@@ -1,0 +1,17 @@
+{
+    "name": "Aqua.SocketSystem",
+    "rootNamespace": "Aqua.SocketSystem",
+    "references": [
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:25c5268b34f82cb4b815835e83657392"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
