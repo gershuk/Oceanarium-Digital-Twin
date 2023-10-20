@@ -6,27 +6,25 @@ using UniRx;
 
 namespace Aqua.SocketSystem
 {
-    public sealed class UniversalSocket<T> : IUniversalSocket<T>, IDisposable
+    public class UniversalSocket<TIn, TOut> : IUniversalSocket<TIn, TOut>, IDisposable
     {
-        private readonly CompositeDisposable _disposable = new();
+        protected readonly CompositeDisposable _disposable = new();
 
-        private bool _disposedValue;
+        protected bool _disposedValue;
 
-        private IWriteOnlySocket<T>? _writer;
+        protected IOutputSocket<TIn>? _mainPublisher;
+        protected IInputSocket<TOut>? _mainSubscriber;
 
-        private ReactiveProperty<T> Property { get; set; }
+        protected ReactiveProperty<TOut?> Property { get; set; }
 
-        public Func<T, T>? ConverterFunction { get; }
+        public Func<TIn, TIn>? InputDataModificationFunction { get; protected set; }
+        public Func<TIn, TOut>? InputData—onvertingFunction { get; protected set; }
 
-        public IReadOnlyReactiveProperty<T> ReadOnlyProperty => Property;
+        public IReadOnlyReactiveProperty<TOut?> ReadOnlyProperty => Property;
 
-        public UniversalSocket (ReactiveProperty<T> property, Func<T, T>? converterFunction = null)
-        {
-            Property = property ?? throw new ArgumentNullException(nameof(property));
-            ConverterFunction = converterFunction;
-        }
+        public UniversalSocket (ReactiveProperty<TOut?> property) => Property = property ?? throw new ArgumentNullException(nameof(property));
 
-        private void Dispose (bool disposing)
+        protected void Dispose (bool disposing)
         {
             if (!_disposedValue)
             {
@@ -39,22 +37,47 @@ namespace Aqua.SocketSystem
             }
         }
 
-        private void Register (IWriteOnlySocket<T> socket)
+        protected void Register (IOutputSocket<TIn> socket)
         {
-            if (_writer != null)
-                throw new Exception("_writer != null");
-            _writer = socket;
+            if (_mainPublisher != null)
+                throw new Exception($"{nameof(_mainPublisher)} != null");
+            _mainPublisher = socket;
         }
 
-        private void Unegister (IWriteOnlySocket<T> socket)
+        protected void ResetDataFunction ()
+        {
+            InputDataModificationFunction = null;
+            InputData—onvertingFunction = null;
+        }
+
+        protected void Unregister (IOutputSocket<TIn> socket)
         {
             if (socket == null)
                 throw new ArgumentNullException(nameof(socket));
 
-            if (socket != _writer)
-                throw new Exception("socket != _writer");
+            if (socket != _mainPublisher)
+                throw new Exception($"{nameof(socket)} != {nameof(_mainPublisher)}");
 
-            _writer = null;
+            _mainPublisher = null;
+        }
+
+        protected void UpdateData (TIn value)
+        {
+            var mValue = InputDataModificationFunction != null
+                             ? InputDataModificationFunction(value)
+                             : value;
+            //ToDo : Refactor this
+            if (mValue == null && (Property.Value == null || Property.Value.GetType().IsClass))
+            {
+                Property.Value = default;
+                return;
+            }
+
+            Property.Value = InputData—onvertingFunction != null
+                           ? InputData—onvertingFunction(value)
+                           : value is TOut v
+                                ? v
+                                : throw new InvalidCastException();
         }
 
         public void Dispose ()
@@ -63,31 +86,49 @@ namespace Aqua.SocketSystem
             GC.SuppressFinalize(this);
         }
 
-        public void SubscribeTo (IWriteOnlySocket<T> socket)
+        public void Register (IInputSocket<TOut> socket)
+        {
+            if (_mainSubscriber != null)
+                throw new Exception($"{nameof(_mainSubscriber)} != null");
+            _mainSubscriber = socket;
+        }
+
+        public void SubscribeTo (IOutputSocket<TIn> socket,
+                                         Func<TIn, TOut> inputData—onvertingFunction,
+                                 Func<TIn, TIn>? inputDataModificationFunction = null)
         {
             Register(socket);
-            _ = socket.ReadOnlyProperty.Subscribe(value => Property.Value = ConverterFunction is not null
-                                                                        ? ConverterFunction(value)
-                                                                        : value
-                                             ).AddTo(_disposable);
+            socket.Register(this);
+            InputDataModificationFunction = inputDataModificationFunction;
+            InputData—onvertingFunction = inputData—onvertingFunction;
+            socket.ReadOnlyProperty.Subscribe(UpdateData).AddTo(_disposable);
         }
 
-        public void UnsubscribeFrom (IWriteOnlySocket<T> socket)
+        public void SubscribeTo (IOutputSocket<TIn> socket, Func<TIn, TIn>? inputDataModificationFunction = null)
         {
-            Unegister(socket);
+            Register(socket);
+            socket.Register(this);
+            InputDataModificationFunction = inputDataModificationFunction;
+            socket.ReadOnlyProperty.Subscribe(UpdateData).AddTo(_disposable);
+        }
+
+        public void Unregister (IInputSocket<TOut> socket)
+        {
+            if (socket == null)
+                throw new ArgumentNullException(nameof(socket));
+
+            if (socket != _mainSubscriber)
+                throw new Exception($"{nameof(socket)} != {nameof(_mainSubscriber)}");
+
+            _mainSubscriber = null;
+        }
+
+        public void UnsubscribeFrom (IOutputSocket<TIn> socket)
+        {
+            Unregister(socket);
+            socket.Unregister(this);
+            ResetDataFunction();
             _disposable.Clear();
-        }
-
-        public void SubscribeTwoWays (IUniversalSocket<T> socket)
-        {
-            SubscribeTo (socket);
-            socket.SubscribeTo (this);
-        }
-
-        public void UnsubscribeTwoWays (IUniversalSocket<T> socket)
-        {
-            UnsubscribeFrom(socket);
-            socket.UnsubscribeFrom(this);
         }
     }
 }

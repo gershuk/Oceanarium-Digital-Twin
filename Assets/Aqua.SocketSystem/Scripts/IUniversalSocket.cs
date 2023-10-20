@@ -1,10 +1,13 @@
 ﻿#nullable enable
 
+using System;
+
 namespace Aqua.SocketSystem
 {
-    public interface IUniversalSocket<T> : IReadOnlySocket<T>, IWriteOnlySocket<T>
+    public interface IUniversalSocket<TIn, TOut> : IInputSocket<TIn>, IOutputSocket<TOut>
     {
-        public void SubscribeTwoWays(IUniversalSocket<T> socket);
-        public void UnsubscribeTwoWays (IUniversalSocket<T> socket);
+        public void SubscribeTo (IOutputSocket<TIn> socket,
+                                 Func<TIn, TOut> inputDataСonvertingFunction,
+                                 Func<TIn, TIn>? inputDataModificationFunction = null);
     }
 }
