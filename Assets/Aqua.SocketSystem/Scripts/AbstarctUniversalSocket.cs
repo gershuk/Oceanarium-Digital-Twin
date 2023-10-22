@@ -37,10 +37,7 @@ namespace Aqua.SocketSystem
 
         protected abstract void RegisterMainPublisher (IOutputSocket<TIn?> socket);
 
-        protected virtual void ResetMainDataFunction ()
-        {
-            MainInputDataModificationFunction = null;
-        }
+        protected virtual void ResetMainDataFunction () => MainInputDataModificationFunction = null;
 
         protected abstract void UnregisterMainPublisher (IOutputSocket<TIn?> socket);
 

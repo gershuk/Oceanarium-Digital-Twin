@@ -20,27 +20,49 @@ namespace Aqua.SocketSystem
             CombineFunction.Subscribe((f) => UpdateData());
         }
 
+        ~СombiningSocket () => Dispose(false);
+
+        private TOut? DefaultCombineFunction (TIn1? in1, TIn2? in2) =>
+            (in1, in2) is TOut tuple
+            ? tuple
+            : throw new InvalidCastException();
+
+        private void RegisterAdditionalPublisher (IOutputSocket<TIn2?> socket)
+        {
+            if (_additionalPublisher != null)
+                throw new Exception($"{nameof(_additionalPublisher)} != null");
+            _additionalPublisher = socket;
+        }
+
+        private void ResetAdditionalDataFunction () => AdditionalInputDataModificationFunction = null;
+
+        private void UnregisterAdditionalPublisher (IOutputSocket<TIn2?> socket)
+        {
+            if (socket == null)
+                throw new ArgumentNullException(nameof(socket));
+
+            if (socket != _additionalPublisher)
+                throw new Exception($"{nameof(socket)} != {nameof(_additionalPublisher)}");
+
+            _additionalPublisher = null;
+        }
+
+        private void UpdateData () => UpdateData(_mainPublisher != null
+                       ? _mainPublisher.ReadOnlyProperty.Value
+                       : default);
+
         protected override void Dispose (bool disposing)
         {
             if (!_disposedValue)
             {
                 if (disposing)
                 {
-                    base.Dispose (disposing);
+                    base.Dispose(disposing);
                     _additionalDisposable.Dispose();
                 }
 
                 _disposedValue = true;
             }
-        }
-
-        ~СombiningSocket () => Dispose(false);
-
-        private void UpdateData ()
-        {
-            UpdateData(_mainPublisher != null 
-                       ? _mainPublisher.ReadOnlyProperty.Value
-                       : default);
         }
 
         protected override void UpdateData (TIn1? value)
@@ -49,11 +71,11 @@ namespace Aqua.SocketSystem
                                    ? MainInputDataModificationFunction(value)
                                    : value;
 
-            var additionalValue = _additionalPublisher != null 
-                                  ? _additionalPublisher.ReadOnlyProperty.Value 
+            var additionalValue = _additionalPublisher != null
+                                  ? _additionalPublisher.ReadOnlyProperty.Value
                                   : default;
 
-            var additionalModifedValue = AdditionalInputDataModificationFunction!= null
+            var additionalModifedValue = AdditionalInputDataModificationFunction != null
                              ? AdditionalInputDataModificationFunction(additionalValue)
                              : additionalValue;
 
@@ -68,7 +90,7 @@ namespace Aqua.SocketSystem
             RegisterAdditionalPublisher(socket);
             socket.Register(this);
             AdditionalInputDataModificationFunction = inputDataModificationFunction;
-            socket.ReadOnlyProperty.Subscribe((v)=>UpdateData()).AddTo(_additionalDisposable);
+            socket.ReadOnlyProperty.Subscribe((v) => UpdateData()).AddTo(_additionalDisposable);
         }
 
         public void UnsubscribeFrom (IOutputSocket<TIn2?> socket)
@@ -77,34 +99,6 @@ namespace Aqua.SocketSystem
             socket.Unregister(this);
             ResetAdditionalDataFunction();
             _additionalDisposable.Clear();
-        }
-
-        private void RegisterAdditionalPublisher (IOutputSocket<TIn2?> socket)
-        {
-            if (_additionalPublisher != null)
-                throw new Exception($"{nameof(_additionalPublisher)} != null");
-            _additionalPublisher = socket;
-        }
-
-        private void UnregisterAdditionalPublisher (IOutputSocket<TIn2?> socket)
-        {
-            if (socket == null)
-                throw new ArgumentNullException(nameof(socket));
-
-            if (socket != _additionalPublisher)
-                throw new Exception($"{nameof(socket)} != {nameof(_additionalPublisher)}");
-
-            _additionalPublisher = null;
-        }
-
-        private TOut? DefaultCombineFunction (TIn1? in1, TIn2? in2) => 
-            (in1, in2) is TOut tuple 
-            ? tuple 
-            : throw new InvalidCastException(); 
-
-        private void ResetAdditionalDataFunction ()
-        {
-            AdditionalInputDataModificationFunction = null;
         }
     }
 }

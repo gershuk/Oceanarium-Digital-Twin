@@ -9,11 +9,10 @@ namespace Aqua.SocketSystem
 {
     public class MulticonnectionSocket<TIn, TOut> : AbstarctUniversalSocket<TIn?, TOut?>
     {
-
         protected HashSet<IOutputSocket<TIn?>> _publishers;
         protected HashSet<IInputSocket<TOut?>> _subscribers;
 
-        public MulticonnectionSocket (ReactiveProperty<TOut?>? property = null):base(property)
+        public MulticonnectionSocket (ReactiveProperty<TOut?>? property = null) : base(property)
         {
             _publishers = new();
             _subscribers = new();

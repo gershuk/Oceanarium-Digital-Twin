@@ -1,22 +1,24 @@
 #nullable enable
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UniRx;
 
-using UnityEngine;
+using UniRx;
 
 namespace Aqua.SocketSystem
 {
     public sealed class ConverterSocket<TIn, TOut> : UniversalSocket<TIn?, TOut?>, IConverterSocket<TIn?, TOut?>
     {
+        public Func<TIn?, TOut?>? MainInputData—onvertingFunction { get; private set; }
+
         public ConverterSocket (ReactiveProperty<TOut?>? property = null) : base(property)
         {
-
         }
 
-        public Func<TIn?, TOut?>? MainInputData—onvertingFunction { get; private set; }
+        protected override void ResetMainDataFunction ()
+        {
+            base.ResetMainDataFunction();
+            MainInputData—onvertingFunction = null;
+        }
 
         protected override void UpdateData (TIn? value)
         {
@@ -36,12 +38,6 @@ namespace Aqua.SocketSystem
                            : value is TOut v
                                 ? v
                                 : throw new InvalidCastException();
-        }
-
-        protected override void ResetMainDataFunction ()
-        {
-            base.ResetMainDataFunction();
-            MainInputData—onvertingFunction = null;
         }
 
         public void SubscribeTo (IOutputSocket<TIn?> socket,

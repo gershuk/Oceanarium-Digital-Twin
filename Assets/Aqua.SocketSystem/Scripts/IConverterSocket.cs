@@ -2,8 +2,6 @@
 
 using System;
 
-using UnityEngine;
-
 namespace Aqua.SocketSystem
 {
     public interface IConverterSocket<TIn, TOut> : IUniversalSocket<TIn, TOut>
