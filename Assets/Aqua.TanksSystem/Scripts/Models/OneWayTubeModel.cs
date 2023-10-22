@@ -10,22 +10,24 @@ namespace Aqua.TanksSystem
 {
     public sealed class OneWayTubeModel<TIn, TOut>
     {
-        private readonly ReactiveProperty<TIn> _inProp;
-        private readonly ReactiveProperty<TOut> _outProp;
+        private readonly ReactiveProperty<TIn?> _inProp;
+        private readonly ReactiveProperty<TOut?> _outProp;
+        private readonly IUniversalSocket<TIn?, TIn?> _inSocket;
+        private readonly IConverterSocket<TIn?, TOut?> _outSocket;
 
-        public IUniversalSocket<TIn, TIn> InSocket { get; }
-        public IUniversalSocket<TIn, TOut> OutSocket { get; }
+        public IInputSocket<TIn?> InSocket => _inSocket;
+        public IOutputSocket<TOut?> OutSocket => _outSocket;
 
-        public OneWayTubeModel (Func<TIn, TOut> inputData—onvertingFunction,
-                                Func<TIn, TIn>? inputDataModificationFunction = null)
+        public OneWayTubeModel (Func<TIn?, TOut?> inputData—onvertingFunction,
+                                Func<TIn?, TIn?>? inputDataModificationFunction = null)
         {
             _inProp = new();
             _outProp = new();
 
-            OutSocket = new UniversalSocket<TIn, TOut>(_outProp);
-            InSocket = new UniversalSocket<TIn, TIn>(_inProp);
+            _outSocket = new ConverterSocket<TIn?, TOut?>(_outProp);
+            _inSocket = new UniversalSocket<TIn?, TIn?>(_inProp);
 
-            OutSocket.SubscribeTo(InSocket, inputData—onvertingFunction, inputDataModificationFunction);
+            _outSocket.SubscribeTo(_inSocket, inputData—onvertingFunction, inputDataModificationFunction);
         }
     }
 }
