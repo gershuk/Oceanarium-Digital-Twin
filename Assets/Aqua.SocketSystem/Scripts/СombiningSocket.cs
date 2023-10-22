@@ -16,7 +16,7 @@ namespace Aqua.SocketSystem
         public СombiningSocket (ReactiveProperty<TOut?>? property = null,
                                 Func<TIn1?, TIn2?, TOut>? combineFunction = null) : base(property)
         {
-            CombineFunction = new ReactiveProperty<Func<TIn1?, TIn2?, TOut>?>(combineFunction ?? DefaultCombineFunction);
+            CombineFunction = new ReactiveProperty<Func<TIn1?, TIn2?, TOut>?>(combineFunction ?? DefaultCombineFunction!);
             CombineFunction.Subscribe((f) => UpdateData());
         }
 
@@ -92,6 +92,8 @@ namespace Aqua.SocketSystem
             AdditionalInputDataModificationFunction = inputDataModificationFunction;
             socket.ReadOnlyProperty.Subscribe((v) => UpdateData()).AddTo(_additionalDisposable);
         }
+
+        public override bool TrySetValue (TOut? value) => _additionalPublisher == null && base.TrySetValue(value);
 
         public void UnsubscribeFrom (IOutputSocket<TIn2?> socket)
         {

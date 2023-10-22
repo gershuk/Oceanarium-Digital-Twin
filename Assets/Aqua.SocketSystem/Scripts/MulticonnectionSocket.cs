@@ -45,6 +45,13 @@ namespace Aqua.SocketSystem
             _subscribers.Add(socket);
         }
 
+        public override bool TrySetValue (TOut? value)
+        {
+            if (_subscribers.Count == 0)
+                Property.Value = value;
+            return _subscribers.Count == 0;
+        }
+
         public override void Unregister (IInputSocket<TOut?> socket)
         {
             if (socket == null)

@@ -75,6 +75,8 @@ namespace Aqua.SocketSystem
             socket.ReadOnlyProperty.Subscribe(UpdateData).AddTo(_mainDisposable);
         }
 
+        public abstract bool TrySetValue (TOut? value);
+
         public abstract void Unregister (IInputSocket<TOut?> socket);
 
         public void UnsubscribeFrom (IOutputSocket<TIn?> socket)

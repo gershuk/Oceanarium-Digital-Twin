@@ -40,6 +40,13 @@ namespace Aqua.SocketSystem
             _mainSubscriber = socket;
         }
 
+        public override bool TrySetValue (TOut? value)
+        {
+            if (_mainPublisher == null)
+                Property.Value = value;
+            return _mainPublisher == null;
+        }
+
         public override void Unregister (IInputSocket<TOut?> socket)
         {
             if (socket == null)
