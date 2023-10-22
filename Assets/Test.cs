@@ -20,15 +20,17 @@ public class Test : MonoBehaviour
         //pos1.Value = Vector3.right;
         //scale.Value = 20;
 
-        var number = new ReactiveProperty<int>();
-        var sockIn = new UniversalSocket<int,int>(number);
+        var flow = new UniversalSocket<int,int>();
+        var valve = new UniversalSocket<float, float>();
 
         var tube = new OneWayTubeModel<int,string>(static(number)=> number.ToString());
-        tube.InSocket.SubscribeTo(sockIn);
-        tube.OutSocket.ReadOnlyProperty.Subscribe(v=>Debug.Log(v));
-        number.Value = 1;
-        number.Value = 2;
-        number.Value = 3;
-        number.Value = 4;
+        tube.InSocket.SubscribeTo(flow);
+
+        var cSocket = new ÑombiningSocket<string, float, string>(combineFunction: static (s,f) => $"str:'{s}' float:{f}");
+        cSocket.SubscribeTo(tube.OutSocket);
+        cSocket.SubscribeTo(valve);
+        cSocket.ReadOnlyProperty.Subscribe(Debug.Log);
+
+        var t = flow.TrySetValue(20);
     }
 }
