@@ -3,7 +3,8 @@
     "rootNamespace": "Aqua.TanksSystem",
     "references": [
         "GUID:f52c881e3a01bd4459588757d81478e3",
-        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:b0354195131e1414dabcc358840d86b5"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

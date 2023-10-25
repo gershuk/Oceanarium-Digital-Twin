@@ -4,9 +4,7 @@ using System;
 
 using Aqua.SocketSystem;
 
-using UniRx;
-
-namespace Aqua.TanksSystem
+namespace Aqua.TanksSystem.Models
 {
     public sealed class OneWayTubeModel<TIn, TOut>
     {
