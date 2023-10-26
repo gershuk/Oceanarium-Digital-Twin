@@ -25,7 +25,7 @@ namespace Aqua.TanksSystem
         private Vector3 _startAngle;
 
         [SerializeField]
-        private Transform _valve;
+        private Transform _handle;
 
         [SerializeField]
         private ValveViewModel _viewmodel;
@@ -34,7 +34,7 @@ namespace Aqua.TanksSystem
         private ReactiveCommand OpenCommand { get; } = new();
 
         private void RotateValve (float value) =>
-            _valve.rotation = Quaternion.Lerp(Quaternion.Euler(_startAngle),
+            _handle.rotation = Quaternion.Lerp(Quaternion.Euler(_startAngle),
                                               Quaternion.Euler(_endAngle),
                                               value);
 
