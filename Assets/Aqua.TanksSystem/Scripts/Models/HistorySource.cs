@@ -4,7 +4,7 @@ using Aqua.DataReader;
 
 namespace Aqua.TanksSystem
 {
-    public class TickSource<T> : Source<T>, ITickObject
+    public class HistorySource<T> : Source<T>, ITickObject
     {
         protected DataArray<T> _source;
         protected float _currentTime;
