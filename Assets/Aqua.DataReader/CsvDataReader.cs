@@ -1,6 +1,7 @@
 #nullable enable
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -19,6 +20,12 @@ namespace Aqua.DataReader
 
         public DateTime Date { get; }
         public T? Value { get; }
+    }
+
+    public class ComparerDataByTime<T> : IComparer<Data<T>>
+    {
+        public static ComparerDataByTime<T> Instance = new();
+        public int Compare (Data<T> x, Data<T> y) => x.Date.CompareTo(y.Date);
     }
 
     public class DataArray<T>
