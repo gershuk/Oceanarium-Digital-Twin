@@ -83,6 +83,19 @@ namespace Aqua.TubesCreater.Builders
         private void Awake ()
         {
             _filter = GetComponent<MeshFilter>();
+
+            if (_points == null || _points.Count == 0)
+            {
+                _points = new List<Vector3>()
+                {
+                    Vector3.zero,
+                    Vector3.up,
+                    Vector3.right
+                };
+            }
+            if (_filter == null)
+                _filter = GetComponent<MeshFilter>();
+
             RebuildCurve();
         }
 
@@ -155,7 +168,7 @@ namespace Aqua.TubesCreater.Builders
 
         private void OnEnable ()
         {
-            if (_points.Count <= 0)
+            if (_points == null || _points.Count == 0)
             {
                 _points = new List<Vector3>()
                 {
