@@ -34,7 +34,7 @@ namespace Aqua.TanksSystem
         private ReactiveCommand OpenCommand { get; } = new();
 
         private void RotateValve (float value) =>
-            _handle.rotation = Quaternion.Lerp(Quaternion.Euler(_startAngle),
+            _handle.localRotation = Quaternion.Lerp(Quaternion.Euler(_startAngle),
                                               Quaternion.Euler(_endAngle),
                                               value);
 
