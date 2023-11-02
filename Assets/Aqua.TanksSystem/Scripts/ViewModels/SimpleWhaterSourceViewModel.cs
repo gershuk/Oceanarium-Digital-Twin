@@ -8,9 +8,13 @@ namespace Aqua.TanksSystem
 {
     public sealed class SimpleWhaterSourceViewModel : MonoBehaviour
     {
+        private readonly Source<WaterData> _waterSource;
+
         [SerializeField]
-        [Range(0.0f, 1e6f)]
-        private float _volume = 1;
+        private WaterData _initValue;
+
+        [SerializeField]
+        private bool _isMulticonnection = false;
 
         [SerializeField]
         [Range(0.0f, 1e6f)]
@@ -21,15 +25,11 @@ namespace Aqua.TanksSystem
         private float _temp = 20;
 
         [SerializeField]
-        private WaterData _initValue;
-
-        private readonly Source<WaterData> _waterSource = new();
+        [Range(0.0f, 1e6f)]
+        private float _volume = 1;
 
         public IOutputSocket<WaterData> OutputSocket => _waterSource.OutputSocket;
 
-        private void Awake ()
-        {
-            _waterSource.Value = new WaterData(_volume, _ph, _temp);
-        }
+        private SimpleWhaterSourceViewModel () => _waterSource = new Source<WaterData>(new WaterData(_volume, _ph, _temp), _isMulticonnection);
     }
 }

@@ -1,7 +1,5 @@
 using System;
 
-using Aqua.SocketSystem;
-
 namespace Aqua.TanksSystem.Models
 {
     public sealed class SimpleValveModel : Source<float>

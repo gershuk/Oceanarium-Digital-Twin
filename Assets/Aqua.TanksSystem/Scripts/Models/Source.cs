@@ -13,9 +13,9 @@ namespace Aqua.TanksSystem
             set => _socket.TrySetValue(InputDataModificationFunction(value));
         }
 
-        public Source (T data = default, bool isMulticonnection = false) => 
+        public Source (T data = default, bool isMulticonnection = false) =>
             _socket = isMulticonnection
-            ? new MulticonnectionSocket<T,T>() 
+            ? new MulticonnectionSocket<T, T>()
             : new UniversalSocket<T, T>(data);
 
         protected virtual T InputDataModificationFunction (T value) => value;

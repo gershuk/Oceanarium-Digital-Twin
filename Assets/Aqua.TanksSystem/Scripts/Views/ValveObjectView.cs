@@ -19,13 +19,13 @@ namespace Aqua.TanksSystem
         [SerializeField]
         private Vector3 _endAngle;
 
+        [SerializeField]
+        private Transform _handle;
+
         private float _lastActionTime = 0f;
 
         [SerializeField]
         private Vector3 _startAngle;
-
-        [SerializeField]
-        private Transform _handle;
 
         [SerializeField]
         private ValveViewModel _viewmodel;

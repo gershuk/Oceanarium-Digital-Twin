@@ -27,7 +27,7 @@ namespace Aqua.TanksSystem
 
         public void Tick (int tickNumber, float startTime, float tickTime)
         {
-            _currentTime = startTime + tickTime * tickNumber;
+            _currentTime = startTime + (tickTime * tickNumber);
             UpdateDataIndex();
             _socket.TrySetValue(_source.Data[_dataIndex].Value);
         }
