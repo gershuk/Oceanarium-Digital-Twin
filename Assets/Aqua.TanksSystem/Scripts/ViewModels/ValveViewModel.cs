@@ -30,17 +30,21 @@ namespace Aqua.TanksSystem.ViewModels
             }
             catch (ArgumentOutOfRangeException outOfRange)
             {
-                Debug.Log($"The valve value limit has been reached. Exception: {outOfRange.Message}");
+                Debug.Log($"The value limit has been reached. Exception: {outOfRange.Message}");
             }
         }
 
         [ContextMenu(nameof(Close))]
+        public void Close () => AddValue(-1, Time.deltaTime);
+
         public void Close (float delta, float deltaTime) => AddValue(delta, deltaTime);
 
         [ContextMenu(nameof(Open))]
+        public void Open () => AddValue(1, Time.deltaTime);
+
         public void Open (float delta, float deltaTime) => AddValue(delta, deltaTime);
 
-        [ContextMenu(nameof(Close))]
+        [ContextMenu(nameof(ResetValue))]
         public void ResetValue () => SimpleValve.Value = 0;
 
         #endregion Rotation method
