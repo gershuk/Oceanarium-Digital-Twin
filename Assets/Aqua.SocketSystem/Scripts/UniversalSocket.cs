@@ -11,7 +11,15 @@ namespace Aqua.SocketSystem
         protected IOutputSocket<TIn?>? _mainPublisher;
         protected IInputSocket<TOut?>? _mainSubscriber;
 
+        public UniversalSocket():base(property:null)
+        {
+        }
+
         public UniversalSocket (ReactiveProperty<TOut?>? property = null) : base(property)
+        {
+        }
+
+        public UniversalSocket (TOut? value = default) : base(value)
         {
         }
 

@@ -13,7 +13,7 @@ namespace Aqua.TanksSystem
             set => _socket.TrySetValue(InputDataModificationFunction(value));
         }
 
-        public Source () => _socket = new UniversalSocket<T, T>();
+        public Source (T data = default) => _socket = new UniversalSocket<T, T>(data);
 
         protected virtual T InputDataModificationFunction (T value) => value;
 

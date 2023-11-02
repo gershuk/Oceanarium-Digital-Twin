@@ -20,6 +20,8 @@ namespace Aqua.SocketSystem
 
         public AbstarctUniversalSocket (ReactiveProperty<TOut?>? property = null) => Property = property ?? new();
 
+        public AbstarctUniversalSocket (TOut? value = default) => Property = new ReactiveProperty<TOut?>(value);
+
         ~AbstarctUniversalSocket () => Dispose(false);
 
         protected virtual void Dispose (bool disposing)
