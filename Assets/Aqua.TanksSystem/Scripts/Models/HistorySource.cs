@@ -6,11 +6,11 @@ namespace Aqua.TanksSystem
 {
     public class HistorySource<T> : Source<T>, ITickObject
     {
-        protected DataArray<T> _source;
         protected float _currentTime;
         protected int _dataIndex;
+        protected DataArray<T> _source;
 
-        protected void UpdateDataIndex()
+        protected void UpdateDataIndex ()
         {
             var index = Array.BinarySearch(_source.Data,
                                            new Data<T>(Convert.ToDateTime(_currentTime), default),
@@ -27,8 +27,9 @@ namespace Aqua.TanksSystem
 
         public void Tick (int tickNumber, float startTime, float tickTime)
         {
-            _currentTime = startTime + tickTime*tickNumber;
+            _currentTime = startTime + tickTime * tickNumber;
             UpdateDataIndex();
+            _socket.TrySetValue(_source.Data[_dataIndex].Value);
         }
     }
 }
