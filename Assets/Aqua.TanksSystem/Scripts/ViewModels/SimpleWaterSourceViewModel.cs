@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aqua.TanksSystem
 {
-    public sealed class SimpleWhaterSourceViewModel : MonoBehaviour
+    public sealed class SimpleWaterSourceViewModel : MonoBehaviour, ITickObject
     {
         private readonly Source<WaterData> _waterSource;
 
@@ -30,6 +30,16 @@ namespace Aqua.TanksSystem
 
         public IOutputSocket<WaterData> OutputSocket => _waterSource.OutputSocket;
 
-        private SimpleWhaterSourceViewModel () => _waterSource = new Source<WaterData>(new WaterData(_volume, _ph, _temp), _isMulticonnection);
+        private SimpleWaterSourceViewModel () : base() => _waterSource = new Source<WaterData>(null, _isMulticonnection);
+
+        public void Init (float startTime)
+        {
+            _waterSource.OutputSocket.TrySetValue(new WaterData(_volume, _ph, _temp));
+        }
+
+        public void Tick (int tickNumber, float startTime, float tickTime)
+        {
+
+        }
     }
 }

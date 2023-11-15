@@ -15,6 +15,8 @@ namespace Aqua.TanksSystem
 
     public sealed class TickSystem : MonoBehaviour
     {
+        private float _lastTickTime = 0;
+
         [SerializeField]
         private float _startTime = 0;
 
@@ -35,13 +37,17 @@ namespace Aqua.TanksSystem
         }
 
         private void Update ()
-        {
-            foreach (var tickObject in _tickObjectQueue)
+        {   
+            if (_lastTickTime + _tickTime <= Time.time)
             {
-                tickObject.Tick(_tickNumber, _startTime, _tickTime);
-            }
+                foreach (var tickObject in _tickObjectQueue)
+                {
+                    tickObject.Tick(_tickNumber, _startTime, _tickTime);
+                }
 
-            _tickNumber++;
+                _tickNumber++;
+                _lastTickTime =Time.time;
+            }            
         }
 
         public void AddToEnd (ITickObject tickObject) => _tickObjectQueue.AddLast(tickObject);

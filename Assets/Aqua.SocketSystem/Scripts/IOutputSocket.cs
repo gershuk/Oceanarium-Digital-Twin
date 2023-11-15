@@ -12,6 +12,8 @@ namespace Aqua.SocketSystem
 
         public bool TrySetValue (TOut? value);
 
+        public TOut GetValue ();
+
         public void Unregister (IInputSocket<TOut?> socket);
     }
 }

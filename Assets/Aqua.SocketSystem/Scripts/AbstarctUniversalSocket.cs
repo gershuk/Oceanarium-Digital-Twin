@@ -88,5 +88,7 @@ namespace Aqua.SocketSystem
             ResetMainDataFunction();
             _mainDisposable.Clear();
         }
+
+        public TOut? GetValue () => Property.Value;
     }
 }

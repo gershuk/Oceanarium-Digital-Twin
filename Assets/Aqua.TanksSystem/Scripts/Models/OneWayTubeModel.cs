@@ -14,7 +14,7 @@ namespace Aqua.TanksSystem.Models
         public IInputSocket<TIn?> InSocket => _inSocket;
         public IOutputSocket<TOut?> OutSocket => _outSocket;
 
-        public OneWayTubeModel (Func<TIn?, TOut?> inputData—onvertingFunction,
+        public OneWayTubeModel (Func<TIn?, TOut?>? inputData—onvertingFunction = null,
                                 Func<TIn?, TIn?>? inputDataModificationFunction = null)
         {
             _outSocket = new ConverterSocket<TIn?, TOut?>();
