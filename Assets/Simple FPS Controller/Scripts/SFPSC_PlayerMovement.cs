@@ -1,33 +1,11 @@
-﻿/*
-    ███████╗██╗██████╗  ██████╗████████╗  ██████╗ ███████╗██████╗  ██████╗ █████╗ ███╗  ██╗
-    ██╔════╝██║██╔══██╗██╔════╝╚══██╔══╝  ██╔══██╗██╔════╝██╔══██╗██╔════╝██╔══██╗████╗ ██║
-    █████╗  ██║██████╔╝╚█████╗    ██║     ██████╔╝█████╗  ██████╔╝╚█████╗ ██║  ██║██╔██╗██║
-    ██╔══╝  ██║██╔══██╗ ╚═══██╗   ██║     ██╔═══╝ ██╔══╝  ██╔══██╗ ╚═══██╗██║  ██║██║╚████║
-    ██║     ██║██║  ██║██████╔╝   ██║     ██║     ███████╗██║  ██║██████╔╝╚█████╔╝██║ ╚███║
-    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝    ╚═╝     ╚═╝     ╚══════╝╚═╝  ╚═╝╚═════╝  ╚════╝ ╚═╝  ╚══╝
+﻿using UnityEngine;
 
-    ██████╗ ██╗      █████╗ ██╗   ██╗███████╗██████╗   ███╗   ███╗ █████╗ ██╗   ██╗███████╗███╗   ███╗███████╗███╗  ██╗████████╗
-    ██╔══██╗██║     ██╔══██╗╚██╗ ██╔╝██╔════╝██╔══██╗  ████╗ ████║██╔══██╗██║   ██║██╔════╝████╗ ████║██╔════╝████╗ ██║╚══██╔══╝
-    ██████╔╝██║     ███████║ ╚████╔╝ █████╗  ██████╔╝  ██╔████╔██║██║  ██║╚██╗ ██╔╝█████╗  ██╔████╔██║█████╗  ██╔██╗██║   ██║   
-    ██╔═══╝ ██║     ██╔══██║  ╚██╔╝  ██╔══╝  ██╔══██╗  ██║╚██╔╝██║██║  ██║ ╚████╔╝ ██╔══╝  ██║╚██╔╝██║██╔══╝  ██║╚████║   ██║   
-    ██║     ███████╗██║  ██║   ██║   ███████╗██║  ██║  ██║ ╚═╝ ██║╚█████╔╝  ╚██╔╝  ███████╗██║ ╚═╝ ██║███████╗██║ ╚███║   ██║   
-    ╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ╚═╝     ╚═╝ ╚════╝    ╚═╝   ╚══════╝╚═╝     ╚═╝╚══════╝╚═╝  ╚══╝   ╚═╝   
-
-    █▄▄ █▄█   ▀█▀ █ █ █▀▀   █▀▄ █▀▀ █ █ █▀▀ █   █▀█ █▀█ █▀▀ █▀█
-    █▄█  █     █  █▀█ ██▄   █▄▀ ██▄ ▀▄▀ ██▄ █▄▄ █▄█ █▀▀ ██▄ █▀▄
-*/
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-// I use Physics.gravity a lot instead of Vector3.up because you can point the gravity to a different direction and i want the controller to work fine
 [RequireComponent(typeof(Rigidbody))]
 public class SFPSC_PlayerMovement : MonoBehaviour
 {
-    private static Vector3 vecZero = Vector3.zero;
-    private Rigidbody rb;
+    private Rigidbody _rb;
 
-    private bool enableMovement = true;
+    private bool _enableMovement = true;
 
     [Header("Movement properties")]
     public float walkSpeed = 8.0f;
@@ -41,84 +19,56 @@ public class SFPSC_PlayerMovement : MonoBehaviour
     [Header("Jump")]
     public float jumpForce = 500.0f;
     public float jumpCooldown = 1.0f;
-    private bool jumpBlocked = false;
 
-    private SFPSC_WallRun wallRun;
-    private SFPSC_GrapplingHook grapplingHook;
-
-    private void Start()
+    private void Start ()
     {
-        rb = this.GetComponent<Rigidbody>();
-
-        TryGetWallRun();
-        TryGetGrapplingHook();
+        _rb = this.GetComponent<Rigidbody>();
     }
 
-    public void TryGetWallRun()
-    {
-        this.TryGetComponent<SFPSC_WallRun>(out wallRun);
-    }
+    private bool _isGrounded = false;
+    public bool IsGrounded { get { return _isGrounded; } }
 
-    public void TryGetGrapplingHook()
-    {
-        this.TryGetComponent<SFPSC_GrapplingHook>(out grapplingHook);
-    }
+    private Vector3 _inputForce;
+    private float _prevY;
 
-    private bool isGrounded = false;
-    public bool IsGrounded { get { return isGrounded; } }
-
-    private Vector3 inputForce;
-    private int i = 0;
-    private float prevY;
-    private void FixedUpdate()
+    private void FixedUpdate ()
     {
-        if ((wallRun != null && wallRun.IsWallRunning) || (grapplingHook != null && grapplingHook.IsGrappling))
-            isGrounded = false;
-        else
-        {
-            // I recieved several messages that there are some bugs and I found out that the ground check is not working properly
-            // so I made this one. It's faster and all it needs is the velocity of the rigidbody in two frames.
-            // It works pretty well!
-            isGrounded = (Mathf.Abs(rb.velocity.y - prevY) < .1f) && (Physics.OverlapSphere(groundChecker.position, groundCheckerDist).Length > 1); // > 1 because it also counts the player
-            prevY = rb.velocity.y;
-        }
+        _isGrounded = (Mathf.Abs(_rb.velocity.y - _prevY) < .1f) &&
+            (Physics.OverlapSphere(groundChecker.position, groundCheckerDist).Length > 1); // > 1 because it also counts the player
+        _prevY = _rb.velocity.y;
 
         // Input
         vInput = Input.GetAxisRaw("Vertical");
         hInput = Input.GetAxisRaw("Horizontal");
 
         // Clamping speed
-        rb.velocity = ClampMag(rb.velocity, maximumPlayerSpeed);
+        _rb.velocity = ClampMag(_rb.velocity, maximumPlayerSpeed);
 
-        if (!enableMovement)
+        if (!_enableMovement)
             return;
-        inputForce = (transform.forward * vInput + transform.right * hInput).normalized * (Input.GetKey(SFPSC_KeyManager.Run) ? runSpeed : walkSpeed);
+        _inputForce = (transform.forward * vInput + transform.right * hInput).normalized * (Input.GetKey(SFPSC_KeyManager.Run) ? runSpeed : walkSpeed);
 
-        if (isGrounded)
+        if (_isGrounded)
         {
             // Jump
-            if (Input.GetButton("Jump") && !jumpBlocked)
-            {
-                rb.AddForce(-jumpForce * rb.mass * Vector3.down);
-                jumpBlocked = true;
-                Invoke("UnblockJump", jumpCooldown);
-            }
+            Jump();
+
             // Ground controller
-            rb.velocity = Vector3.Lerp(rb.velocity, inputForce, changeInStageSpeed * Time.fixedDeltaTime);
+            _rb.velocity = Vector3.Lerp(_rb.velocity, _inputForce, changeInStageSpeed * Time.fixedDeltaTime);
         }
         else
             // Air control
-            rb.velocity = ClampSqrMag(rb.velocity + inputForce * Time.fixedDeltaTime, rb.velocity.sqrMagnitude);
+            _rb.velocity = ClampSqrMag(_rb.velocity + _inputForce * Time.fixedDeltaTime, _rb.velocity.sqrMagnitude);
     }
 
-    private static Vector3 ClampSqrMag(Vector3 vec, float sqrMag)
+    private static Vector3 ClampSqrMag (Vector3 vec, float sqrMag)
     {
         if (vec.sqrMagnitude > sqrMag)
             vec = vec.normalized * Mathf.Sqrt(sqrMag);
         return vec;
     }
 
-    private static Vector3 ClampMag(Vector3 vec, float maxMag)
+    private static Vector3 ClampMag (Vector3 vec, float maxMag)
     {
         if (vec.sqrMagnitude > maxMag * maxMag)
             vec = vec.normalized * maxMag;
@@ -146,21 +96,24 @@ public class SFPSC_PlayerMovement : MonoBehaviour
     }*/
     #endregion
 
-    private void UnblockJump()
+
+    public void Jump ()
     {
-        jumpBlocked = false;
+        if (_isGrounded && Input.GetButton("Jump"))
+        {
+            _rb.AddForce(-jumpForce * _rb.mass * Vector3.down);
+        }
     }
-    
-    
+
     // Enables jumping and player movement
-    public void EnableMovement()
+    public void EnableMovement ()
     {
-        enableMovement = true;
+        _enableMovement = true;
     }
 
     // Disables jumping and player movement
-    public void DisableMovement()
+    public void DisableMovement ()
     {
-        enableMovement = false;
+        _enableMovement = false;
     }
 }
