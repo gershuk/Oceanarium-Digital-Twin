@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerItemController : MonoBehaviour
 {
@@ -16,6 +17,11 @@ public class PlayerItemController : MonoBehaviour
     public float distanceOfItemInteraction = 5;
     public float distanceOfItemDrop = 5;
     public LayerMask obstacleLayerMask;
+
+    [Header("Input")]
+    public InputActionReference takeItemAction;
+    public InputActionReference dropItemAction;
+    public InputActionReference gradReleaseItemAction;
 
     private void Awake ()
     {
@@ -33,17 +39,17 @@ public class PlayerItemController : MonoBehaviour
             ? hit.transform.gameObject.GetComponent<ItemScript>()
             : null;
 
-        if (Input.GetMouseButtonDown(0))
+        if (takeItemAction.action.WasPressedThisFrame())
         {
             TryTakeItem();
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (dropItemAction.action.WasPressedThisFrame())
         {
             TryDropItem();
         }
 
-        if (Input.GetMouseButtonDown(2))
+        if (gradReleaseItemAction.action.WasPressedThisFrame())
         {
             if (_currentGrabbedItem is null)
             {

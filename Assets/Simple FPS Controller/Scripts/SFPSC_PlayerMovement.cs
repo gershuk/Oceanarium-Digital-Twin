@@ -13,13 +13,17 @@ public class SFPSC_PlayerMovement : MonoBehaviour
     public float runSpeed = 12.0f;
     public float changeInStageSpeed = 10.0f; // Lerp from walk to run and backwards speed
     public float maximumPlayerSpeed = 150.0f;
-    [HideInInspector] public float vInput, hInput;
     public Transform groundChecker;
     public float groundCheckerDist = 0.2f;
 
     [Header("Jump")]
     public float jumpForce = 500.0f;
     public float jumpCooldown = 1.0f;
+
+    [Header("Input")]
+    public InputActionReference moveAction;
+    public InputActionReference sprintAction;
+    public InputActionReference jumpAction;
 
     private void Start ()
     {
@@ -38,28 +42,27 @@ public class SFPSC_PlayerMovement : MonoBehaviour
             (Physics.OverlapSphere(groundChecker.position, groundCheckerDist).Length > 1); // > 1 because it also counts the player
         _prevY = _rb.velocity.y;
 
-        // Input
-        vInput = Input.GetAxisRaw("Vertical");
-        hInput = Input.GetAxisRaw("Horizontal");
-
         // Clamping speed
         _rb.velocity = ClampMag(_rb.velocity, maximumPlayerSpeed);
 
         if (!_enableMovement)
             return;
-        _inputForce = (transform.forward * vInput + transform.right * hInput).normalized * (Input.GetKey(SFPSC_KeyManager.Run) ? runSpeed : walkSpeed);
-
+        AddMoveForce(moveAction.action.ReadValue<Vector2>(), sprintAction.action.IsInProgress());
+        
         if (_isGrounded)
         {
-            // Jump
-            Jump();
-
+            if (jumpAction.action.IsPressed())
+            {
+                AddJumpForce();
+            }
             // Ground controller
             _rb.velocity = Vector3.Lerp(_rb.velocity, _inputForce, changeInStageSpeed * Time.fixedDeltaTime);
         }
         else
+        {
             // Air control
             _rb.velocity = ClampSqrMag(_rb.velocity + _inputForce * Time.fixedDeltaTime, _rb.velocity.sqrMagnitude);
+        }
     }
 
     private static Vector3 ClampSqrMag (Vector3 vec, float sqrMag)
@@ -97,13 +100,14 @@ public class SFPSC_PlayerMovement : MonoBehaviour
     }*/
     #endregion
 
-
-    public void Jump ()
+    public void AddMoveForce (Vector2 movement, bool sprint)
     {
-        if (_isGrounded && Input.GetButton("Jump"))
-        {
-            _rb.AddForce(-jumpForce * _rb.mass * Vector3.down);
-        }
+        _inputForce = (transform.forward * movement.y + transform.right * movement.x).normalized * (sprint ? runSpeed : walkSpeed);
+    }
+
+    public void AddJumpForce ()
+    {
+        _rb.AddForce(jumpForce * _rb.mass * Vector3.up);
     }
 
     // Enables jumping and player movement

@@ -1,50 +1,26 @@
-﻿/*
-    ███████╗██╗██████╗  ██████╗████████╗  ██████╗ ███████╗██████╗  ██████╗ █████╗ ███╗  ██╗
-    ██╔════╝██║██╔══██╗██╔════╝╚══██╔══╝  ██╔══██╗██╔════╝██╔══██╗██╔════╝██╔══██╗████╗ ██║
-    █████╗  ██║██████╔╝╚█████╗    ██║     ██████╔╝█████╗  ██████╔╝╚█████╗ ██║  ██║██╔██╗██║
-    ██╔══╝  ██║██╔══██╗ ╚═══██╗   ██║     ██╔═══╝ ██╔══╝  ██╔══██╗ ╚═══██╗██║  ██║██║╚████║
-    ██║     ██║██║  ██║██████╔╝   ██║     ██║     ███████╗██║  ██║██████╔╝╚█████╔╝██║ ╚███║
-    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝    ╚═╝     ╚═╝     ╚══════╝╚═╝  ╚═╝╚═════╝  ╚════╝ ╚═╝  ╚══╝
-
-     █████╗  █████╗ ███╗   ███╗███████╗██████╗  █████╗ 
-    ██╔══██╗██╔══██╗████╗ ████║██╔════╝██╔══██╗██╔══██╗
-    ██║  ╚═╝███████║██╔████╔██║█████╗  ██████╔╝███████║
-    ██║  ██╗██╔══██║██║╚██╔╝██║██╔══╝  ██╔══██╗██╔══██║
-    ╚█████╔╝██║  ██║██║ ╚═╝ ██║███████╗██║  ██║██║  ██║
-     ╚════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝
-
-     █████╗  █████╗ ███╗  ██╗████████╗██████╗  █████╗ ██╗     ██╗     ███████╗██████╗ 
-    ██╔══██╗██╔══██╗████╗ ██║╚══██╔══╝██╔══██╗██╔══██╗██║     ██║     ██╔════╝██╔══██╗
-    ██║  ╚═╝██║  ██║██╔██╗██║   ██║   ██████╔╝██║  ██║██║     ██║     █████╗  ██████╔╝
-    ██║  ██╗██║  ██║██║╚████║   ██║   ██╔══██╗██║  ██║██║     ██║     ██╔══╝  ██╔══██╗
-    ╚█████╔╝╚█████╔╝██║ ╚███║   ██║   ██║  ██║╚█████╔╝███████╗███████╗███████╗██║  ██║
-     ╚════╝  ╚════╝ ╚═╝  ╚══╝   ╚═╝   ╚═╝  ╚═╝ ╚════╝ ╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝
-
-    █▄▄ █▄█   ▀█▀ █ █ █▀▀   █▀▄ █▀▀ █ █ █▀▀ █   █▀█ █▀█ █▀▀ █▀█
-    █▄█  █     █  █▀█ ██▄   █▄▀ ██▄ ▀▄▀ ██▄ █▄▄ █▄█ █▀▀ ██▄ █▀▄
-*/
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Camera))]
 public class SFPSC_FPSCamera : MonoBehaviour
 {
-    public static SFPSC_FPSCamera cam;
-    private Camera cam_;
+    private Camera _cam;
     
-    public float sensitivity = 3;
+    public float sensitivity = 0.2f;
     [HideInInspector]
-    public float mouseX, mouseY;
+    private Vector2 mouseMovement;
     public float maxUpAngle = 80;
     public float maxDownAngle = -80;
     public Transform player;
     public Transform CameraPosition;
-    
+
+    [Header("Input")]
+    public InputActionReference mouseMoveAction;
+
     private void Awake()
     {
-        cam = this;
-        cam_ = this.GetComponent<Camera>();
+        _cam = this.GetComponent<Camera>();
 
         //Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = true;
@@ -56,17 +32,16 @@ public class SFPSC_FPSCamera : MonoBehaviour
     private void Update()
     {
         // Mouse input
-        mouseX = Input.GetAxis("Mouse X") * sensitivity;
-        mouseY = Input.GetAxis("Mouse Y") * sensitivity;
+        mouseMovement = mouseMoveAction.action.ReadValue<Vector2>() * sensitivity;
 
         // Calculations
-        rotX -= mouseY;
+        rotX -= mouseMovement.y;
         rotX = Mathf.Clamp(rotX, maxDownAngle, maxUpAngle);
-        rotY += mouseX;
+        rotY += mouseMovement.x;
 
         // Placing values
         transform.localRotation = Quaternion.Euler(rotX, rotY, rotZ);
-        player.Rotate(Vector3.up * mouseX);
+        player.Rotate(Vector3.up * mouseMovement.x);
         transform.position = CameraPosition.position;
     }
 
