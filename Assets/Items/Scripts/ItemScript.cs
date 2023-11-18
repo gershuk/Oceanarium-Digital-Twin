@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class ItemScript : MonoBehaviour, IItemInfo
+public class ItemScript : MonoBehaviour, IInfo
 {
     private Rigidbody _rb;
     private Collider _collider;
 
-    public string itemName = "test";
-    public string itemDescription = "test";
+    public string itemName = "item";
+    public string itemDescription = "item";
 
     public string Name => itemName;
 
@@ -15,6 +15,8 @@ public class ItemScript : MonoBehaviour, IItemInfo
     public Rigidbody Rigidbody => _rb;
 
     public Collider Collider => _collider;
+
+    public GameObject GameObject => gameObject;
 
     private void Awake ()
     {

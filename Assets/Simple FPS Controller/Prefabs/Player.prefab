@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 4859417973598721536}
   - component: {fileID: 3516626745156377673}
   - component: {fileID: 6847441525046305202}
-  m_Layer: 2
+  m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,9 +170,9 @@ MonoBehaviour:
   groundCheckerDist: 0.9
   jumpForce: 500
   jumpCooldown: 1
-  move: {fileID: 0}
-  sprint: {fileID: 0}
-  jump: {fileID: 0}
+  moveAction: {fileID: 0}
+  sprintAction: {fileID: 0}
+  jumpAction: {fileID: 0}
 --- !u!114 &3516626745156377673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,6 +192,9 @@ MonoBehaviour:
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 1025
+  takeItemAction: {fileID: 0}
+  dropItemAction: {fileID: 0}
+  gradReleaseItemAction: {fileID: 0}
 --- !u!114 &6847441525046305202
 MonoBehaviour:
   m_ObjectHideFlags: 0

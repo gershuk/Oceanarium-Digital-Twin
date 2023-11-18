@@ -1,4 +1,6 @@
-public interface IItemInfo
+using UnityEngine;
+
+public interface IInfo
 {
     public string Name { get; }
 
