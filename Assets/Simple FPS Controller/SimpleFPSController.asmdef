@@ -1,7 +1,10 @@
 {
     "name": "SimpleFPSController",
     "rootNamespace": "SimpleFPSController",
-    "references": [],
+    "references": [
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:6e27ca69a1c4ddf4f83cd351fbd7d8df"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
