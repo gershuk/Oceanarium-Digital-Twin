@@ -1,0 +1,60 @@
+#nullable enable
+
+using System;
+
+using Aqua.SceneController;
+
+using UnityEngine;
+
+namespace Aqua.UIBaseElements
+{
+    [Serializable]
+    public struct SceneData
+    {
+        [SerializeField]
+        private string _name;
+
+        [SerializeField]
+        private string? _description;
+
+        [SerializeField]
+        private string _fileName;
+
+        public SceneData (string name, string? description, string fileName)
+        {
+            _name = name ?? throw new ArgumentNullException(nameof(name));
+            _description = description;
+            _fileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
+        }
+
+        public string Name { get => _name; set => _name = value; }
+        public string? Description { get => _description; set => _description = value; }
+        public string FileName { get => _fileName; set => _fileName = value; }
+    }
+
+    public class ScriptsMenuScreenViewModel : MonoBehaviour
+    {
+        [SerializeField]
+        private SceneData[] _scenesData;
+
+        [SerializeField]
+        private ElementPickerViewModel _scenePicker;
+        
+        void Start()
+        {
+            if (_scenesData != null)
+            {
+                foreach (var sceneData in _scenesData)
+                {
+                    _scenePicker.AddElement(sceneData.Name, () => SceneLoader.Instance.LoadScene(sceneData.FileName));
+                }
+            }    
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+        
+        }
+    }
+}
