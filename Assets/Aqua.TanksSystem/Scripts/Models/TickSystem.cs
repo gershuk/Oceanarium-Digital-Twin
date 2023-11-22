@@ -37,7 +37,7 @@ namespace Aqua.TanksSystem
         }
 
         private void Update ()
-        {   
+        {
             if (_lastTickTime + _tickTime <= Time.time)
             {
                 foreach (var tickObject in _tickObjectQueue)
@@ -46,8 +46,8 @@ namespace Aqua.TanksSystem
                 }
 
                 _tickNumber++;
-                _lastTickTime =Time.time;
-            }            
+                _lastTickTime = Time.time;
+            }
         }
 
         public void AddToEnd (ITickObject tickObject) => _tickObjectQueue.AddLast(tickObject);

@@ -15,7 +15,7 @@ namespace Aqua.TanksSystem
         protected Vector3 _endPosition;
 
         [SerializeField]
-        protected Transform _water;
+        protected float _maxLevel;
 
         [SerializeField]
         protected Vector3 _startPosition;
@@ -24,12 +24,12 @@ namespace Aqua.TanksSystem
         protected SimpleWaterTankViewModel _viewmodel;
 
         [SerializeField]
-        protected float _maxLevel;
-
-        protected void SetLevel (float value) =>
-            _water.position = _base.TransformVector(Vector3.Lerp(_startPosition, _endPosition, value));
+        protected Transform _water;
 
         protected void DataListener (WaterData? waterData) => SetLevel((waterData?.Volume ?? 0) / _maxLevel);
+
+        protected void SetLevel (float value) =>
+                    _water.position = _base.TransformVector(Vector3.Lerp(_startPosition, _endPosition, value));
 
         protected void Start ()
         {

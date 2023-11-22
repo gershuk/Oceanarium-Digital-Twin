@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-
 using Aqua.TanksSystem.ViewModels;
 
 using UnityEngine;
@@ -11,21 +8,21 @@ namespace Aqua.TanksSystem
     public class ValveTestScene : MonoBehaviour
     {
         [SerializeField]
-        private SimpleWaterSourceViewModel _waterSource;
+        private TickSystem _tickSystem;
 
         [SerializeField]
         private ValveViewModel _valve;
 
         [SerializeField]
-        private SimpleWaterTubeViewModel _waterTube;
+        private SimpleWaterSourceViewModel _waterSource;
 
         [SerializeField]
         private SimpleWaterTankViewModel _waterTank;
 
         [SerializeField]
-        private TickSystem _tickSystem;
+        private SimpleWaterTubeViewModel _waterTube;
 
-        void Start()
+        private void Start ()
         {
             if (_tickSystem == null)
                 _tickSystem = GetComponent<TickSystem>();

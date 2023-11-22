@@ -32,14 +32,10 @@ namespace Aqua.TanksSystem
 
         private SimpleWaterSourceViewModel () : base() => _waterSource = new Source<WaterData>(null, _isMulticonnection);
 
-        public void Init (float startTime)
-        {
-            _waterSource.OutputSocket.TrySetValue(new WaterData(_volume, _ph, _temp));
-        }
+        public void Init (float startTime) => _waterSource.OutputSocket.TrySetValue(new WaterData(_volume, _ph, _temp));
 
         public void Tick (int tickNumber, float startTime, float tickTime)
         {
-
         }
     }
 }

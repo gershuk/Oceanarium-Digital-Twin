@@ -1,9 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-
 using Aqua.SocketSystem;
-
-using UnityEngine;
 
 namespace Aqua.TanksSystem
 {
@@ -11,16 +6,17 @@ namespace Aqua.TanksSystem
     {
         protected readonly UniversalSocket<WaterData, WaterData> _inputSocket = new();
 
-        public SimpleWaterTank () : base() { }
-
-        public SimpleWaterTank (WaterData waterData) : base(waterData) { }
-
         public IInputSocket<WaterData> InputSocket => _inputSocket;
 
-        public override void Init (float startTime)
+        public SimpleWaterTank () : base()
         {
-            base.Init(startTime);
         }
+
+        public SimpleWaterTank (WaterData waterData) : base(waterData)
+        {
+        }
+
+        public override void Init (float startTime) => base.Init(startTime);
 
         public override void Tick (int tickNumber, float startTime, float tickTime)
         {

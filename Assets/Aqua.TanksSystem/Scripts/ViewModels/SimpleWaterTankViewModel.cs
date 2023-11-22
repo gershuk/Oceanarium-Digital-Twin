@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-
 using Aqua.SocketSystem;
 
 using UnityEngine;
@@ -23,19 +20,13 @@ namespace Aqua.TanksSystem
 
         protected readonly SimpleWaterTank _waterTank;
 
+        public IOutputSocket<WaterData> DataSocket => _waterTank.DataSocket;
         public IInputSocket<WaterData> InputSocket => _waterTank.InputSocket;
 
-        public IOutputSocket<WaterData> DataSocket => _waterTank.DataSocket;
+        public SimpleWaterTankViewModel () => _waterTank = new SimpleWaterTank(new WaterData(_volume, _temp, _ph));
 
-        public SimpleWaterTankViewModel ()
-        {
-            _waterTank = new SimpleWaterTank(new WaterData(_volume, _temp, _ph));
-        }
+        public void Init (float startTime) => _waterTank.Init(startTime);
 
-        public void Init (float startTime)
-        {
-            _waterTank.Init(startTime);
-        }
         public void Tick (int tickNumber, float startTime, float tickTime) => _waterTank.Tick(tickNumber, startTime, tickTime);
     }
 }

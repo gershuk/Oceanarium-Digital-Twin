@@ -1,6 +1,5 @@
-using UnityEngine;
-
 using Aqua.SocketSystem;
+
 using UniRx;
 
 namespace Aqua.TanksSystem
@@ -19,7 +18,7 @@ namespace Aqua.TanksSystem
             _universalSocket = new UniversalSocket<T, T>(_data);
         }
 
-        public SimpleTank(T parameters)
+        public SimpleTank (T parameters)
         {
             _data = new ReactiveProperty<T>(parameters);
             _universalSocket = new UniversalSocket<T, T>(_data);
@@ -27,7 +26,6 @@ namespace Aqua.TanksSystem
 
         public virtual void Init (float startTime)
         {
-           
         }
 
         public virtual void Tick (int tickNumber, float startTime, float tickTime)

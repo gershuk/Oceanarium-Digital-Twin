@@ -8,11 +8,11 @@ namespace Aqua.SocketSystem
     {
         public IReadOnlyReactiveProperty<TOut?> ReadOnlyProperty { get; }
 
+        public TOut GetValue ();
+
         public void Register (IInputSocket<TOut?> socket);
 
         public bool TrySetValue (TOut? value);
-
-        public TOut GetValue ();
 
         public void Unregister (IInputSocket<TOut?> socket);
     }

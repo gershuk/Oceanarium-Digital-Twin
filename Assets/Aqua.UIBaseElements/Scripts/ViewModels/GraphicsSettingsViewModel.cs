@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-
 using Aqua.UnityEngineSettings;
 
 using UniRx;
@@ -14,52 +11,14 @@ namespace Aqua.UIBaseElements
         [SerializeField]
         private UnityGraphicsSettingsHelper _helper;
 
-        private GraphicsSettingsModel _model;
-
         [SerializeField]
         private GraphicsSettingsView _view;
 
-        public GraphicsSettingsModel Model => _model;
-
-        private void SubscribeHelperToModel ()
-        {
-            _model.IsBloomSocket.ReadOnlyProperty.Subscribe(value => _helper.IsBloom = value).AddTo(this);
-            _model.IsFogSocket.ReadOnlyProperty.Subscribe(value => _helper.IsFog = value).AddTo(this);
-            _model.IsHdrSocket.ReadOnlyProperty.Subscribe(value => _helper.IsHdr = value).AddTo(this);
-            _model.IsVSyncSocket.ReadOnlyProperty.Subscribe(value => _helper.IsVSync = value).AddTo(this);
-            _model.QualityLevelSocket.ReadOnlyProperty.Subscribe(value => _helper.QualityLevel = value).AddTo(this);
-            _model.ResolutionSocket.ReadOnlyProperty.Subscribe(value => _helper.Resolution = value).AddTo(this);
-            _model.AntiAliasingSocket.ReadOnlyProperty.Subscribe(value => _helper.AntiAliasing = value).AddTo(this);
-            _model.ScreenModeSocket.ReadOnlyProperty.Subscribe(value => _helper.ScreenMode = value).AddTo(this);
-        }
-
-        private void SubscribeModelToView ()
-        {
-            _model.IsBloomSocket.SubscribeTo(_view.IsBloomSocket);
-            _model.IsFogSocket.SubscribeTo(_view.IsFogSocket);
-            _model.IsHdrSocket.SubscribeTo(_view.IsHdrSocket);
-            _model.IsVSyncSocket.SubscribeTo(_view.IsVSyncSocket);
-            _model.QualityLevelSocket.SubscribeTo(_view.QualityLevelSocket);
-            _model.ResolutionSocket.SubscribeTo(_view.ResolutionSocket);
-            _model.AntiAliasingSocket.SubscribeTo(_view.AntiAliasingSocket);
-            _model.ScreenModeSocket.SubscribeTo(_view.ScreenModeSocket);
-        }
-        
-        private void SubscribeViewToModel ()
-        {
-            _view.IsBloomSocket.SubscribeTo(_model.IsBloomSocket);
-            _view.IsFogSocket.SubscribeTo(_model.IsFogSocket);
-            _view.IsHdrSocket.SubscribeTo(_model.IsHdrSocket);
-            _view.IsVSyncSocket.SubscribeTo(_model.IsVSyncSocket);
-            _view.QualityLevelSocket.SubscribeTo(_model.QualityLevelSocket);
-            _view.ResolutionSocket.SubscribeTo(_model.ResolutionSocket);
-            _view.AntiAliasingSocket.SubscribeTo(_model.AntiAliasingSocket);
-            _view.ScreenModeSocket.SubscribeTo(_model.ScreenModeSocket);
-        }
+        public GraphicsSettingsModel Model { get; private set; }
 
         private void Start ()
         {
-            _model = new();
+            Model = new();
 
             if (_helper == null)
                 _helper = FindAnyObjectByType<UnityGraphicsSettingsHelper>();
@@ -75,6 +34,42 @@ namespace Aqua.UIBaseElements
             SubscribeHelperToModel();
             SubscribeViewToModel();
             SubscribeModelToView();
+        }
+
+        private void SubscribeHelperToModel ()
+        {
+            Model.IsBloomSocket.ReadOnlyProperty.Subscribe(value => _helper.IsBloom = value).AddTo(this);
+            Model.IsFogSocket.ReadOnlyProperty.Subscribe(value => _helper.IsFog = value).AddTo(this);
+            Model.IsHdrSocket.ReadOnlyProperty.Subscribe(value => _helper.IsHdr = value).AddTo(this);
+            Model.IsVSyncSocket.ReadOnlyProperty.Subscribe(value => _helper.IsVSync = value).AddTo(this);
+            Model.QualityLevelSocket.ReadOnlyProperty.Subscribe(value => _helper.QualityLevel = value).AddTo(this);
+            Model.ResolutionSocket.ReadOnlyProperty.Subscribe(value => _helper.Resolution = value).AddTo(this);
+            Model.AntiAliasingSocket.ReadOnlyProperty.Subscribe(value => _helper.AntiAliasing = value).AddTo(this);
+            Model.ScreenModeSocket.ReadOnlyProperty.Subscribe(value => _helper.ScreenMode = value).AddTo(this);
+        }
+
+        private void SubscribeModelToView ()
+        {
+            Model.IsBloomSocket.SubscribeTo(_view.IsBloomSocket);
+            Model.IsFogSocket.SubscribeTo(_view.IsFogSocket);
+            Model.IsHdrSocket.SubscribeTo(_view.IsHdrSocket);
+            Model.IsVSyncSocket.SubscribeTo(_view.IsVSyncSocket);
+            Model.QualityLevelSocket.SubscribeTo(_view.QualityLevelSocket);
+            Model.ResolutionSocket.SubscribeTo(_view.ResolutionSocket);
+            Model.AntiAliasingSocket.SubscribeTo(_view.AntiAliasingSocket);
+            Model.ScreenModeSocket.SubscribeTo(_view.ScreenModeSocket);
+        }
+
+        private void SubscribeViewToModel ()
+        {
+            _view.IsBloomSocket.SubscribeTo(Model.IsBloomSocket);
+            _view.IsFogSocket.SubscribeTo(Model.IsFogSocket);
+            _view.IsHdrSocket.SubscribeTo(Model.IsHdrSocket);
+            _view.IsVSyncSocket.SubscribeTo(Model.IsVSyncSocket);
+            _view.QualityLevelSocket.SubscribeTo(Model.QualityLevelSocket);
+            _view.ResolutionSocket.SubscribeTo(Model.ResolutionSocket);
+            _view.AntiAliasingSocket.SubscribeTo(Model.AntiAliasingSocket);
+            _view.ScreenModeSocket.SubscribeTo(Model.ScreenModeSocket);
         }
     }
 }

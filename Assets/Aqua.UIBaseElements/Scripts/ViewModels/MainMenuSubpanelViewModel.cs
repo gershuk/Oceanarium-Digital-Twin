@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,7 +25,9 @@ namespace Aqua.UIBaseElements
         public Button NewButton => _newButton;
         public Button SettingsButton => _settingsButton;
 
-        private void RegisterButtons() 
+        private void OnDestroy () => UnregisterButtons();
+
+        private void RegisterButtons ()
         {
             _newButton.onClick.AddListener(OpenScriptsMenu);
             _loadButton.onClick.AddListener(OpenLoadMenu);
@@ -36,22 +35,14 @@ namespace Aqua.UIBaseElements
             _exitButton.onClick.AddListener(Exit);
         }
 
+        private void Start () => RegisterButtons();
+
         private void UnregisterButtons ()
         {
             _newButton.onClick.RemoveListener(OpenScriptsMenu);
             _loadButton.onClick.RemoveListener(OpenLoadMenu);
             _settingsButton.onClick.RemoveListener(OpenSettingsMenu);
             _exitButton.onClick.RemoveListener(Exit);
-        }
-
-        private void OnDestroy ()
-        {
-            UnregisterButtons();
-        }
-
-        private void Start ()
-        {
-            RegisterButtons();
         }
 
         public void Exit () => Application.Quit();

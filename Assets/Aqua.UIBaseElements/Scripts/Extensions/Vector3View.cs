@@ -6,7 +6,6 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 namespace Aqua.UIBaseElements
 {
     public class Vector3View : MonoBehaviour

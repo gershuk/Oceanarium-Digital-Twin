@@ -68,6 +68,8 @@ namespace Aqua.SocketSystem
             GC.SuppressFinalize(this);
         }
 
+        public TOut? GetValue () => Property.Value;
+
         public abstract void Register (IInputSocket<TOut?> socket);
 
         public void SubscribeTo (IOutputSocket<TIn?> socket, Func<TIn?, TIn?>? inputDataModificationFunction = null)
@@ -89,7 +91,5 @@ namespace Aqua.SocketSystem
             ResetMainDataFunction();
             _mainDisposable.Clear();
         }
-
-        public TOut? GetValue () => Property.Value;
     }
 }

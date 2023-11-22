@@ -18,7 +18,8 @@ namespace Aqua.UIBaseElements
 {
     public class GraphicsSettingsView : MonoBehaviour
     {
-        private bool _isInit = false;
+        [SerializeField]
+        private TMP_Dropdown _antiAliasingDropdown;
 
         [SerializeField]
         private Toggle _bloomToggle;
@@ -27,47 +28,46 @@ namespace Aqua.UIBaseElements
         private Toggle _fogToggle;
 
         [SerializeField]
-        private Toggle _vScyncToggle;
-
-        [SerializeField]
         private Toggle _hdrToggle;
 
-        [SerializeField]
-        private TMP_Dropdown _resolutionDropdown;
+        private bool _isInit = false;
 
         [SerializeField]
         private TMP_Dropdown _qualityLevelDropdown;
 
         [SerializeField]
-        private TMP_Dropdown _antiAliasingDropdown;
+        private TMP_Dropdown _resolutionDropdown;
+
+        [SerializeField]
+        private Resolution[] _resolutions;
 
         [SerializeField]
         private TMP_Dropdown _screenModeDropdown;
 
         [SerializeField]
-        private Resolution[] _resolutions;
+        private Toggle _vScyncToggle;
 
         #region ReactiveProperty
+        private readonly ReactiveProperty<AntiAliasingLevel> _antiAliasing = new();
         private readonly ReactiveProperty<bool> _isBloom = new();
         private readonly ReactiveProperty<bool> _isFog = new();
         private readonly ReactiveProperty<bool> _isHdr = new();
         private readonly ReactiveProperty<bool> _isVSync = new();
         private readonly ReactiveProperty<QualityLevelType> _qualityLevel = new();
         private readonly ReactiveProperty<Vector2Int> _resolution = new();
-        private readonly ReactiveProperty<AntiAliasingLevel> _antiAliasing = new();
         private readonly ReactiveProperty<ScreenMode> _screenMode = new();
         #endregion ReactiveProperty
 
         #region Sockets
+        public MulticonnectionSocket<AntiAliasingLevel, AntiAliasingLevel> AntiAliasingSocket { get; private set; }
         public MulticonnectionSocket<bool, bool> IsBloomSocket { get; private set; }
         public MulticonnectionSocket<bool, bool> IsFogSocket { get; private set; }
         public MulticonnectionSocket<bool, bool> IsHdrSocket { get; private set; }
         public MulticonnectionSocket<bool, bool> IsVSyncSocket { get; private set; }
         public MulticonnectionSocket<QualityLevelType, QualityLevelType> QualityLevelSocket { get; private set; }
         public MulticonnectionSocket<Vector2Int, Vector2Int> ResolutionSocket { get; private set; }
-        public MulticonnectionSocket<AntiAliasingLevel, AntiAliasingLevel> AntiAliasingSocket { get; private set; }
         public MulticonnectionSocket<ScreenMode, ScreenMode> ScreenModeSocket { get; private set; }
-        #endregion
+        #endregion Sockets
 
         private void InitSockets ()
         {
@@ -115,43 +115,7 @@ namespace Aqua.UIBaseElements
             _screenMode.Subscribe(value => _screenModeDropdown.value = (int) value).AddTo(this);
         }
 
-        public void InitQualityLevelDropdown ()
-        {
-            _qualityLevelDropdown.ClearOptions();
-            _qualityLevelDropdown.AddOptions(new List<string>(3)
-            {
-                QualityLevelType.Low.ToString(),
-                QualityLevelType.Middle.ToString(),
-                QualityLevelType.High.ToString(),
-            });
-        }
-
-        public void InitAntiAliasingDropdown (int levelsCount = 4)
-        {
-            if (levelsCount is < 1 or > 4)
-                throw new ArgumentOutOfRangeException(nameof(levelsCount));
-
-            _antiAliasingDropdown.ClearOptions();
-            var levels = new List<string>(levelsCount);
-
-            for (var i = 0; i < levelsCount; ++i)
-                levels.Add(((AntiAliasingLevel) i).ToString());
-            _antiAliasingDropdown.AddOptions(levels);
-        }
-
-        public void InitScreenModeDropdown ()
-        {
-            _screenModeDropdown.ClearOptions();
-            _screenModeDropdown.AddOptions(new List<string>(3)
-            {
-                ScreenMode.ExclusiveFullScreen.ToString(),
-                ScreenMode.FullScreenWindow.ToString(),
-                ScreenMode.MaximizedWindow.ToString(),
-                ScreenMode.Windowed.ToString(),
-            });
-        }
-
-        public void Init()
+        public void Init ()
         {
             if (_isInit)
                 return;
@@ -170,18 +134,51 @@ namespace Aqua.UIBaseElements
             _isInit = true;
         }
 
-        public void Start ()
+        public void InitAntiAliasingDropdown (int levelsCount = 4)
         {
-            Init();
+            if (levelsCount is < 1 or > 4)
+                throw new ArgumentOutOfRangeException(nameof(levelsCount));
+
+            _antiAliasingDropdown.ClearOptions();
+            var levels = new List<string>(levelsCount);
+
+            for (var i = 0; i < levelsCount; ++i)
+                levels.Add(((AntiAliasingLevel) i).ToString());
+            _antiAliasingDropdown.AddOptions(levels);
+        }
+
+        public void InitQualityLevelDropdown ()
+        {
+            _qualityLevelDropdown.ClearOptions();
+            _qualityLevelDropdown.AddOptions(new List<string>(3)
+            {
+                QualityLevelType.Low.ToString(),
+                QualityLevelType.Middle.ToString(),
+                QualityLevelType.High.ToString(),
+            });
+        }
+
+        public void InitScreenModeDropdown ()
+        {
+            _screenModeDropdown.ClearOptions();
+            _screenModeDropdown.AddOptions(new List<string>(3)
+            {
+                ScreenMode.ExclusiveFullScreen.ToString(),
+                ScreenMode.FullScreenWindow.ToString(),
+                ScreenMode.MaximizedWindow.ToString(),
+                ScreenMode.Windowed.ToString(),
+            });
         }
 
         public void SetResolutions (Resolution[] resolutions, int appliedndex = 0)
         {
             _resolutions = resolutions;
-            _resolutionDropdown.options = 
+            _resolutionDropdown.options =
                 _resolutions.Select(res => new TMP_Dropdown.OptionData($"{res.width}x{res.height} Hz:{res.refreshRateRatio}"))
                 .ToList();
             _resolutionDropdown.value = appliedndex;
         }
+
+        public void Start () => Init();
     }
 }

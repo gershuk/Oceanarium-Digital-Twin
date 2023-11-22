@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,19 +6,21 @@ namespace Aqua.UIBaseElements
     public class SettingsSubpanelViewModel : MonoBehaviour
     {
         [SerializeField]
-        private Button _returnButton;
+        private Button _applyButton;
 
         [SerializeField]
-        private Button _applyButton;
+        private GraphicsSettingsViewModel _graphicsSettingsViewModel;
 
         [SerializeField]
         private Button _resetButton;
 
         [SerializeField]
-        private MainScreenSwapContainerModel _swapContainer;
+        private Button _returnButton;
 
         [SerializeField]
-        private GraphicsSettingsViewModel _graphicsSettingsViewModel;
+        private MainScreenSwapContainerModel _swapContainer;
+
+        private void OnDestroy () => UnregisterButtons();
 
         private void RegisterButtons ()
         {
@@ -29,6 +29,8 @@ namespace Aqua.UIBaseElements
             _applyButton.onClick.AddListener(ApplySettings);
         }
 
+        private void Start () => RegisterButtons();
+
         private void UnregisterButtons ()
         {
             _returnButton.onClick.RemoveListener(ReturnToMainMenu);
@@ -36,24 +38,14 @@ namespace Aqua.UIBaseElements
             _applyButton.onClick.RemoveListener(ApplySettings);
         }
 
-        private void OnDestroy ()
-        {
-            UnregisterButtons();
-        }
+        public void ApplySettings () => _graphicsSettingsViewModel.Model.SaveDataToAssignedFile();
 
-        private void Start ()
-        {
-            RegisterButtons();
-        }
+        public void ResetSettings () => _graphicsSettingsViewModel.Model.ReloadDataFromAssignedFile();
 
         public void ReturnToMainMenu ()
         {
             ResetSettings();
             _swapContainer.ActiveMainMenu();
         }
-
-        public void ResetSettings () => _graphicsSettingsViewModel.Model.ReloadDataFromAssignedFile();
-
-        public void ApplySettings () => _graphicsSettingsViewModel.Model.SaveDataToAssignedFile();
     }
 }

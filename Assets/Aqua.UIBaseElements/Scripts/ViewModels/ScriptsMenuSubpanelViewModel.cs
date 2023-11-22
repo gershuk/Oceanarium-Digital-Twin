@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,9 +5,6 @@ namespace Aqua.UIBaseElements
 {
     public class ScriptsMenuSubpanelViewModel : MonoBehaviour
     {
-        [SerializeField]
-        private MainScreenSwapContainerModel _swapContainer;
-
         [SerializeField]
         private ElementPickerViewModel _elementPicker;
 
@@ -18,11 +14,18 @@ namespace Aqua.UIBaseElements
         [SerializeField]
         private Button _startButton;
 
+        [SerializeField]
+        private MainScreenSwapContainerModel _swapContainer;
+
+        private void OnDestroy () => UnregisterButtons();
+
         private void RegisterButtons ()
         {
             _startButton.onClick.AddListener(LoadLevel);
             _returnButton.onClick.AddListener(ReturnToMain);
         }
+
+        private void Start () => RegisterButtons();
 
         private void UnregisterButtons ()
         {
@@ -30,18 +33,8 @@ namespace Aqua.UIBaseElements
             _returnButton.onClick.RemoveListener(ReturnToMain);
         }
 
-        private void OnDestroy ()
-        {
-            UnregisterButtons();
-        }
+        public void LoadLevel () => _elementPicker.ActiveElement();
 
-        private void Start ()
-        {
-            RegisterButtons();
-        }
-
-        public void ReturnToMain() => _swapContainer.ActiveMainMenu();
-        
-        public void LoadLevel() => _elementPicker.ActiveElement();
+        public void ReturnToMain () => _swapContainer.ActiveMainMenu();
     }
 }

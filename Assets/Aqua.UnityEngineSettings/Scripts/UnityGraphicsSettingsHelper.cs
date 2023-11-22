@@ -37,10 +37,8 @@ namespace Aqua.UnityEngineSettings
     [RequireComponent(typeof(Volume))]
     public sealed class UnityGraphicsSettingsHelper : MonoBehaviour
     {
+        private Bloom? _bloom;
         private bool _isInit = false;
-
-        private Bloom _bloom;
-
         private VolumeProfile _profile;
 
         private UniversalRenderPipelineAsset _urpAsset;
@@ -108,9 +106,11 @@ namespace Aqua.UnityEngineSettings
             InitObject();
         }
 
+        public Resolution[] GetResolutions () => Screen.resolutions;
+
         public void InitObject ()
         {
-            if (_isInit) 
+            if (_isInit)
                 return;
 
             if (_volume == null)
@@ -123,7 +123,5 @@ namespace Aqua.UnityEngineSettings
 
             _isInit = true;
         }
-
-        public Resolution[] GetResolutions () => Screen.resolutions;
     }
 }

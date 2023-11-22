@@ -61,6 +61,10 @@ namespace Aqua.UIBaseElements
         }
     }
 
+    public class FileNotAssignedException : Exception
+    {
+    }
+
     public sealed class GraphicsSettingsModel
     {
         public const string DefaultFileName = @"graphics_settings.json";
@@ -72,42 +76,26 @@ namespace Aqua.UIBaseElements
         public string? FilePath { get; private set; }
 
         #region ReactiveProperty
+        private readonly ReactiveProperty<AntiAliasingLevel> _antiAliasing;
         private readonly ReactiveProperty<bool> _isBloom;
         private readonly ReactiveProperty<bool> _isFog;
         private readonly ReactiveProperty<bool> _isHdr;
         private readonly ReactiveProperty<bool> _isVSync;
         private readonly ReactiveProperty<QualityLevel> _qualityLevel;
         private readonly ReactiveProperty<Vector2Int> _resolution;
-        private readonly ReactiveProperty<AntiAliasingLevel> _antiAliasing;
         private readonly ReactiveProperty<ScreenMode> _screenMode;
         #endregion ReactiveProperty
 
         #region Sockets
+        public MulticonnectionSocket<AntiAliasingLevel, AntiAliasingLevel> AntiAliasingSocket { get; }
         public MulticonnectionSocket<bool, bool> IsBloomSocket { get; }
         public MulticonnectionSocket<bool, bool> IsFogSocket { get; }
         public MulticonnectionSocket<bool, bool> IsHdrSocket { get; }
         public MulticonnectionSocket<bool, bool> IsVSyncSocket { get; }
-        public MulticonnectionSocket<QualityLevel,QualityLevel> QualityLevelSocket { get; }
-        public MulticonnectionSocket<Vector2Int,Vector2Int> ResolutionSocket { get; }
-        public MulticonnectionSocket<AntiAliasingLevel, AntiAliasingLevel> AntiAliasingSocket { get; }
+        public MulticonnectionSocket<QualityLevel, QualityLevel> QualityLevelSocket { get; }
+        public MulticonnectionSocket<Vector2Int, Vector2Int> ResolutionSocket { get; }
         public MulticonnectionSocket<ScreenMode, ScreenMode> ScreenModeSocket { get; }
-        #endregion
-
-        private static void CreateDefaultConfig()
-        {
-            if (!Directory.Exists(DefaultFilePath))
-                Directory.CreateDirectory(DefaultFilePath);
-
-            var defaultData = new GraphicSettingsData()
-            {
-                Resolution = new(Screen.currentResolution.width, Screen.currentResolution.height),
-                ScreenMode = ScreenMode.ExclusiveFullScreen
-            };
-
-            using var file = File.Create(DefaultFullName);
-            using var writer = new StreamWriter(file);
-            writer.WriteLine(JsonUtility.ToJson(defaultData));
-        }
+        #endregion Sockets
 
         static GraphicsSettingsModel ()
         {
@@ -133,16 +121,29 @@ namespace Aqua.UIBaseElements
             IsBloomSocket = new(_isBloom);
             IsFogSocket = new(_isFog);
             IsVSyncSocket = new(_isVSync);
-            IsHdrSocket= new(_isHdr);
+            IsHdrSocket = new(_isHdr);
             ResolutionSocket = new(_resolution);
             QualityLevelSocket = new(_qualityLevel);
             AntiAliasingSocket = new(_antiAliasing);
             ScreenModeSocket = new(_screenMode);
         }
 
-        public GraphicsSettingsModel (string path = DefaultFullName) : this(GetDataFromJson(path))
+        public GraphicsSettingsModel (string path = DefaultFullName) : this(GetDataFromJson(path)) => FilePath = path;
+
+        private static void CreateDefaultConfig ()
         {
-            FilePath = path;
+            if (!Directory.Exists(DefaultFilePath))
+                Directory.CreateDirectory(DefaultFilePath);
+
+            var defaultData = new GraphicSettingsData()
+            {
+                Resolution = new(Screen.currentResolution.width, Screen.currentResolution.height),
+                ScreenMode = ScreenMode.ExclusiveFullScreen
+            };
+
+            using var file = File.Create(DefaultFullName);
+            using var writer = new StreamWriter(file);
+            writer.WriteLine(JsonUtility.ToJson(defaultData));
         }
 
         private static GraphicSettingsData GetDataFromJson (string path) =>
@@ -159,8 +160,10 @@ namespace Aqua.UIBaseElements
                                                       _antiAliasing.Value,
                                                       _screenMode.Value);
 
+        public void ReloadDataFromAssignedFile () => SetData(GetDataFromJson(FilePath));
+
         public void SaveDataToAssignedFile () =>
-            File.WriteAllText(FilePath ?? throw new FileNotAssignedException(), JsonUtility.ToJson(GetData()));
+                    File.WriteAllText(FilePath ?? throw new FileNotAssignedException(), JsonUtility.ToJson(GetData()));
 
         public void SetData (GraphicSettingsData data)
         {
@@ -173,15 +176,5 @@ namespace Aqua.UIBaseElements
             _antiAliasing.Value = data.AntiAliasing;
             _screenMode.Value = data.ScreenMode;
         }
-
-        public void ReloadDataFromAssignedFile()
-        {
-            SetData(GetDataFromJson(FilePath));
-        }
-    }
-
-    public class FileNotAssignedException : Exception 
-    { 
-
     }
 }

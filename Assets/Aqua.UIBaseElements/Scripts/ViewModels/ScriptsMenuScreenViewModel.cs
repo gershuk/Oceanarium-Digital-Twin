@@ -12,13 +12,19 @@ namespace Aqua.UIBaseElements
     public struct SceneData
     {
         [SerializeField]
-        private string _name;
-
-        [SerializeField]
         private string? _description;
 
         [SerializeField]
         private string _fileName;
+
+        [SerializeField]
+        private string _name;
+
+        public string? Description { get => _description; set => _description = value; }
+
+        public string FileName { get => _fileName; set => _fileName = value; }
+
+        public string Name { get => _name; set => _name = value; }
 
         public SceneData (string name, string? description, string fileName)
         {
@@ -26,21 +32,17 @@ namespace Aqua.UIBaseElements
             _description = description;
             _fileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
         }
-
-        public string Name { get => _name; set => _name = value; }
-        public string? Description { get => _description; set => _description = value; }
-        public string FileName { get => _fileName; set => _fileName = value; }
     }
 
     public class ScriptsMenuScreenViewModel : MonoBehaviour
     {
         [SerializeField]
-        private SceneData[] _scenesData;
+        private ElementPickerViewModel _scenePicker;
 
         [SerializeField]
-        private ElementPickerViewModel _scenePicker;
-        
-        void Start()
+        private SceneData[] _scenesData;
+
+        private void Start ()
         {
             if (_scenesData != null)
             {
@@ -48,13 +50,7 @@ namespace Aqua.UIBaseElements
                 {
                     _scenePicker.AddElement(sceneData.Name, () => SceneLoader.Instance.LoadScene(sceneData.FileName));
                 }
-            }    
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
+            }
         }
     }
 }
