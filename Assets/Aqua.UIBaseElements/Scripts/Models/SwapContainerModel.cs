@@ -15,6 +15,14 @@ namespace Aqua.UIBaseElements
 
         public IReadOnlyList<GameObject> UIElements => _uiElements;
 
+        protected void DisableAll ()
+        {
+            foreach (var uiElement in _uiElements)
+            {
+                uiElement.SetActive(false);
+            }
+        }
+
         protected bool TryDisableAcitveUI()
         {
             if (_activeIndex.HasValue)
@@ -27,6 +35,8 @@ namespace Aqua.UIBaseElements
         {
             if (UIElements.Count > index)
                 UIElements[index].SetActive(true);
+
+            _activeIndex = index;
 
             return UIElements.Count > index;
         }

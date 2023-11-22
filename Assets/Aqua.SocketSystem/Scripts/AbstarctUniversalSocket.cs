@@ -45,6 +45,7 @@ namespace Aqua.SocketSystem
 
         protected virtual void UpdateData (TIn? value)
         {
+            // ToDo : Add a condition for equality of values to reduce unnecessary calls.
             var mValue = MainInputDataModificationFunction != null
                              ? MainInputDataModificationFunction(value)
                              : value;
