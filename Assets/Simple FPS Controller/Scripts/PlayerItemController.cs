@@ -22,10 +22,26 @@ public class PlayerItemController : MonoBehaviour
     public InputActionReference takeItemAction;
     public InputActionReference dropItemAction;
     public InputActionReference gradReleaseItemAction;
-    public InputActionReference invenoryIndexdelta;
-    public InputActionReference inventoyPrev;
+    public InputActionReference invenoryIndexDelta;
 
     public IInfo SelectedItem => _inventoryIndex == -1 ? null : _inventory[_inventoryIndex];
+
+    private void UpdateSelectedItem ()
+    {
+        var delta = invenoryIndexDelta.action.ReadValue<Vector2>().y;
+        if (delta > 0.0f)
+        {
+            _inventoryIndex++;
+            if (_inventoryIndex == inventorySize)
+                _inventoryIndex = -1;
+        }
+        if (delta < 0.0f)
+        {
+            _inventoryIndex--;
+            if (_inventoryIndex < -1)
+                _inventoryIndex = inventorySize - 1;
+        }
+    }
 
     private void Awake ()
     {
@@ -55,6 +71,8 @@ public class PlayerItemController : MonoBehaviour
             else
                 TryReleaseItem();
         }
+
+        UpdateSelectedItem();
     }
 
     private bool TryGrabItem ()

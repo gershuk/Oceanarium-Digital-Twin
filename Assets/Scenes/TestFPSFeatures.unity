@@ -351,7 +351,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.27093858, y: 0.17165773, z: -0.10310567, w: 0.94153875}
   m_LocalPosition: {x: -4.8608, y: 2.77, z: 12.13}
-  m_LocalScale: {x: 0.60015494, y: 0.60015494, z: 0.60015494}
+  m_LocalScale: {x: 0.5194694, y: 0.18040551, z: 2.8597767}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -795,7 +795,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.27093858, y: 0.17165773, z: -0.10310567, w: 0.94153875}
   m_LocalPosition: {x: -3.9906, y: 2.77, z: 12.13}
-  m_LocalScale: {x: 0.60015494, y: 0.60015494, z: 0.60015494}
+  m_LocalScale: {x: 0.60015494, y: 0.60015494, z: 1.038328}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -874,6 +874,14 @@ PrefabInstance:
       propertyPath: takeItemAction
       value: 
       objectReference: {fileID: 3145655153634754387, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+    - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
+      propertyPath: invenoryIndexDelta
+      value: 
+      objectReference: {fileID: -3095274666385267114, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+    - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
+      propertyPath: invenoryIndexdelta
+      value: 
+      objectReference: {fileID: -3095274666385267114, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
     - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
       propertyPath: gradReleaseItemAction
       value: 
@@ -1457,7 +1465,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.27093858, y: 0.17165773, z: -0.10310567, w: 0.94153875}
   m_LocalPosition: {x: -2.0692, y: 2.77, z: 12.13}
-  m_LocalScale: {x: 0.60015494, y: 0.60015494, z: 0.60015494}
+  m_LocalScale: {x: 0.97147083, y: 0.97147083, z: 0.97147083}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
