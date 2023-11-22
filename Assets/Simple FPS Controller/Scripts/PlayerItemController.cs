@@ -22,6 +22,10 @@ public class PlayerItemController : MonoBehaviour
     public InputActionReference takeItemAction;
     public InputActionReference dropItemAction;
     public InputActionReference gradReleaseItemAction;
+    public InputActionReference invenoryIndexdelta;
+    public InputActionReference inventoyPrev;
+
+    public IInfo SelectedItem => _inventoryIndex == -1 ? null : _inventory[_inventoryIndex];
 
     private void Awake ()
     {
@@ -39,25 +43,17 @@ public class PlayerItemController : MonoBehaviour
             : null;
 
         if (takeItemAction.action.WasPressedThisFrame())
-        {
             TryTakeItem();
-        }
 
         if (dropItemAction.action.WasPressedThisFrame())
-        {
             TryDropItem();
-        }
 
         if (gradReleaseItemAction.action.WasPressedThisFrame())
         {
             if (_currentGrabbedItem is null)
-            {
                 TryGrabItem();
-            }
             else
-            {
                 TryReleaseItem();
-            }
         }
     }
 
@@ -67,12 +63,23 @@ public class PlayerItemController : MonoBehaviour
         {
             _currentGrabbedItem = (ItemScript) _currentObservedObject;
             _currentObservedObject = null;
+        }
+        if (_currentObservedObject as ItemSlotScript is not null)
+        {
+            var itemSlot = (ItemSlotScript) _currentObservedObject;
+            _currentGrabbedItem = itemSlot.CurrentItem;
+            if (_currentGrabbedItem is not null)
+                itemSlot.RemoveItem();
+        }
+        if (_currentGrabbedItem is not null)
+        {
             _currentGrabbedItem.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             _currentGrabbedItem.transform.parent = _camera.transform;
             _currentGrabbedItem.Rigidbody.isKinematic = true;
             return true;
         }
-        return false;
+        else
+            return false;
     }
 
     private bool TryReleaseItem ()
@@ -95,21 +102,22 @@ public class PlayerItemController : MonoBehaviour
             switch (_currentObservedObject)
             {
                 case ItemScript itemScript:
-                    itemScript.GetComponent<Rigidbody>().isKinematic = true;
+                    itemScript.Rigidbody.isKinematic = true;
                     itemScript.gameObject.SetActive(false);
                     _inventory.Add(itemScript);
                     _currentObservedObject = null;
                     break;
                 case ItemSlotScript itemSlotScript:
                     var itemInSlot = itemSlotScript.CurrentItem;
-                    itemInSlot.GetComponent<Rigidbody>().isKinematic = true;
-                    itemInSlot.gameObject.SetActive(false);
-                    _inventory.Add(itemInSlot);
-                    itemInSlot.gameObject.layer = LayerMask.NameToLayer("Items");
-                    itemSlotScript.RemoveItem();
+                    if (itemInSlot is not null)
+                    {
+                        _inventory.Add(itemInSlot);
+                        itemSlotScript.RemoveItem();
+                        itemInSlot.gameObject.SetActive(false);
+                    }
                     break;
-
             }
+            _inventoryIndex = _inventory.Count - 1;
             return true;
         }
         return false;
@@ -139,9 +147,6 @@ public class PlayerItemController : MonoBehaviour
                 case ItemSlotScript itemSlotScript:
                     if (itemSlotScript.CurrentItem is null)
                     {
-                        item.transform.rotation = itemSlotScript.transform.rotation;
-                        item.transform.position = itemSlotScript.transform.position;
-                        item.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
                         itemSlotScript.SetItem(item);
                     }
                     else
@@ -156,6 +161,8 @@ public class PlayerItemController : MonoBehaviour
         }
         _inventory.RemoveAt(_inventoryIndex);
         item.gameObject.SetActive(true);
+        if (_inventoryIndex == _inventory.Count)
+            _inventoryIndex--;
         return true;
     }
 }
