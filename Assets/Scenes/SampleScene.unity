@@ -3677,12 +3677,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 379a95d14770cd649bbb4f9f0d7dc991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 1339223815}
-  Name: OutputSocket
   AssemblyQualifiedName: Aqua.TanksSystem.WaterData, Aqua.TanksSystem, Version=0.0.0.0,
     Culture=neutral, PublicKeyToken=null
+  Name: OutputSocket
+  Owner: {fileID: 1339223815}
+  SocketMemberType: 0
   TypeName: WaterData
-  _inputSocketWrappers: []
+  _subscribers: []
 --- !u!4 &1211748518 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5364793507204785334, guid: a53b7bdb075dcf14884705e0790cd113, type: 3}
