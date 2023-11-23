@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2702652138179465128}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.231, z: 0}
+  m_LocalPosition: {x: 0, y: -1.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -162,17 +162,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ec39ce101b75a44ba203f9e9cbaa8b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 8
-  runSpeed: 12
-  changeInStageSpeed: 10
-  maximumPlayerSpeed: 150
-  groundChecker: {fileID: 2909522368568669065}
-  groundCheckerDist: 0.9
-  jumpForce: 500
-  jumpCooldown: 1
-  moveAction: {fileID: 0}
-  sprintAction: {fileID: 0}
-  jumpAction: {fileID: 0}
+  _changeInStageSpeed: 10
+  _groundChecker: {fileID: 2909522368568669065}
+  _groundCheckerDist: 0.2
+  _maximumPlayerSpeed: 150
+  _runSpeed: 12
+  _walkSpeed: 8
+  _jumpCooldown: 1
+  _jumpForce: 500
+  _jumpAction: {fileID: -5436909572901721764, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+  _moveAction: {fileID: 2160566331340322340, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+  _sprintAction: {fileID: 9119538492376587900, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
 --- !u!114 &3516626745156377673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,16 +185,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2291ac6b60d3e9e4c8f1e1b8c648e12e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _camera: {fileID: 0}
-  inventorySize: 3
-  distanceOfItemInteraction: 5
-  distanceOfItemDrop: 5
-  obstacleLayerMask:
+  _dropItemAction: {fileID: 456163549722714508, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+  _grabReleaseItemAction: {fileID: -4521078104182257466, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+  _invenoryIndexDelta: {fileID: -3095274666385267114, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+  _takeItemAction: {fileID: 3145655153634754387, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+  _fpsCamera: {fileID: 0}
+  _inventorySize: 9
+  _distanceOfItemDrop: 5
+  _distanceOfItemInteraction: 5
+  _obstacleLayerMask:
     serializedVersion: 2
-    m_Bits: 1025
-  takeItemAction: {fileID: 0}
-  dropItemAction: {fileID: 0}
-  gradReleaseItemAction: {fileID: 0}
+    m_Bits: 3073
 --- !u!114 &6847441525046305202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,7 +208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: 0}
+  m_Actions: {fileID: -944628639613478452, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
   m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
