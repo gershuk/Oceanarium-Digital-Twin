@@ -180,10 +180,6 @@ PrefabInstance:
       value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 4383198211375709275, guid: 2f6a8b56ca29b164bbe26632ceedd723, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 1797012766}
-    - target: {fileID: 4383198211375709275, guid: 2f6a8b56ca29b164bbe26632ceedd723, type: 3}
       propertyPath: _camera
       value: 
       objectReference: {fileID: 1396954244}
@@ -192,25 +188,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1797012766}
     - target: {fileID: 4383198211375709275, guid: 2f6a8b56ca29b164bbe26632ceedd723, type: 3}
-      propertyPath: sensitivity
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4383198211375709275, guid: 2f6a8b56ca29b164bbe26632ceedd723, type: 3}
-      propertyPath: mouseXAction
-      value: 
-      objectReference: {fileID: -228842476150599013, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 4383198211375709275, guid: 2f6a8b56ca29b164bbe26632ceedd723, type: 3}
-      propertyPath: mouseYAction
-      value: 
-      objectReference: {fileID: 2569181145497638470, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 4383198211375709275, guid: 2f6a8b56ca29b164bbe26632ceedd723, type: 3}
-      propertyPath: CameraPosition
+      propertyPath: _cameraPosition
       value: 
       objectReference: {fileID: 844642189}
-    - target: {fileID: 4383198211375709275, guid: 2f6a8b56ca29b164bbe26632ceedd723, type: 3}
-      propertyPath: mouseMoveAction
-      value: 
-      objectReference: {fileID: -228842476150599013, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
     - target: {fileID: 4383198211375709275, guid: 2f6a8b56ca29b164bbe26632ceedd723, type: 3}
       propertyPath: _mouseMoveAction
       value: 
@@ -881,21 +861,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: _camera
-      value: 
-      objectReference: {fileID: 1396954244}
-    - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
       propertyPath: _fpsCamera
       value: 
       objectReference: {fileID: 1396954246}
-    - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: dropItemAction
-      value: 
-      objectReference: {fileID: 456163549722714508, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: takeItemAction
-      value: 
-      objectReference: {fileID: 3145655153634754387, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
     - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
       propertyPath: _dropItemAction
       value: 
@@ -905,57 +873,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3145655153634754387, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
     - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: invenoryIndexDelta
-      value: 
-      objectReference: {fileID: -3095274666385267114, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: invenoryIndexdelta
-      value: 
-      objectReference: {fileID: -3095274666385267114, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
       propertyPath: _invenoryIndexDelta
       value: 
       objectReference: {fileID: -3095274666385267114, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: gradReleaseItemAction
-      value: 
-      objectReference: {fileID: -4521078104182257466, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
     - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
       propertyPath: _grabReleaseItemAction
       value: 
       objectReference: {fileID: -4521078104182257466, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
     - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: obstacleLayerMask.m_Bits
-      value: 3073
-      objectReference: {fileID: 0}
-    - target: {fileID: 3516626745156377673, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
       propertyPath: _obstacleLayerMask.m_Bits
       value: 3073
       objectReference: {fileID: 0}
-    - target: {fileID: 4859417973598721536, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: jump
-      value: 
-      objectReference: {fileID: -5436909572901721764, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 4859417973598721536, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: move
-      value: 
-      objectReference: {fileID: 2160566331340322340, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 4859417973598721536, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: sprint
-      value: 
-      objectReference: {fileID: 9119538492376587900, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 4859417973598721536, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: movement
-      value: 
-      objectReference: {fileID: 2160566331340322340, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 4859417973598721536, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: jumpAction
-      value: 
-      objectReference: {fileID: -5436909572901721764, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 4859417973598721536, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: moveAction
-      value: 
-      objectReference: {fileID: 2160566331340322340, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
     - target: {fileID: 4859417973598721536, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
       propertyPath: _jumpAction
       value: 
@@ -964,10 +892,6 @@ PrefabInstance:
       propertyPath: _moveAction
       value: 
       objectReference: {fileID: 2160566331340322340, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
-    - target: {fileID: 4859417973598721536, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
-      propertyPath: sprintAction
-      value: 
-      objectReference: {fileID: 9119538492376587900, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
     - target: {fileID: 4859417973598721536, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
       propertyPath: _sprintAction
       value: 
