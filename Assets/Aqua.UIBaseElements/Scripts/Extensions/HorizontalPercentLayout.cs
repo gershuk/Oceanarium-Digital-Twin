@@ -18,6 +18,10 @@ namespace Aqua.UIBaseElements
         [SerializeField]
         private float[] _fractions;
 
+        [SerializeField]
+        [Range(0f, 1000f)]
+        private float _horizontalSpace;
+
         private RectTransform _transform;
 
         private void Start ()
@@ -51,7 +55,7 @@ namespace Aqua.UIBaseElements
 
                 child.SetUpRectTransform(parameters);
 
-                offset += newWidth;
+                offset += newWidth + _horizontalSpace;;
             }
         }
     }
