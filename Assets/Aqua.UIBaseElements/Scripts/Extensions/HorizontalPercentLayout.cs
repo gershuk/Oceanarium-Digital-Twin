@@ -55,7 +55,8 @@ namespace Aqua.UIBaseElements
 
                 child.SetUpRectTransform(parameters);
 
-                offset += newWidth + _horizontalSpace;;
+                offset += newWidth + _horizontalSpace;
+                ;
             }
         }
     }
