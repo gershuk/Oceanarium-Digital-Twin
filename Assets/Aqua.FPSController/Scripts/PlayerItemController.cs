@@ -1,9 +1,11 @@
 #nullable enable
 
 using System;
-using System.Collections.Generic;
 
 using Aqua.Items;
+using Aqua.SocketSystem;
+
+using UniRx;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,6 +14,11 @@ namespace Aqua.FPSController
 {
     public class PlayerItemController : MonoBehaviour
     {
+        private readonly ReactiveProperty<int> _inventoryIndex = new(-1);
+        private Item? _currentGrabbedItem = null;
+        private IInfo? _currentObservedObject;
+        private bool _isInited = false;
+
         #region Layers names
         public const string DefaultLayerName = "Default";
         public const string IgnoreRaycastLayerName = "Ignore Raycast";
@@ -19,9 +26,6 @@ namespace Aqua.FPSController
         public const string ItemsSlotsLayerName = "ItemSlots";
         public const string NothingLayerName = "Nothing";
         #endregion Layers names
-
-        private Item? _currentGrabbedItem = null;
-        private IInfo? _currentObservedObject;
 
         #region Input actions
 
@@ -40,7 +44,17 @@ namespace Aqua.FPSController
 
         #endregion Input actions
 
-        private List<Item> _inventory;
+        #region Collection
+        private readonly ReactiveCollection<Item> _inventory = new();
+        public IReadOnlyReactiveCollection<Item> Inventory => _inventory;
+        #endregion Collection
+
+        #region Sockets
+        private MulticonnectionSocket<int, int> _indexSocket { get; set; }
+        private MulticonnectionSocket<IInfo?, IInfo?> _selectedItemSocket { get; set; }
+        public IOutputSocket<int> IndexSocket => _indexSocket;
+        public IOutputSocket<IInfo?> SelectedItemSocket => _selectedItemSocket;
+        #endregion Sockets
 
         #region Other Parameters
 
@@ -65,34 +79,32 @@ namespace Aqua.FPSController
 
         [SerializeField]
         private LayerMask _obstacleLayerMask;
-        private int _inventoryIndex = 0;
 
         #endregion Input action parameters
 
-        public IInfo? SelectedItem => _inventory[InventoryIndex];
-
         public int InventoryIndex
         {
-            get => _inventoryIndex;
+            get => _inventoryIndex.Value;
             set
             {
-                if (value < 0 || value >= _inventorySize)
+                if (value < 0 || value >= InventorySize)
                 {
                     Debug.LogWarning($"Out of range item index {value}");
                     return;
                 }
-                if (_inventoryIndex == value)
-                    return;
-                _inventoryIndex = value;
+
+                _inventoryIndex.Value = value;
+                if (!_selectedItemSocket.TrySetValue(SelectedItem))
+                {
+                    Debug.LogError("Can't set socket value when he got input connection");
+                }
             }
         }
 
-        private void Awake ()
-        {
-            _inventory = new List<Item>(_inventorySize);
-            if (_obstacleLayerMask.value == LayerMask.GetMask(NothingLayerName))
-                _obstacleLayerMask = LayerMask.GetMask(DefaultLayerName, ItemsLayerName, ItemsSlotsLayerName);
-        }
+        public int InventorySize { get => _inventorySize; private set => _inventorySize = value; }
+        public IInfo? SelectedItem => InventoryIndex > -1 ? _inventory[InventoryIndex] : null;
+
+        private void Awake () => ForceInit();
 
         private bool TryDropItem ()
         {
@@ -136,8 +148,8 @@ namespace Aqua.FPSController
             }
             _inventory.RemoveAt(InventoryIndex);
             item.gameObject.SetActive(true);
-            if (InventoryIndex == _inventory.Count)
-                InventoryIndex = (InventoryIndex - 1) < 0 ? _inventorySize - 1 : InventoryIndex - 1;
+
+            InventoryIndex = _inventory.Count - 1;
             return true;
         }
 
@@ -183,7 +195,7 @@ namespace Aqua.FPSController
 
         private bool TryTakeItem ()
         {
-            if (_currentObservedObject is not null && _inventory.Count < _inventorySize)
+            if (_currentObservedObject is not null && _inventory.Count < InventorySize)
             {
                 switch (_currentObservedObject)
                 {
@@ -240,15 +252,31 @@ namespace Aqua.FPSController
 
         private void UpdateSelectedItem ()
         {
+            if (_inventory.Count == 0)
+                return;
+
             var delta = _invenoryIndexDelta.action.ReadValue<Vector2>().y;
             if (delta > 0.0f)
             {
-                InventoryIndex = (InventoryIndex + 1) % _inventorySize;
+                InventoryIndex = (InventoryIndex + 1) % _inventory.Count;
             }
             if (delta < 0.0f)
             {
-                InventoryIndex = (InventoryIndex - 1) < 0 ? _inventorySize - 1 : InventoryIndex - 1;
+                InventoryIndex = (InventoryIndex - 1) < 0 ? _inventory.Count - 1 : InventoryIndex - 1;
             }
+        }
+
+        public void ForceInit ()
+        {
+            if (_isInited)
+                return;
+
+            if (_obstacleLayerMask.value == LayerMask.GetMask(NothingLayerName))
+                _obstacleLayerMask = LayerMask.GetMask(DefaultLayerName, ItemsLayerName, ItemsSlotsLayerName);
+            _indexSocket = new(_inventoryIndex);
+            _selectedItemSocket = new(SelectedItem);
+
+            _isInited = true;
         }
     }
 }

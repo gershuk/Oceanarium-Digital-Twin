@@ -13,24 +13,26 @@ namespace Aqua.Items
         private static Sprite? _deafultSprite;
 
         #region Item start parameters
+
+        [SerializeField]
+        private string _descritption = "description";
+
         [Header("Item start parameters")]
         [SerializeField]
         private string _name = "item";
-        [SerializeField]
-        private string _descritption = "description";
+
         [SerializeField]
         private Sprite _sprite;
-        #endregion
+
+        #endregion Item start parameters
 
         public Collider Collider { get; private set; }
         public GameObject GameObject { get; private set; }
         public Rigidbody Rigidbody { get; private set; }
 
         #region Sockets
-        private MulticonnectionSocket<string, string> _nameSocket { get; set; }
-
         private MulticonnectionSocket<string, string> _descriptionSocket { get; set; }
-
+        private MulticonnectionSocket<string, string> _nameSocket { get; set; }
         private MulticonnectionSocket<Sprite, Sprite> _spriteSocket { get; set; }
 
         public IOutputSocket<string> DescriptionSocket => _descriptionSocket;
@@ -38,17 +40,14 @@ namespace Aqua.Items
         public IOutputSocket<string> NameSocket => _nameSocket;
 
         public IOutputSocket<Sprite> SpriteSocket => _spriteSocket;
-        #endregion
+        #endregion Sockets
 
-        public Item ()
+        protected void Awake ()
         {
             _nameSocket = new(_name);
             _descriptionSocket = new(_descritption);
             _spriteSocket = new(_sprite);
-        }
 
-        protected void Awake ()
-        {
             if (_spriteSocket.GetValue() == null)
             {
                 if (_deafultSprite == null)
@@ -60,7 +59,7 @@ namespace Aqua.Items
 
             GameObject = GetComponent<GameObject>();
             Rigidbody = GetComponent<Rigidbody>();
-            Collider = GetComponent<Collider>();           
+            Collider = GetComponent<Collider>();
         }
     }
 }

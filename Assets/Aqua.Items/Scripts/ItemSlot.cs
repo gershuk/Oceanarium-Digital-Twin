@@ -11,20 +11,22 @@ namespace Aqua.Items
         private static Sprite? _deafultSprite;
 
         #region Item slot start parameters
+
+        [SerializeField]
+        private string _descritption = "description";
+
         [Header("Item slot start parameters")]
         [SerializeField]
         private string _name = "item";
-        [SerializeField]
-        private string _descritption = "description";
+
         [SerializeField]
         private Sprite _sprite;
-        #endregion
+
+        #endregion Item slot start parameters
 
         #region Sockets
-        private MulticonnectionSocket<string, string> _nameSocket { get; set; }
-
         private MulticonnectionSocket<string, string> _descriptionSocket { get; set; }
-
+        private MulticonnectionSocket<string, string> _nameSocket { get; set; }
         private MulticonnectionSocket<Sprite, Sprite> _spriteSocket { get; set; }
 
         public IOutputSocket<string> DescriptionSocket => _descriptionSocket;
@@ -32,12 +34,12 @@ namespace Aqua.Items
         public IOutputSocket<string> NameSocket => _nameSocket;
 
         public IOutputSocket<Sprite> SpriteSocket => _spriteSocket;
-        #endregion
+        #endregion Sockets
+
+        protected Item? _item = null;
 
         [SerializeField]
         protected Transform _itemPosition;
-
-        protected Item? _item = null;
 
         [SerializeField]
         protected string _slotDescription = "slot";
@@ -51,6 +53,13 @@ namespace Aqua.Items
         public string Description => _slotDescription;
         public string Name => _slotName;
 
+        public ItemSlot ()
+        {
+            _nameSocket = new(_name);
+            _descriptionSocket = new(_descritption);
+            _spriteSocket = new(_sprite);
+        }
+
         protected void Awake ()
         {
             if (_spriteSocket.GetValue() == null)
@@ -61,13 +70,6 @@ namespace Aqua.Items
                 }
                 _spriteSocket.TrySetValue(_deafultSprite);
             }
-        }
-
-        public ItemSlot ()
-        {
-            _nameSocket = new(_name);
-            _descriptionSocket = new(_descritption);
-            _spriteSocket = new(_sprite);
         }
 
         protected void OnTriggerEnter (Collider other)

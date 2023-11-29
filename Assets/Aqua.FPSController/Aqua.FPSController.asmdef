@@ -3,7 +3,9 @@
     "rootNamespace": "Aqua.FPSController",
     "references": [
         "GUID:75469ad4d38634e559750d17036d5f7c",
-        "GUID:6e27ca69a1c4ddf4f83cd351fbd7d8df"
+        "GUID:6e27ca69a1c4ddf4f83cd351fbd7d8df",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:f52c881e3a01bd4459588757d81478e3"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
