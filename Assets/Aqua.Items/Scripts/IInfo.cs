@@ -1,8 +1,15 @@
+using Aqua.SocketSystem;
+
+using UnityEngine;
+
 namespace Aqua.Items
 {
     public interface IInfo
     {
-        public string Description { get; }
-        public string Name { get; }
+        public IOutputSocket<string> DescriptionSocket { get; }
+
+        public IOutputSocket<string> NameSocket { get; }
+
+        public IOutputSocket<Sprite> SpriteSocket { get; }
     }
 }
