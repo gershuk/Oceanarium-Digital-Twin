@@ -1,5 +1,6 @@
 #nullable enable
 
+using System;
 using System.Collections.Generic;
 
 using Aqua.Items;
@@ -40,7 +41,6 @@ namespace Aqua.FPSController
         #endregion Input actions
 
         private List<Item> _inventory;
-        private int _inventoryIndex = 0;
 
         #region Other Parameters
 
@@ -65,10 +65,27 @@ namespace Aqua.FPSController
 
         [SerializeField]
         private LayerMask _obstacleLayerMask;
+        private int _inventoryIndex = 0;
 
         #endregion Input action parameters
 
-        public IInfo? SelectedItem => _inventoryIndex == -1 ? null : _inventory[_inventoryIndex];
+        public IInfo? SelectedItem => _inventory[InventoryIndex];
+
+        public int InventoryIndex
+        {
+            get => _inventoryIndex;
+            set
+            {
+                if (value < 0 || value >= _inventorySize)
+                {
+                    Debug.LogWarning($"Out of range item index {value}");
+                    return;
+                }
+                if (_inventoryIndex == value)
+                    return;
+                _inventoryIndex = value;
+            }
+        }
 
         private void Awake ()
         {
@@ -79,10 +96,10 @@ namespace Aqua.FPSController
 
         private bool TryDropItem ()
         {
-            if (_inventoryIndex >= _inventory.Count || _inventoryIndex < 0)
+            if (InventoryIndex >= _inventory.Count || InventoryIndex < 0)
                 return false;
 
-            var item = _inventory[_inventoryIndex];
+            var item = _inventory[InventoryIndex];
 
             if (!Physics.Raycast(_fpsCamera.Camera.transform.position,
                                 _fpsCamera.Camera.transform.TransformDirection(Vector3.forward),
@@ -117,10 +134,10 @@ namespace Aqua.FPSController
                         break;
                 }
             }
-            _inventory.RemoveAt(_inventoryIndex);
+            _inventory.RemoveAt(InventoryIndex);
             item.gameObject.SetActive(true);
-            if (_inventoryIndex == _inventory.Count)
-                _inventoryIndex--;
+            if (InventoryIndex == _inventory.Count)
+                InventoryIndex = (InventoryIndex - 1) < 0 ? _inventorySize - 1 : InventoryIndex - 1;
             return true;
         }
 
@@ -187,7 +204,7 @@ namespace Aqua.FPSController
                         }
                         break;
                 }
-                _inventoryIndex = _inventory.Count - 1;
+                InventoryIndex = _inventory.Count - 1;
                 return true;
             }
             return false;
@@ -195,6 +212,7 @@ namespace Aqua.FPSController
 
         private void Update ()
         {
+            Debug.Log($"Inv index : {InventoryIndex}");
             _currentObservedObject = Physics.Raycast(_fpsCamera.Camera.transform.position,
                                                    _fpsCamera.Camera.transform.TransformDirection(Vector3.forward),
                                                    out var hit,
@@ -225,15 +243,11 @@ namespace Aqua.FPSController
             var delta = _invenoryIndexDelta.action.ReadValue<Vector2>().y;
             if (delta > 0.0f)
             {
-                _inventoryIndex++;
-                if (_inventoryIndex == _inventorySize)
-                    _inventoryIndex = -1;
+                InventoryIndex = (InventoryIndex + 1) % _inventorySize;
             }
             if (delta < 0.0f)
             {
-                _inventoryIndex--;
-                if (_inventoryIndex < -1)
-                    _inventoryIndex = _inventorySize - 1;
+                InventoryIndex = (InventoryIndex - 1) < 0 ? _inventorySize - 1 : InventoryIndex - 1;
             }
         }
     }
