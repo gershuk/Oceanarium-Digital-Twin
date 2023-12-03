@@ -15,9 +15,9 @@ namespace Aqua.FPSController
         [SerializeField]
         private PlayerMovement _playerMovement;
 
-        public FPSCamera FpsCamera { get => _fpsCamera; set => _fpsCamera = value; }
-        public PlayerInventory Inventory { get => _inventory; set => _inventory = value; }
-        public PlayerMovement PlayerMovement { get => _playerMovement; set => _playerMovement = value; }
+        public FPSCamera FpsCamera { get => _fpsCamera; private set => _fpsCamera = value; }
+        public PlayerInventory Inventory { get => _inventory; private set => _inventory = value; }
+        public PlayerMovement PlayerMovement { get => _playerMovement; private set => _playerMovement = value; }
 
         private void Awake ()
         {
