@@ -78,7 +78,7 @@ namespace Aqua.FPSController
             _rotX = Mathf.Clamp(_rotX, _maxDownAngle, _maxUpAngle);
             _rotY += _mouseMovement.x;
 
-            _cameraTransform.localRotation = Quaternion.Euler(_rotX, _rotY, _rotZ);
+            _cameraTransform.rotation = Quaternion.Euler(_rotX, _rotY, _rotZ);
             _player.Rotate(Vector3.up * _mouseMovement.x);
             _cameraTransform.position = _cameraPosition.position;
         }
