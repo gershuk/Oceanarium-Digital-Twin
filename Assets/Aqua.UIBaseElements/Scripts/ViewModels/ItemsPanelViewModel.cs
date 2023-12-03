@@ -14,6 +14,8 @@ namespace Aqua.UIBaseElements
 {
     public class ItemsPanelViewModel : MonoBehaviour
     {
+        private bool _isInited = false;
+
         private readonly CompositeDisposable _collectionDisposables = new();
 
         private readonly MulticonnectionSocket<IInfo, IInfo> _indexSocket = new();
@@ -29,6 +31,17 @@ namespace Aqua.UIBaseElements
         [SerializeField]
         private GameObject _selectItemViewPrefab;
 
+        public PlayerInventory Model 
+        { 
+            get => _model;
+            set
+            {
+                _model = value;
+                _model.ForceInit();
+                SubcribeToModel();
+            }
+        }
+
         private void AddFrame (IInfo info)
         {
             var selectItemViewModel = Instantiate(_selectItemViewPrefab, _content).GetComponent<SelectItemViewModel>();
@@ -37,20 +50,23 @@ namespace Aqua.UIBaseElements
             _items.Add(selectItemViewModel);
         }
 
-        private void Awake ()
+        public void ForceInit ()
         {
-            if (_model == null)
-                _model = FindAnyObjectByType<PlayerInventory>();
+            if (_isInited)
+                return;
 
             if (_content == null)
                 _content = GetComponent<RectTransform>();
 
-            _model.ForceInit();
-
             _indexSocket.ReadOnlyProperty.Subscribe(SetFrameSelected).AddTo(this);
 
             UpdatePanelVisual(0);
-            SubcribeToModel();
+            _isInited = true;
+        }
+
+        private void Awake ()
+        {
+            ForceInit();
         }
 
         private void OnDestroy () => UnsubcribeFromModel();
@@ -75,15 +91,15 @@ namespace Aqua.UIBaseElements
 
         private void SubcribeToModel ()
         {
-            _indexSocket.SubscribeTo(_model.SelectedItemSocket);
-            _model.Inventory.ObserveAdd().Subscribe(e => AddFrame(e.Value)).AddTo(_collectionDisposables);
-            _model.Inventory.ObserveRemove().Subscribe(e => RemoveFrame(e.Value)).AddTo(_collectionDisposables);
-            _model.Inventory.ObserveCountChanged().Subscribe(UpdatePanelVisual).AddTo(_collectionDisposables);
+            _indexSocket.SubscribeTo(Model.SelectedItemSocket);
+            Model.Inventory.ObserveAdd().Subscribe(e => AddFrame(e.Value)).AddTo(_collectionDisposables);
+            Model.Inventory.ObserveRemove().Subscribe(e => RemoveFrame(e.Value)).AddTo(_collectionDisposables);
+            Model.Inventory.ObserveCountChanged().Subscribe(UpdatePanelVisual).AddTo(_collectionDisposables);
         }
 
         private void UnsubcribeFromModel ()
         {
-            _indexSocket.UnsubscribeFrom(_model.SelectedItemSocket);
+            _indexSocket.UnsubscribeFrom(Model.SelectedItemSocket);
             _collectionDisposables.Dispose();
         }
 
