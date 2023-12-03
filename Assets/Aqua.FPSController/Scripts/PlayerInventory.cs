@@ -12,7 +12,7 @@ using UnityEngine.InputSystem;
 
 namespace Aqua.FPSController
 {
-    public class PlayerItemController : MonoBehaviour
+    public class PlayerInventory : MonoBehaviour
     {
         private readonly ReactiveProperty<int> _inventoryIndex = new(-1);
         private Item? _currentGrabbedItem = null;
@@ -224,7 +224,6 @@ namespace Aqua.FPSController
 
         private void Update ()
         {
-            Debug.Log($"Inv index : {InventoryIndex}");
             _currentObservedObject = Physics.Raycast(_fpsCamera.Camera.transform.position,
                                                    _fpsCamera.Camera.transform.TransformDirection(Vector3.forward),
                                                    out var hit,
