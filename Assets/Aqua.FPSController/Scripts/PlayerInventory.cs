@@ -16,7 +16,6 @@ namespace Aqua.FPSController
     {
         private readonly ReactiveProperty<int> _inventoryIndex = new(-1);
         private Item? _currentGrabbedItem = null;
-        private IInfo? _currentObservedObject;
         private bool _isInited = false;
 
         #region Layers names
@@ -52,8 +51,10 @@ namespace Aqua.FPSController
         #region Sockets
         private MulticonnectionSocket<int, int> _indexSocket { get; set; }
         private MulticonnectionSocket<IInfo?, IInfo?> _selectedItemSocket { get; set; }
+        private MulticonnectionSocket<IInfo?, IInfo?> _currentObservedObjectSocket { get; set; }
         public IOutputSocket<int> IndexSocket => _indexSocket;
         public IOutputSocket<IInfo?> SelectedItemSocket => _selectedItemSocket;
+        public IOutputSocket<IInfo?> CurrentObservedObjectSocket => _currentObservedObjectSocket;
         #endregion Sockets
 
         #region Other Parameters
@@ -82,12 +83,13 @@ namespace Aqua.FPSController
 
         #endregion Input action parameters
 
+        // ToDo : Replace -1 with null
         public int InventoryIndex
         {
             get => _inventoryIndex.Value;
             set
             {
-                if (value < 0 || value >= InventorySize)
+                if (value < -1 || value >= InventorySize)
                 {
                     Debug.LogWarning($"Out of range item index {value}");
                     return;
@@ -149,20 +151,20 @@ namespace Aqua.FPSController
             _inventory.RemoveAt(InventoryIndex);
             item.gameObject.SetActive(true);
 
-            InventoryIndex = _inventory.Count - 1;
+            InventoryIndex = InventoryIndex - 1 >= 0 ? InventoryIndex - 1 : _inventory.Count - 1;
             return true;
         }
 
         private bool TryGrabItem ()
         {
-            if (_currentObservedObject as Item is not null)
+            if (_currentObservedObjectSocket.GetValue() is Item item and not null)
             {
-                _currentGrabbedItem = (Item) _currentObservedObject;
-                _currentObservedObject = null;
+                _currentGrabbedItem = item;
+                _currentObservedObjectSocket.TrySetValue(null);
             }
-            if (_currentObservedObject as ItemSlot is not null)
+            if (_currentObservedObjectSocket.GetValue() is ItemSlot slot and not null)
             {
-                var itemSlot = (ItemSlot) _currentObservedObject;
+                var itemSlot = slot;
                 _currentGrabbedItem = itemSlot.CurrentItem;
                 if (_currentGrabbedItem is not null)
                     itemSlot.RemoveItem();
@@ -195,42 +197,37 @@ namespace Aqua.FPSController
 
         private bool TryTakeItem ()
         {
-            if (_currentObservedObject is not null && _inventory.Count < InventorySize)
+            if (_inventory.Count < InventorySize)
             {
-                switch (_currentObservedObject)
+                var item = _currentObservedObjectSocket.GetValue() switch
                 {
-                    case Item itemScript:
-                        itemScript.Rigidbody.isKinematic = true;
-                        itemScript.gameObject.SetActive(false);
-                        _inventory.Add(itemScript);
-                        _currentObservedObject = null;
-                        break;
+                    Item itemObject => itemObject,
+                    ItemSlot itemSlot => itemSlot.TakeItem(),
+                    null => null,
+                    _ => throw new NotImplementedException(),
+                };
 
-                    case ItemSlot itemSlotScript:
-                        var itemInSlot = itemSlotScript.CurrentItem;
-                        if (itemInSlot is not null)
-                        {
-                            _inventory.Add(itemInSlot);
-                            itemSlotScript.RemoveItem();
-                            itemInSlot.gameObject.SetActive(false);
-                        }
-                        break;
+                if (item is not null)
+                {
+                    _inventory.Add(item);
+                    item.Rigidbody.isKinematic = true;
+                    item.gameObject.SetActive(false);
+                    InventoryIndex = _inventory.Count - 1;
+                    return true;
                 }
-                InventoryIndex = _inventory.Count - 1;
-                return true;
             }
             return false;
         }
 
         private void Update ()
         {
-            _currentObservedObject = Physics.Raycast(_fpsCamera.Camera.transform.position,
+            _currentObservedObjectSocket.TrySetValue(Physics.Raycast(_fpsCamera.Camera.transform.position,
                                                    _fpsCamera.Camera.transform.TransformDirection(Vector3.forward),
                                                    out var hit,
                                                    _distanceOfItemInteraction,
                                                    _obstacleLayerMask)
                 ? hit.transform.gameObject.GetComponent<IInfo>()
-                : null;
+                : null);
 
             if (_takeItemAction.action.WasPressedThisFrame())
                 TryTakeItem();
@@ -274,6 +271,8 @@ namespace Aqua.FPSController
                 _obstacleLayerMask = LayerMask.GetMask(DefaultLayerName, ItemsLayerName, ItemsSlotsLayerName);
             _indexSocket = new(_inventoryIndex);
             _selectedItemSocket = new(SelectedItem);
+
+            _currentObservedObjectSocket = new();
 
             _isInited = true;
         }
