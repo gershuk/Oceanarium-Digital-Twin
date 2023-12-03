@@ -10,6 +10,14 @@ namespace Aqua.SocketSystem
     {
         public Func<TIn?, TOut?>? MainInputData—onvertingFunction { get; private set; }
 
+        public ConverterSocket () : base()
+        {
+        }
+
+        public ConverterSocket(TOut? value = default) : base(value) 
+        { 
+        }
+
         public ConverterSocket (ReactiveProperty<TOut?>? property = null) : base(property)
         {
         }
