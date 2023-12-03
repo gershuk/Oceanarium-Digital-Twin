@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using UniRx;
+using TMPro;
+using Aqua.Items;
 
 namespace Aqua.UIBaseElements
 {
@@ -20,8 +22,13 @@ namespace Aqua.UIBaseElements
 
     public class HUDAimViewModel : MonoBehaviour
     {
+        private readonly CompositeDisposable _disposables = new();
+
         [SerializeField]
         private Image _aimImage;
+
+        [SerializeField]
+        private TMP_Text _objectName;
 
         [SerializeField]
         private Color _highlightedColor;
@@ -31,7 +38,8 @@ namespace Aqua.UIBaseElements
         [SerializeField]
         private Color _normalColor;
 
-        private UniversalSocket<AimState, AimState> _stateSocket;
+        private ConverterSocket<IInfo, AimState> _stateSocket;
+        private UniversalSocket<IInfo, IInfo> _infoSocket;
 
         public AimState State
         {
@@ -45,7 +53,8 @@ namespace Aqua.UIBaseElements
             }
         }
 
-        public IUniversalSocket<AimState,AimState> StateSocket => _stateSocket;
+        public IOutputSocket<AimState> StateSocket => _stateSocket;
+        public IInputSocket<IInfo> InfoSocket => _infoSocket;
 
         private void UpdateGraphicalState (AimState state)
         {
@@ -77,10 +86,44 @@ namespace Aqua.UIBaseElements
             if (_aimImage == null)
                 _aimImage = GetComponent<Image>();
 
+            if (_objectName == null)
+                _objectName = GetComponent<TMP_Text>();
+
+            _infoSocket = new();
+            _infoSocket.ReadOnlyProperty.Subscribe(UpdateSubscriptions).AddTo(this);
+
             _stateSocket = new(AimState.Normal);
+            _stateSocket.SubscribeTo(_infoSocket, static info => info == null ? AimState.Normal : AimState.Highlighted);
             _stateSocket.ReadOnlyProperty.Subscribe(UpdateGraphicalState).AddTo(this);
 
             _isInited = true;
+        }
+
+        private void UpdateName (string? name)
+        {
+            _objectName.text = name;
+            _objectName.enabled = name is null ? false : true;
+        }
+
+        private void UpdateSubscriptions (IInfo? info)
+        {
+            UnsubcribeFromInfoObject();
+            SubscribeToInfoObject(info ?? EmptyInfo.Instance);
+        }
+
+        private void SubscribeToInfoObject (IInfo infoObject)
+        {
+            infoObject.NameSocket.ReadOnlyProperty.Subscribe(UpdateName).AddTo(_disposables);
+        }
+
+        private void UnsubcribeFromInfoObject ()
+        {
+            _disposables.Dispose();
+        }
+
+        private void OnDestroy ()
+        {
+            UnsubcribeFromInfoObject();
         }
     }
 }
