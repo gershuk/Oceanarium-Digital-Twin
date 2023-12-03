@@ -8,16 +8,17 @@ namespace Aqua.Items
 {
     public class ItemSlot : MonoBehaviour, IInfo
     {
+        private bool _isInited;
+
         private static Sprite? _deafultSprite;
 
         #region Item slot start parameters
-
-        [SerializeField]
-        private string _descritption = "description";
-
         [Header("Item slot start parameters")]
         [SerializeField]
-        private string _name = "item";
+        private string _descritption;
+
+        [SerializeField]
+        private string _name;
 
         [SerializeField]
         private Sprite _sprite;
@@ -41,27 +42,19 @@ namespace Aqua.Items
         [SerializeField]
         protected Transform _itemPosition;
 
-        [SerializeField]
-        protected string _slotDescription = "slot";
-
-        [SerializeField]
-        protected string _slotName = "slot";
-
         public const string IgnorRayCastLayerName = "Ignore Raycast";
         public const string ItemsLayerName = "Items";
         public Item CurrentItem => _item;
-        public string Description => _slotDescription;
-        public string Name => _slotName;
 
-        public ItemSlot ()
+        public void ForceInit ()
         {
+            if (_isInited)
+                return;
+
             _nameSocket = new(_name);
             _descriptionSocket = new(_descritption);
             _spriteSocket = new(_sprite);
-        }
 
-        protected void Awake ()
-        {
             if (_spriteSocket.GetValue() == null)
             {
                 if (_deafultSprite == null)
@@ -70,19 +63,37 @@ namespace Aqua.Items
                 }
                 _spriteSocket.TrySetValue(_deafultSprite);
             }
+
+            _isInited = true;
+        }
+
+        protected void Awake ()
+        {
+            ForceInit();
         }
 
         protected void OnTriggerEnter (Collider other)
         {
+            var item = other.GetComponent<Item>();
+
+            if (item == null)
+                return;
+
             if (CurrentItem != null)
             {
                 Debug.Log($"Slot is not empty. Item '{CurrentItem}' already attached");
                 return;
             }
 
-            var item = other.GetComponent<Item>();
+            SetItem(item);
+        }
+
+        public Item? TakeItem ()
+        {
+            var item = _item;
             if (item != null)
-                SetItem(item);
+                RemoveItem();
+            return item;
         }
 
         public void RemoveItem ()
