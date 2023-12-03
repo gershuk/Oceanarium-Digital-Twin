@@ -24,7 +24,7 @@ namespace Aqua.UIBaseElements
         private RectTransform _content;
 
         [SerializeField]
-        private PlayerItemController _model;
+        private PlayerInventory _model;
 
         [SerializeField]
         private GameObject _selectItemViewPrefab;
@@ -40,7 +40,7 @@ namespace Aqua.UIBaseElements
         private void Awake ()
         {
             if (_model == null)
-                _model = FindAnyObjectByType<PlayerItemController>();
+                _model = FindAnyObjectByType<PlayerInventory>();
 
             if (_content == null)
                 _content = GetComponent<RectTransform>();
