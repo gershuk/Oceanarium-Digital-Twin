@@ -54,7 +54,7 @@ namespace Aqua.UIBaseElements
             {
                 if (!_isSelectedSocket.TrySetValue(value))
                 {
-                    Debug.LogWarning("Can't set value if when socket has input connection");
+                    Debug.LogWarning("Can't set value when socket has input connection");
                 }
             }
         }
