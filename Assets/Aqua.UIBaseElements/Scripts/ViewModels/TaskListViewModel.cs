@@ -6,18 +6,30 @@ using Aqua.SceneController;
 using UniRx;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Aqua.UIBaseElements
 {
     public class TaskListViewModel : MonoBehaviour
     {
+        private bool _isInited = false;
+
         [SerializeField]
         private RectTransform _content;
+
+        [SerializeField]
+        private Image _backgroundImage;
 
         private TaskListModel _model;
 
         [SerializeField]
         private GameObject _taskViewPrefab;
+
+        public TaskListModel Model 
+        { 
+            get => _model; 
+            set => SetAndSubscribeToModel(value); 
+        }
 
         private void AttachView (TaskToggleViewModel viewModel) => viewModel.GetComponent<RectTransform>().SetParent(_content);
 
@@ -42,12 +54,35 @@ namespace Aqua.UIBaseElements
             Destroy(taskToggleViewModels.gameObject);
         }
 
+        public void ForceInit ()
+        {
+            if (_isInited) 
+                return;
+
+            if (_backgroundImage == null)
+                _backgroundImage = GetComponent<Image>();
+
+            Model = new TaskListModel();
+
+            _isInited = true;
+        }
+
         public void Awake ()
         {
-            _model = new TaskListModel();
-            _model.Tasks.ObserveAdd().Subscribe(e => CreateAndAttachView(e.Value)).AddTo(this);
-            _model.Tasks.ObserveRemove().Subscribe(e => RemoveAndDestoryTaskView(FindTaskViewModel(e.Value))).AddTo(this);
+            ForceInit();
         }
+
+        private void SetAndSubscribeToModel (TaskListModel model)
+        {
+            _model = model;
+            Model.Tasks.ObserveAdd().Subscribe(e => CreateAndAttachView(e.Value)).AddTo(this);
+            Model.Tasks.ObserveRemove().Subscribe(e => RemoveAndDestoryTaskView(FindTaskViewModel(e.Value))).AddTo(this);
+            Model.Tasks.ObserveCountChanged().Subscribe(UpdateBackground).AddTo(this);
+
+            UpdateBackground(Model.Tasks.Count);
+        }
+
+        private void UpdateBackground (int count) => _backgroundImage.enabled = count > 0;
     }
 
     public class WrongParentException : Exception

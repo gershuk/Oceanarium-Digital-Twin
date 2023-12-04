@@ -576,6 +576,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _content: {fileID: 3614403826836459968}
+  _backgroundImage: {fileID: 245283074310850759}
   _taskViewPrefab: {fileID: 659665215711112699, guid: 36947def6a1235745875be0a613b91c9, type: 3}
 --- !u!1 &5822261289197098497
 GameObject:
@@ -697,7 +698,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8954017747504265068}
   m_HandleRect: {fileID: 8514515929101764711}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -823,7 +824,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7141322354892390492}
   m_HandleRect: {fileID: 927841832844722518}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
