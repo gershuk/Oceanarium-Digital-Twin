@@ -22,7 +22,7 @@ namespace Aqua.UIBaseElements
 
             if (_helper == null)
                 _helper = FindAnyObjectByType<UnityGraphicsSettingsHelper>();
-            _helper.InitObject();
+            _helper.ForceInit();
 
             if (_view == null)
                 _view = GetComponent<GraphicsSettingsView>();
