@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6779737950196075211}
   - component: {fileID: 5018942814456035969}
   - component: {fileID: 2188899829751821209}
+  - component: {fileID: 6216666382983967865}
   m_Layer: 0
   m_Name: GraphicsSettings
   m_TagString: Untagged
@@ -63,3 +64,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _volume: {fileID: 5018942814456035969}
+--- !u!114 &6216666382983967865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4735368892841365769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 071b1a91c44860949919a5c9569137d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cursorTexture: {fileID: 2800000, guid: a85db14436a95ae4b8a1c78efee591c9, type: 3}
+  _cursorMode: 0
+  _hotSpot: {x: 0, y: 0}
