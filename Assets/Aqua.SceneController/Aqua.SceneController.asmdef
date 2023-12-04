@@ -1,7 +1,10 @@
 {
     "name": "Aqua.SceneController",
     "rootNamespace": "Aqua.SceneController",
-    "references": [],
+    "references": [
+        "GUID:f52c881e3a01bd4459588757d81478e3",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

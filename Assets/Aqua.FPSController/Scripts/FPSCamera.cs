@@ -55,8 +55,6 @@ namespace Aqua.FPSController
                 _camera = GetComponent<Camera>();
 
             _cameraTransform = _camera.transform;
-
-            HideCursor();
         }
 
         private IEnumerator IShake (float mag, float dur)
@@ -83,18 +81,6 @@ namespace Aqua.FPSController
             _cameraTransform.position = _cameraPosition.position;
         }
 
-        public void HideCursor ()
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-
         public void Shake (float magnitude, float duration) => StartCoroutine(IShake(magnitude, duration));
-
-        public void ShowCursor ()
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
     }
 }

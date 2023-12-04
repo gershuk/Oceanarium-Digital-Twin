@@ -60,6 +60,14 @@ PrefabInstance:
       propertyPath: _fpsCamera
       value: 
       objectReference: {fileID: 8564766761505736872}
+    - target: {fileID: 7672684028432144790, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
+      propertyPath: _showHideMenu
+      value: 
+      objectReference: {fileID: 4902970217077752335, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+    - target: {fileID: 7672684028432144790, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
+      propertyPath: _showHideCursor
+      value: 
+      objectReference: {fileID: -3391545930609472182, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
     - target: {fileID: 8049329219535538140, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
       propertyPath: m_Name
       value: PlayerWithCamera
