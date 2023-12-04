@@ -15,6 +15,8 @@ namespace Aqua.UIBaseElements
     {
         private bool _isInited = false;
 
+        private LoadingScreenViewModel _loadingScreenViewModel;
+
         public Action CloseHUDSubpanel { get; set; }
 
         public const string MainMenuName = "MainMenu";
@@ -58,6 +60,8 @@ namespace Aqua.UIBaseElements
 
             RegisterButtons();
 
+            _loadingScreenViewModel = FindFirstObjectByType<LoadingScreenViewModel>();
+
             _isInited = true;
         }
 
@@ -71,7 +75,7 @@ namespace Aqua.UIBaseElements
 
         public void Continue () => CloseHUDSubpanel();
 
-        public void GoToMainMenu () => SceneLoader.Instance.LoadScene(MainMenuName);
+        public void GoToMainMenu () => _loadingScreenViewModel.StartLoadingCoroutine(MainMenuName);
 
         public void Save () => Debug.Log($"{nameof(Save)} not implemented");
 

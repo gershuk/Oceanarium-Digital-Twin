@@ -1,7 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
+using System;
 
 using Aqua.SceneController;
+#nullable enable
+
 using Aqua.SocketSystem;
 
 using UnityEngine;
@@ -11,6 +13,11 @@ namespace Aqua.UIBaseElements
 {
     public class LoadingScreenViewModel : MonoBehaviour
     {
+        private Coroutine? _loadingCoroutine;
+
+        [SerializeField]
+        private GameObject _loadingCamera;
+
         public const int EndLoadingWaitTime = 5;
 
         [SerializeField]
@@ -33,20 +40,53 @@ namespace Aqua.UIBaseElements
             if (_canvas != null )
                 _canvas = GetComponent<Canvas>();
             DontDestroyOnLoad(gameObject);
-            _canvas.enabled = false;
+            DisableView();
         }
 
-        public IEnumerator StartLoadingWithScreen (string name, LoadSceneParameters parameters = new())
+        private void DisableView ()
+        {
+            _canvas.enabled = false;
+            _loadingCamera.SetActive(false);
+        }
+
+        private void EnableView ()
         {
             _canvas.enabled = true;
+            _loadingCamera.SetActive(true);
+        }
+
+        public void StartLoadingCoroutine (string name, LoadSceneParameters parameters = new())
+        {
+            if (_loadingCoroutine != null)
+                throw new Exception("Already loading scene");
+
+            _loadingCoroutine = StartCoroutine(StartLoadingWithScreen(name, parameters));
+        }
+
+        private IEnumerator StartLoadingWithScreen (string name, LoadSceneParameters parameters = new())
+        {
             var loadingOperation = SceneLoader.Instance.LoadSceneAsync(name, parameters);
+            
+            EnableView();
+
             while (!loadingOperation.isDone)
             {
                 _progressSocket.TrySetValue(loadingOperation.progress);
                 yield return null;
             }
+
+            _progressSocket.TrySetValue(loadingOperation.progress);
             yield return new WaitForSeconds(EndLoadingWaitTime);
-            _canvas.enabled = false;
+
+            DisableView();
+
+            _loadingCoroutine = null;
+        }
+
+        private void OnDestroy ()
+        {
+            if (_loadingCoroutine != null)
+                StopCoroutine(_loadingCoroutine);
         }
     }
 }
