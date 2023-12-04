@@ -87,6 +87,8 @@ namespace Aqua.UIBaseElements
             }
         }
 
+        public void SetTaskList(TaskListModel model) => _taskListViewModel.Model = model;
+
         private void UnsubscriveSockets ()
         {
             _stateSocket.UnsubscribeFrom(_model.StateSocket);
