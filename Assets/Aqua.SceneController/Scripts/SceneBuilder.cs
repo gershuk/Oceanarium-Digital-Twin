@@ -103,6 +103,7 @@ namespace Aqua.SceneController
             if (_stateScoket.GetValue() != BuilderState.BuildingEnded)
             {
                 Debug.LogError("Can't start scene. It is not built.");
+                return;
             }
 
             if (_startingCoroutine != null)
