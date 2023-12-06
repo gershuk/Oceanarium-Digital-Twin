@@ -13,6 +13,8 @@ namespace Aqua.Items
     [RequireComponent(typeof(Collider))]
     public class Item : MonoBehaviour, IInfo
     {
+        public ItemSpawner? Spawner { get => _spawner; set => _spawner = value; }
+
         private bool _isInited = false;
 
         private static Sprite? _deafultSprite;
@@ -28,6 +30,12 @@ namespace Aqua.Items
 
         [SerializeField]
         private Sprite _sprite;
+
+        [SerializeField]
+        private ItemSpawner? _spawner;
+
+        [SerializeField]
+        private Transform _defaultRespawnPosition;
 
         #endregion Item start parameters
 
@@ -50,6 +58,22 @@ namespace Aqua.Items
         protected void Awake ()
         {
             ForceInit();
+        }
+
+        public bool TryResetPosition ()
+        {
+            switch (_spawner, _defaultRespawnPosition)
+            {
+                case (not null, _): 
+                    _spawner.ResetSpawnedItemPosition(this);
+                    return true;
+                case (_, not null):
+                    transform.position = _defaultRespawnPosition.position;
+                    transform.rotation = _defaultRespawnPosition.rotation;
+                    return true;
+                default: 
+                    return false;
+            };
         }
 
         public void ForceInit ()
