@@ -21,6 +21,9 @@ namespace Aqua.FPSController
     public sealed class PlayerModel : MonoBehaviour
     {
         [SerializeField]
+        private ObjectInteracter _objectInteracter;
+
+        [SerializeField]
         private FPSCamera _fpsCamera;
 
         [SerializeField]
@@ -62,6 +65,16 @@ namespace Aqua.FPSController
             }
         }
 
+        public bool IsObjectInteracterAcitve
+        {
+            get => _isObjectInteracterAcitve;
+            set
+            {
+                _isObjectInteracterAcitve = value;
+                _objectInteracter.enabled = _isObjectInteracterAcitve;
+            }
+        }
+
         public bool IsMovementInputAcitve
         {
             get => _isMovementInputAcitve;
@@ -91,24 +104,28 @@ namespace Aqua.FPSController
                 {
                     case PlayerControllerState.None:
                         IsMovementInputAcitve = false;
+                        IsObjectInteracterAcitve = false;
                         IsCursorAcitve = false;
                         IsCameraAcitve = false;
                         break;
 
                     case PlayerControllerState.MovementInput:
                         IsMovementInputAcitve = true;
+                        IsObjectInteracterAcitve = true;
                         IsCursorAcitve = false;
                         IsCameraAcitve = true;
                         break;
 
                     case PlayerControllerState.Cursor:
                         IsMovementInputAcitve = false;
+                        IsObjectInteracterAcitve = false;
                         IsCursorAcitve = true;
                         IsCameraAcitve = true;
                         break;
 
                     case PlayerControllerState.Menu:
                         IsMovementInputAcitve = false;
+                        IsObjectInteracterAcitve = false;
                         IsCursorAcitve = true;
                         IsCameraAcitve = true;
                         break;
@@ -134,6 +151,7 @@ namespace Aqua.FPSController
         [Header("Input actions")]
         [SerializeField]
         private InputActionReference _showHideMenu;
+        private bool _isObjectInteracterAcitve;
 
         #endregion Input actions
 

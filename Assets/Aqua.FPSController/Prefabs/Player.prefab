@@ -78,6 +78,7 @@ GameObject:
   - component: {fileID: 6847441525046305202}
   - component: {fileID: 7672684028432144790}
   - component: {fileID: 4481195978018896633}
+  - component: {fileID: 2740279768062953501}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -241,6 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f5f53c122183de419e542006b245f24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _objectInteracter: {fileID: 2740279768062953501}
   _fpsCamera: {fileID: 0}
   _inventory: {fileID: 3516626745156377673}
   _objectScaner: {fileID: 4481195978018896633}
@@ -262,6 +264,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fpsCamera: {fileID: 0}
   _distanceOfItemInteraction: 5
+--- !u!114 &2740279768062953501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8049329219535538140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24dead4dc8eb5564eb85a831d5e8136c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objectScaner: {fileID: 4481195978018896633}
+  _doProcessingAction: {fileID: 6152622585138991222, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+  _undoProcessingAction: {fileID: 7497073919193677845, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+  _useAction: {fileID: 1653056630801189198, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
+  _doProcessingCooldown: 0.2
+  _undoProcessingCooldown: 0.2
+  _useCooldown: 0.2
 --- !u!1001 &4998049222876686338
 PrefabInstance:
   m_ObjectHideFlags: 0
