@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: NEW
+  m_text: "\u041D\u041E\u0412\u042B\u0419 \u0421\u0426\u0415\u041D\u0410\u0420\u0418\u0419"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bb70d7beda6f1d24e90b3c65c1205001, type: 2}
   m_sharedMaterial: {fileID: -534672005559383862, guid: bb70d7beda6f1d24e90b3c65c1205001, type: 2}
