@@ -8,6 +8,9 @@ namespace Aqua.FPSController
     public class FPSCamera : MonoBehaviour
     {
         [SerializeField]
+        private bool _isCameraChildOfPlayerBody = false;
+
+        [SerializeField]
         private Camera _camera;
 
         private Transform _cameraTransform;
@@ -55,6 +58,12 @@ namespace Aqua.FPSController
                 _camera = GetComponent<Camera>();
 
             _cameraTransform = _camera.transform;
+
+            if (_isCameraChildOfPlayerBody)
+            {
+                _cameraTransform.position = _cameraPosition.position;
+                _cameraTransform.rotation = _cameraPosition.rotation;
+            }
         }
 
         private IEnumerator IShake (float mag, float dur)
@@ -74,11 +83,19 @@ namespace Aqua.FPSController
 
             _rotX -= _mouseMovement.y;
             _rotX = Mathf.Clamp(_rotX, _maxDownAngle, _maxUpAngle);
-            _rotY += _mouseMovement.x;
+            _rotY += _mouseMovement.x;   
 
-            _cameraTransform.rotation = Quaternion.Euler(_rotX, _rotY, _rotZ);
+            if (!_isCameraChildOfPlayerBody)
+            {
+                _cameraTransform.rotation = Quaternion.Euler(_rotX, _rotY, _rotZ);
+                _cameraTransform.position = _cameraPosition.position;
+            }
+            else
+            {
+                _cameraTransform.localEulerAngles = Vector3.right * _rotX;
+            }
+
             _player.Rotate(Vector3.up * _mouseMovement.x);
-            _cameraTransform.position = _cameraPosition.position;
         }
 
         public void Shake (float magnitude, float duration) => StartCoroutine(IShake(magnitude, duration));
