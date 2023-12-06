@@ -47,7 +47,7 @@ namespace Aqua.UIBaseElements
             _itemsPanelViewModel.Model = _model.Inventory;
 
             _aimViewModel.ForceInit();
-            _aimViewModel.InfoSocket.SubscribeTo(_model.Inventory.CurrentObservedObjectSocket);
+            _aimViewModel.InfoSocket.SubscribeTo(_model.ObjectScaner.ObservedObjectSocket);
 
             _hudSubpanelViewModel.ForceInit();
             _hudSubpanelViewModel.CloseHUDSubpanel = ClosePanel;

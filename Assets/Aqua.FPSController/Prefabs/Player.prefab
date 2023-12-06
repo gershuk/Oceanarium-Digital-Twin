@@ -77,6 +77,7 @@ GameObject:
   - component: {fileID: 3516626745156377673}
   - component: {fileID: 6847441525046305202}
   - component: {fileID: 7672684028432144790}
+  - component: {fileID: 4481195978018896633}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -193,8 +194,8 @@ MonoBehaviour:
   _takeItemAction: {fileID: 3145655153634754387, guid: a6bcc7f8b323313458ac56e32f62b177, type: 3}
   _fpsCamera: {fileID: 0}
   _inventorySize: 9
+  _objectScaner: {fileID: 0}
   _distanceOfItemDrop: 5
-  _distanceOfItemInteraction: 5
   _obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 3073
@@ -242,7 +243,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fpsCamera: {fileID: 0}
   _inventory: {fileID: 3516626745156377673}
+  _objectScaner: {fileID: 4481195978018896633}
   _playerMovement: {fileID: 4859417973598721536}
+  _startState: 0
+  _showHideCursor: {fileID: 0}
+  _showHideMenu: {fileID: 0}
+--- !u!114 &4481195978018896633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8049329219535538140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fb623b10da162c4b9925e006286e952, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fpsCamera: {fileID: 0}
+  _distanceOfItemInteraction: 5
 --- !u!1001 &4998049222876686338
 PrefabInstance:
   m_ObjectHideFlags: 0

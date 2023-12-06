@@ -20,9 +20,6 @@ namespace Aqua.FPSController
 
     public sealed class PlayerModel : MonoBehaviour
     {
-        private MulticonnectionSocket<PlayerControllerState, PlayerControllerState> _stateSocket;
-        public IOutputSocket<PlayerControllerState> StateSocket => _stateSocket;
-
         [SerializeField]
         private FPSCamera _fpsCamera;
 
@@ -32,135 +29,27 @@ namespace Aqua.FPSController
         private bool _isInited = false;
 
         [SerializeField]
+        private ObjectScaner _objectScaner;
+
+        [SerializeField]
         private PlayerMovement _playerMovement;
 
         [SerializeField]
         private PlayerControllerState _startState = PlayerControllerState.None;
 
+        private MulticonnectionSocket<PlayerControllerState, PlayerControllerState> _stateSocket;
         public FPSCamera FpsCamera { get => _fpsCamera; private set => _fpsCamera = value; }
         public PlayerInventory Inventory { get => _inventory; private set => _inventory = value; }
-        public PlayerMovement PlayerMovement { get => _playerMovement; private set => _playerMovement = value; }
 
-        public PlayerControllerState State
+        public bool IsCameraAcitve
         {
-            get => _stateSocket.GetValue();
-            set
+            get => _isCameraAcitve;
+            private set
             {
-                if (!_stateSocket.TrySetValue(value))
-                {
-                    Debug.LogWarning("Can't set value when socket has input connection");
-                    return;
-                }
-
-                switch (_stateSocket.GetValue())
-                {
-                    case PlayerControllerState.None:
-                        IsMovementInputAcitve = false;
-                        IsCursorAcitve = false;
-                        IsCameraAcitve = false;
-                        break;
-                    case PlayerControllerState.MovementInput:
-                        IsMovementInputAcitve = true;
-                        IsCursorAcitve = false;
-                        IsCameraAcitve = true;
-                        break;
-                    case PlayerControllerState.Cursor:
-                        IsMovementInputAcitve = false;
-                        IsCursorAcitve = true;
-                        IsCameraAcitve = true;
-                        break;
-                    case PlayerControllerState.Menu:
-                        IsMovementInputAcitve = false;
-                        IsCursorAcitve = true;
-                        IsCameraAcitve = true;
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                }
+                _isCameraAcitve = value;
+                FpsCamera.gameObject.SetActive(_isCameraAcitve);
             }
         }
-
-        #region Input actions
-
-        [Header("Input actions")]
-        [SerializeField]
-        private InputActionReference _showHideMenu;
-
-        [SerializeField]
-        private InputActionReference _showHideCursor;
-        private bool _isMovementInputAcitve;
-        private bool _isCursorAcitve;
-        private bool _isCameraAcitve;
-
-        #endregion
-
-        private void Awake ()
-        {
-            ForceInit();
-        }
-
-        public void ForceInit ()
-        {
-            if (_isInited)
-                return;
-
-            FindObjectsIfNull();
-
-            _stateSocket = new(PlayerControllerState.MovementInput);
-
-            SubscribeOnActions();
-
-            State = _startState;
-
-            _isInited = true;
-        }
-
-        private void FindObjectsIfNull ()
-        {
-            if (_fpsCamera == null)
-                _fpsCamera = GetComponent<FPSCamera>();
-
-            if (_inventory == null)
-                _inventory = GetComponent<PlayerInventory>();
-
-            if (_playerMovement == null)
-                _playerMovement = GetComponent<PlayerMovement>();
-        }
-
-        private void OnDestroy ()
-        {
-            UnsubscribeFromActions();
-        }
-
-        private void SubscribeOnActions ()
-        {
-            _showHideCursor.action.performed += OnShowHideCursorPerformed;
-            _showHideMenu.action.performed += OnShowHideMenuPerformed;
-        }
-
-        private void UnsubscribeFromActions ()
-        {
-            _showHideCursor.action.performed -= OnShowHideCursorPerformed;
-            _showHideMenu.action.performed -= OnShowHideMenuPerformed;
-        }
-
-        private void OnShowHideMenuPerformed (InputAction.CallbackContext obj) => State = State switch
-        {
-            PlayerControllerState.None => PlayerControllerState.None,
-            PlayerControllerState.MovementInput => PlayerControllerState.Menu,
-            PlayerControllerState.Cursor => PlayerControllerState.Menu,
-            PlayerControllerState.Menu => PlayerControllerState.MovementInput,
-            _ => throw new NotImplementedException(),
-        };
-
-        private void OnShowHideCursorPerformed (InputAction.CallbackContext obj) => State = State switch
-        {
-            PlayerControllerState.None => PlayerControllerState.None,
-            PlayerControllerState.MovementInput => PlayerControllerState.Cursor,
-            PlayerControllerState.Cursor => PlayerControllerState.MovementInput,
-            PlayerControllerState.Menu => PlayerControllerState.Menu,
-            _ => throw new NotImplementedException(),
-        };
 
         public bool IsCursorAcitve
         {
@@ -184,14 +73,136 @@ namespace Aqua.FPSController
             }
         }
 
-        public bool IsCameraAcitve
+        public ObjectScaner ObjectScaner { get => _objectScaner; private set => _objectScaner = value; }
+        public PlayerMovement PlayerMovement { get => _playerMovement; private set => _playerMovement = value; }
+
+        public PlayerControllerState State
         {
-            get => _isCameraAcitve;
-            private set
+            get => _stateSocket.GetValue();
+            set
             {
-                _isCameraAcitve = value;
-                FpsCamera.gameObject.SetActive(_isCameraAcitve);
+                if (!_stateSocket.TrySetValue(value))
+                {
+                    Debug.LogWarning("Can't set value when socket has input connection");
+                    return;
+                }
+
+                switch (_stateSocket.GetValue())
+                {
+                    case PlayerControllerState.None:
+                        IsMovementInputAcitve = false;
+                        IsCursorAcitve = false;
+                        IsCameraAcitve = false;
+                        break;
+
+                    case PlayerControllerState.MovementInput:
+                        IsMovementInputAcitve = true;
+                        IsCursorAcitve = false;
+                        IsCameraAcitve = true;
+                        break;
+
+                    case PlayerControllerState.Cursor:
+                        IsMovementInputAcitve = false;
+                        IsCursorAcitve = true;
+                        IsCameraAcitve = true;
+                        break;
+
+                    case PlayerControllerState.Menu:
+                        IsMovementInputAcitve = false;
+                        IsCursorAcitve = true;
+                        IsCameraAcitve = true;
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
             }
+        }
+
+        public IOutputSocket<PlayerControllerState> StateSocket => _stateSocket;
+        #region Input actions
+
+        private bool _isCameraAcitve;
+
+        private bool _isCursorAcitve;
+
+        private bool _isMovementInputAcitve;
+
+        [SerializeField]
+        private InputActionReference _showHideCursor;
+
+        [Header("Input actions")]
+        [SerializeField]
+        private InputActionReference _showHideMenu;
+
+        #endregion Input actions
+
+        private void Awake ()
+        {
+            ForceInit();
+        }
+
+        private void FindObjectsIfNull ()
+        {
+            if (_fpsCamera == null)
+                _fpsCamera = GetComponent<FPSCamera>();
+
+            if (_inventory == null)
+                _inventory = GetComponent<PlayerInventory>();
+
+            if (_playerMovement == null)
+                _playerMovement = GetComponent<PlayerMovement>();
+        }
+
+        private void OnDestroy ()
+        {
+            UnsubscribeFromActions();
+        }
+
+        private void OnShowHideCursorPerformed (InputAction.CallbackContext obj) => State = State switch
+        {
+            PlayerControllerState.None => PlayerControllerState.None,
+            PlayerControllerState.MovementInput => PlayerControllerState.Cursor,
+            PlayerControllerState.Cursor => PlayerControllerState.MovementInput,
+            PlayerControllerState.Menu => PlayerControllerState.Menu,
+            _ => throw new NotImplementedException(),
+        };
+
+        private void OnShowHideMenuPerformed (InputAction.CallbackContext obj) => State = State switch
+        {
+            PlayerControllerState.None => PlayerControllerState.None,
+            PlayerControllerState.MovementInput => PlayerControllerState.Menu,
+            PlayerControllerState.Cursor => PlayerControllerState.Menu,
+            PlayerControllerState.Menu => PlayerControllerState.MovementInput,
+            _ => throw new NotImplementedException(),
+        };
+
+        private void SubscribeOnActions ()
+        {
+            _showHideCursor.action.performed += OnShowHideCursorPerformed;
+            _showHideMenu.action.performed += OnShowHideMenuPerformed;
+        }
+
+        private void UnsubscribeFromActions ()
+        {
+            _showHideCursor.action.performed -= OnShowHideCursorPerformed;
+            _showHideMenu.action.performed -= OnShowHideMenuPerformed;
+        }
+
+        public void ForceInit ()
+        {
+            if (_isInited)
+                return;
+
+            FindObjectsIfNull();
+
+            _stateSocket = new(PlayerControllerState.MovementInput);
+
+            SubscribeOnActions();
+
+            State = _startState;
+
+            _isInited = true;
         }
     }
 }

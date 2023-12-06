@@ -51,10 +51,8 @@ namespace Aqua.FPSController
         #region Sockets
         private MulticonnectionSocket<int, int> _indexSocket { get; set; }
         private MulticonnectionSocket<IInfo?, IInfo?> _selectedItemSocket { get; set; }
-        private MulticonnectionSocket<IInfo?, IInfo?> _currentObservedObjectSocket { get; set; }
         public IOutputSocket<int> IndexSocket => _indexSocket;
         public IOutputSocket<IInfo?> SelectedItemSocket => _selectedItemSocket;
-        public IOutputSocket<IInfo?> CurrentObservedObjectSocket => _currentObservedObjectSocket;
         #endregion Sockets
 
         #region Other Parameters
@@ -67,6 +65,9 @@ namespace Aqua.FPSController
         [Range(1f, 9f)]
         private int _inventorySize = 9;
 
+        [SerializeField]
+        private ObjectScaner _objectScaner;
+
         #endregion Other Parameters
 
         #region Input action parameters
@@ -74,9 +75,6 @@ namespace Aqua.FPSController
         [Header("Input action parameters")]
         [SerializeField]
         private float _distanceOfItemDrop = 5;
-
-        [SerializeField]
-        private float _distanceOfItemInteraction = 5;
 
         [SerializeField]
         private LayerMask _obstacleLayerMask;
@@ -157,13 +155,12 @@ namespace Aqua.FPSController
 
         private bool TryGrabItem ()
         {
-            if (_currentObservedObjectSocket.GetValue() is Item item and not null)
+            if (_objectScaner.ObservedObjectSocket.GetValue() is Item item and not null)
             {
                 _currentGrabbedItem = item;
-                _currentObservedObjectSocket.TrySetValue(null);
             }
 
-            if (_currentObservedObjectSocket.GetValue() is ItemSlot slot and not null)
+            if (_objectScaner.ObservedObjectSocket.GetValue() is ItemSlot slot and not null)
             {
                 var itemSlot = slot;
                 _currentGrabbedItem = itemSlot.CurrentItem;
@@ -203,7 +200,7 @@ namespace Aqua.FPSController
         {
             if (_inventory.Count < InventorySize)
             {
-                var item = _currentObservedObjectSocket.GetValue() switch
+                var item = _objectScaner.ObservedObjectSocket.GetValue() switch
                 {
                     Item itemObject => itemObject,
                     ItemSlot itemSlot => itemSlot.TakeItem(),
@@ -225,14 +222,6 @@ namespace Aqua.FPSController
 
         private void Update ()
         {
-            _currentObservedObjectSocket.TrySetValue(Physics.Raycast(_fpsCamera.Camera.transform.position,
-                                                   _fpsCamera.Camera.transform.TransformDirection(Vector3.forward),
-                                                   out var hit,
-                                                   _distanceOfItemInteraction,
-                                                   _obstacleLayerMask)
-                ? hit.transform.gameObject.GetComponent<IInfo>()
-                : null);
-
             if (_takeItemAction.action.WasPressedThisFrame())
                 TryTakeItem();
 
@@ -271,12 +260,13 @@ namespace Aqua.FPSController
             if (_isInited)
                 return;
 
+            if(_objectScaner == null)
+                _objectScaner = GetComponent<ObjectScaner>();
+
             if (_obstacleLayerMask.value == LayerMask.GetMask(NothingLayerName))
                 _obstacleLayerMask = LayerMask.GetMask(DefaultLayerName, ItemsLayerName, ItemsSlotsLayerName);
             _indexSocket = new(_inventoryIndex);
             _selectedItemSocket = new(SelectedItem);
-
-            _currentObservedObjectSocket = new();
 
             _isInited = true;
         }

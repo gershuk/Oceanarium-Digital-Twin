@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: _fpsCamera
       value: 
       objectReference: {fileID: 8564766761505736872}
+    - target: {fileID: 4481195978018896633, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
+      propertyPath: _fpsCamera
+      value: 
+      objectReference: {fileID: 8564766761505736872}
     - target: {fileID: 6847441525046305202, guid: ddee1c5150a36ce44b7bd8a798776277, type: 3}
       propertyPath: m_Camera
       value: 
