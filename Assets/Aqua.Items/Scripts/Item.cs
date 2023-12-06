@@ -1,23 +1,28 @@
 #nullable enable
 
+using System;
+
 using Aqua.SocketSystem;
 
 using UnityEngine;
 
 namespace Aqua.Items
 {
+    [Serializable]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(Collider))]
     public class Item : MonoBehaviour, IInfo
     {
+        private bool _isInited = false;
+
         private static Sprite? _deafultSprite;
 
         #region Item start parameters
 
+        [Header("Item start parameters")]
         [SerializeField]
         private string _descritption = "description";
-
-        [Header("Item start parameters")]
+    
         [SerializeField]
         private string _name = "item";
 
@@ -44,6 +49,14 @@ namespace Aqua.Items
 
         protected void Awake ()
         {
+            ForceInit();
+        }
+
+        public void ForceInit ()
+        {
+            if (_isInited) 
+                return;
+
             _nameSocket = new(_name);
             _descriptionSocket = new(_descritption);
             _spriteSocket = new(_sprite);
@@ -60,6 +73,8 @@ namespace Aqua.Items
             GameObject = GetComponent<GameObject>();
             Rigidbody = GetComponent<Rigidbody>();
             Collider = GetComponent<Collider>();
+
+            _isInited = true;
         }
     }
 }

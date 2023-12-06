@@ -162,6 +162,7 @@ namespace Aqua.FPSController
                 _currentGrabbedItem = item;
                 _currentObservedObjectSocket.TrySetValue(null);
             }
+
             if (_currentObservedObjectSocket.GetValue() is ItemSlot slot and not null)
             {
                 var itemSlot = slot;
@@ -169,11 +170,13 @@ namespace Aqua.FPSController
                 if (_currentGrabbedItem is not null)
                     itemSlot.RemoveItem();
             }
+
             if (_currentGrabbedItem is not null)
             {
                 _currentGrabbedItem.gameObject.layer = LayerMask.NameToLayer(IgnoreRaycastLayerName);
                 _currentGrabbedItem.transform.parent = _fpsCamera.Camera.transform;
                 _currentGrabbedItem.Rigidbody.isKinematic = true;
+                _currentGrabbedItem.Collider.enabled = false;
                 return true;
             }
             else
@@ -189,6 +192,7 @@ namespace Aqua.FPSController
                 _currentGrabbedItem.gameObject.layer = LayerMask.NameToLayer(ItemsLayerName);
                 _currentGrabbedItem.transform.parent = null;
                 _currentGrabbedItem.Rigidbody.isKinematic = false;
+                _currentGrabbedItem.Collider.enabled = true;
                 _currentGrabbedItem = null;
                 return true;
             }

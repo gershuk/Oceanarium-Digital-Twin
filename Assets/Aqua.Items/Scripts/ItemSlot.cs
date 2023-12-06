@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Aqua.Items
 {
+    [RequireComponent(typeof(Collider))]
     public class ItemSlot : MonoBehaviour, IInfo
     {
         private bool _isInited;
@@ -22,6 +23,12 @@ namespace Aqua.Items
 
         [SerializeField]
         private Sprite _sprite;
+
+        [SerializeField]
+        private string _requiredName;
+
+        [SerializeField]
+        private Item _defaultItem;
 
         #endregion Item slot start parameters
 
@@ -41,6 +48,8 @@ namespace Aqua.Items
 
         [SerializeField]
         protected Transform _itemPosition;
+
+        private Transform Anchor => _itemPosition == null ? transform : _itemPosition;
 
         public const string IgnorRayCastLayerName = "Ignore Raycast";
         public const string ItemsLayerName = "Items";
@@ -65,6 +74,12 @@ namespace Aqua.Items
             }
 
             _isInited = true;
+
+            if (_defaultItem != null)
+            {
+                _defaultItem.ForceInit();
+                SetItem(_defaultItem);
+            }
         }
 
         protected void Awake ()
@@ -88,6 +103,14 @@ namespace Aqua.Items
             SetItem(item);
         }
 
+        protected void OnTriggerExit (Collider other)
+        {
+            var item = other.GetComponent<Item>();
+
+            if (item != null && CurrentItem == item)
+                TakeItem();
+        }
+
         public Item? TakeItem ()
         {
             var item = _item;
@@ -107,13 +130,20 @@ namespace Aqua.Items
             _item = null;
         }
 
-        public void SetItem (Item itemScript)
+        public void SetItem (Item item)
         {
-            itemScript.transform.position = transform.position;
-            itemScript.transform.rotation = transform.rotation;
-            itemScript.gameObject.layer = LayerMask.NameToLayer(IgnorRayCastLayerName);
-            itemScript.Rigidbody.isKinematic = true;
-            _item = itemScript;
+            item.transform.position = Anchor.position;
+            item.transform.rotation = Anchor.rotation;
+
+            if (!string.IsNullOrEmpty(_requiredName) && _requiredName != item.NameSocket.GetValue())
+            {
+                Debug.Log("Wrang item name. Can't set it.");
+                return;
+            }
+            
+            item.gameObject.layer = LayerMask.NameToLayer(IgnorRayCastLayerName);
+            item.Rigidbody.isKinematic = true;
+            _item = item;
         }
     }
 }
