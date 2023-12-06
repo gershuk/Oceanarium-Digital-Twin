@@ -170,6 +170,12 @@ namespace Aqua.FPSController
 
             if (_playerMovement == null)
                 _playerMovement = GetComponent<PlayerMovement>();
+
+            if (_objectScaner == null)
+                _objectScaner = GetComponent<ObjectScaner>();
+
+            if (_objectInteracter == null)
+                _objectInteracter = GetComponent<ObjectInteracter>();
         }
 
         private void OnDestroy ()
@@ -207,12 +213,22 @@ namespace Aqua.FPSController
             _showHideMenu.action.performed -= OnShowHideMenuPerformed;
         }
 
+        private void ForceInitSubcomponents ()
+        {
+            //_fpsCamera.ForceInit();
+            _inventory.ForceInit();
+            //_playerMovement.ForceInit();
+            _objectScaner.ForceInit();
+            _objectInteracter.ForceInit();
+        }
+
         public void ForceInit ()
         {
             if (_isInited)
                 return;
 
             FindObjectsIfNull();
+            ForceInitSubcomponents();
 
             _stateSocket = new(PlayerControllerState.MovementInput);
 
