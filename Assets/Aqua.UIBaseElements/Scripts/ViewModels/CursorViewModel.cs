@@ -18,5 +18,15 @@ namespace Aqua.UIBaseElements
         public Vector2 HotSpot { get => _hotSpot; set => _hotSpot = value; }
 
         private void Start () => Cursor.SetCursor(CursorTexture, HotSpot, CursorMode);
+
+        public bool IsCursorAcitve
+        {
+            get => Cursor.visible;
+            set
+            {
+                Cursor.visible = value;
+                Cursor.lockState = value ? CursorLockMode.Confined : CursorLockMode.Locked;
+            }
+        }
     }
 }

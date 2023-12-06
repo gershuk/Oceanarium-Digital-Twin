@@ -13,12 +13,16 @@ namespace Aqua.UIBaseElements
 {
     public class LoadingScreenViewModel : MonoBehaviour
     {
+        [SerializeField]
+        private CursorViewModel _cursorViewModel;
+
         private Coroutine? _loadingCoroutine;
 
         [SerializeField]
         private GameObject _loadingCamera;
 
         public const int EndLoadingWaitTime = 5;
+        public const float LoadingSceneCoefficient = 0.5f;
 
         [SerializeField]
         private Canvas _canvas;
@@ -37,8 +41,13 @@ namespace Aqua.UIBaseElements
             }
 
             _loadingBar.ProgressSocket.SubscribeTo(_progressSocket);
-            if (_canvas != null )
+
+            if (_canvas == null )
                 _canvas = GetComponent<Canvas>();
+
+            if (_cursorViewModel == null )
+                _cursorViewModel = FindFirstObjectByType<CursorViewModel>();
+
             DontDestroyOnLoad(gameObject);
             DisableView();
         }
@@ -65,20 +74,38 @@ namespace Aqua.UIBaseElements
 
         private IEnumerator StartLoadingWithScreen (string name, LoadSceneParameters parameters = new())
         {
+            if (FindFirstObjectByType<SceneBuilder>() is var oldSceneBuilder and not null)
+                oldSceneBuilder.DestroyScene();
+
+            _cursorViewModel.IsCursorAcitve = true;
+
             var loadingOperation = SceneLoader.Instance.LoadSceneAsync(name, parameters);
             
             EnableView();
 
-            while (!loadingOperation.isDone)
+            do
             {
-                _progressSocket.TrySetValue(loadingOperation.progress);
+                _progressSocket.TrySetValue(loadingOperation.progress * LoadingSceneCoefficient);
                 yield return null;
-            }
+            } while (!loadingOperation.isDone);
 
-            _progressSocket.TrySetValue(loadingOperation.progress);
-            yield return new WaitForSeconds(EndLoadingWaitTime);
+            var sceneBuilder = FindFirstObjectByType<SceneBuilder>();
+
+            sceneBuilder.StartBuildingCorutine();
+
+            do
+            {
+                _progressSocket.TrySetValue(LoadingSceneCoefficient + sceneBuilder.BuildingPercentSocket.GetValue());
+                yield return null;
+            } while (sceneBuilder.StateSocket.GetValue() != BuilderState.BuildingEnded);
+
+            _progressSocket.TrySetValue(1);
+
+            yield return new WaitForSeconds(2);      
 
             DisableView();
+
+            sceneBuilder.StartStartingCorutine();
 
             _loadingCoroutine = null;
         }

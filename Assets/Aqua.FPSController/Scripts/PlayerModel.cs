@@ -1,19 +1,21 @@
+#nullable enable
+
 using System;
 
 using Aqua.SocketSystem;
-
-using UniRx;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Aqua.FPSController
 {
+    [Serializable]
     public enum PlayerControllerState
     {
-        MovementInput = 0,
-        Cursor = 1,
-        Menu = 2,
+        None = 0,
+        MovementInput = 1,
+        Cursor = 2,
+        Menu = 3,
     }
 
     public sealed class PlayerModel : MonoBehaviour
@@ -32,34 +34,45 @@ namespace Aqua.FPSController
         [SerializeField]
         private PlayerMovement _playerMovement;
 
+        [SerializeField]
+        private PlayerControllerState _startState = PlayerControllerState.None;
+
         public FPSCamera FpsCamera { get => _fpsCamera; private set => _fpsCamera = value; }
         public PlayerInventory Inventory { get => _inventory; private set => _inventory = value; }
         public PlayerMovement PlayerMovement { get => _playerMovement; private set => _playerMovement = value; }
 
-        public PlayerControllerState State 
-        { 
+        public PlayerControllerState State
+        {
             get => _stateSocket.GetValue();
             set
             {
                 if (!_stateSocket.TrySetValue(value))
                 {
-                    Debug.LogWarning("Can't set value if when socket has input connection");
+                    Debug.LogWarning("Can't set value when socket has input connection");
                     return;
                 }
 
                 switch (_stateSocket.GetValue())
                 {
+                    case PlayerControllerState.None:
+                        IsMovementInputAcitve = false;
+                        IsCursorAcitve = false;
+                        IsCameraAcitve = false;
+                        break;
                     case PlayerControllerState.MovementInput:
                         IsMovementInputAcitve = true;
                         IsCursorAcitve = false;
+                        IsCameraAcitve = true;
                         break;
                     case PlayerControllerState.Cursor:
                         IsMovementInputAcitve = false;
                         IsCursorAcitve = true;
+                        IsCameraAcitve = true;
                         break;
                     case PlayerControllerState.Menu:
                         IsMovementInputAcitve = false;
                         IsCursorAcitve = true;
+                        IsCameraAcitve = true;
                         break;
                     default:
                         throw new NotImplementedException();
@@ -77,6 +90,7 @@ namespace Aqua.FPSController
         private InputActionReference _showHideCursor;
         private bool _isMovementInputAcitve;
         private bool _isCursorAcitve;
+        private bool _isCameraAcitve;
 
         #endregion
 
@@ -96,7 +110,7 @@ namespace Aqua.FPSController
 
             SubscribeOnActions();
 
-            State = PlayerControllerState.MovementInput;
+            State = _startState;
 
             _isInited = true;
         }
@@ -132,6 +146,7 @@ namespace Aqua.FPSController
 
         private void OnShowHideMenuPerformed (InputAction.CallbackContext obj) => State = State switch
         {
+            PlayerControllerState.None => PlayerControllerState.None,
             PlayerControllerState.MovementInput => PlayerControllerState.Menu,
             PlayerControllerState.Cursor => PlayerControllerState.Menu,
             PlayerControllerState.Menu => PlayerControllerState.MovementInput,
@@ -140,6 +155,7 @@ namespace Aqua.FPSController
 
         private void OnShowHideCursorPerformed (InputAction.CallbackContext obj) => State = State switch
         {
+            PlayerControllerState.None => PlayerControllerState.None,
             PlayerControllerState.MovementInput => PlayerControllerState.Cursor,
             PlayerControllerState.Cursor => PlayerControllerState.MovementInput,
             PlayerControllerState.Menu => PlayerControllerState.Menu,
@@ -152,7 +168,6 @@ namespace Aqua.FPSController
             private set
             {
                 _isCursorAcitve = value;
-
                 Cursor.visible = _isCursorAcitve;
                 Cursor.lockState = _isCursorAcitve ? CursorLockMode.Confined : CursorLockMode.Locked;
             }
@@ -164,9 +179,18 @@ namespace Aqua.FPSController
             private set
             {
                 _isMovementInputAcitve = value;
+                _fpsCamera.enabled = _isMovementInputAcitve;
+                PlayerMovement.enabled = _isMovementInputAcitve;
+            }
+        }
 
-                _fpsCamera.enabled = value;
-                _playerMovement.enabled = value;
+        public bool IsCameraAcitve
+        {
+            get => _isCameraAcitve;
+            private set
+            {
+                _isCameraAcitve = value;
+                FpsCamera.gameObject.SetActive(_isCameraAcitve);
             }
         }
     }

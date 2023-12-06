@@ -1,11 +1,9 @@
 {
-    "name": "Aqua.SceneController",
-    "rootNamespace": "Aqua.SceneController",
+    "name": "Aqua.Scenes.MainMenu",
+    "rootNamespace": "Aqua.Scenes.MainMenu",
     "references": [
         "GUID:f52c881e3a01bd4459588757d81478e3",
-        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
-        "GUID:0f8cc86c7b49de74bb89a4b3902cdfd2",
-        "GUID:6e27ca69a1c4ddf4f83cd351fbd7d8df"
+        "GUID:aef38acb4acce274698f4c65e2956312"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
