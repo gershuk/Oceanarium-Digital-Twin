@@ -1,0 +1,19 @@
+{
+    "name": "Aqua.Scenes.ChangingFilter",
+    "rootNamespace": "Aqua.Scenes.ChangingFilter",
+    "references": [
+        "GUID:aef38acb4acce274698f4c65e2956312",
+        "GUID:f52c881e3a01bd4459588757d81478e3",
+        "GUID:b0354195131e1414dabcc358840d86b5",
+        "GUID:0f8cc86c7b49de74bb89a4b3902cdfd2"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

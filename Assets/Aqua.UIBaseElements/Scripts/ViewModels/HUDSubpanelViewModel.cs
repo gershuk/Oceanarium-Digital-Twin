@@ -1,13 +1,12 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 
-using Aqua.FPSController;
-using Aqua.SceneController;
+
+using UniRx.Triggers;
 
 using UnityEngine;
 using UnityEngine.UI;
+
+using UniRx;
 
 namespace Aqua.UIBaseElements
 {
@@ -38,6 +37,22 @@ namespace Aqua.UIBaseElements
         public Button SaveButton => _saveButton;
         public Button ContinueButton => _continueButton;
 
+        public LoadingScreenViewModel LoadingScreenViewModel 
+        { 
+            get => _loadingScreenViewModel;
+            protected set
+            {
+                _loadingScreenViewModel = value;
+
+                if (_loadingScreenViewModel != null)
+                {
+                    _loadingScreenViewModel.OnDestroyAsObservable()
+                                           .Subscribe(u => _loadingScreenViewModel = FindFirstObjectByType<LoadingScreenViewModel>())
+                                           .AddTo(this);
+                }
+            }
+        }
+
         private void OnDestroy () => UnregisterButtons();
 
         private void RegisterButtons ()
@@ -60,7 +75,7 @@ namespace Aqua.UIBaseElements
 
             RegisterButtons();
 
-            _loadingScreenViewModel = FindFirstObjectByType<LoadingScreenViewModel>();
+            LoadingScreenViewModel = FindFirstObjectByType<LoadingScreenViewModel>();
 
             _isInited = true;
         }
@@ -75,7 +90,7 @@ namespace Aqua.UIBaseElements
 
         public void Continue () => CloseHUDSubpanel();
 
-        public void GoToMainMenu () => _loadingScreenViewModel.StartLoadingCoroutine(MainMenuName);
+        public void GoToMainMenu () => LoadingScreenViewModel.StartLoadingCoroutine(MainMenuName);
 
         public void Save () => Debug.Log($"{nameof(Save)} not implemented");
 

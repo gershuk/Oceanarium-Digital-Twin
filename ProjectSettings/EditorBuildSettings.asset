@@ -12,10 +12,7 @@ EditorBuildSettings:
     path: Assets/Aqua.Scenes/MainMenu/MainMenu.unity
     guid: 42441c847abefc84290a91c241cca216
   - enabled: 1
-    path: Assets/Aqua.Scenes/ChangingFilter.unity
+    path: Assets/Aqua.Scenes/ChangingFilter/ChangingFilter.unity
     guid: e26ad53702f44f34cb5acc955359800b
-  - enabled: 1
-    path: Assets/Aqua.Scenes/TestFPSFeatures.unity
-    guid: 4d33d889e941bea42bbebb338833d31c
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 5a6d860f007b89e41b95731a9c5d7a80, type: 2}

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Aqua.SceneController
 {
-    public class Scenario : SceneBuilder
+    public class ScenarioSceneBuilder : SceneBuilder
     {
         [SerializeField]
         private PlayerModel _playerModel;
