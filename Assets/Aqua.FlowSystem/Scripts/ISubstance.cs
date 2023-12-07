@@ -4,7 +4,7 @@ namespace Aqua.FlowSystem
 {
     public interface ISubstance
     {
-        public double Volum { get; }
+        public double Volume { get; }
     }
 
     public interface ISubstanceOperations<T> where T : struct, ISubstance
@@ -13,6 +13,6 @@ namespace Aqua.FlowSystem
 
         public T Combine (params T[] substances);
 
-        public bool IsVolumApproximatelyEqual (double value, double eps);
+        public bool IsVolumeApproximatelyEqual (double value, double eps);
     }
 }
