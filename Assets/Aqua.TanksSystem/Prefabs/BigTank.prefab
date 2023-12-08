@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3727424332386807284}
   - component: {fileID: 4168887176891878628}
   - component: {fileID: 7405900289693379534}
+  - component: {fileID: 4481705368046572560}
   m_Layer: 0
   m_Name: BigTank
   m_TagString: Untagged
@@ -106,6 +107,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.023419503, y: 0.012892918, z: 0.01200021}
   m_Center: {x: 0.0004641246, y: 0.000048250426, z: 0.006000103}
+--- !u!114 &4481705368046572560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6386715489387565468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 813eb0b549d121042b3fcb4729129e31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _descritption: "\u0422\u0430\u043D\u043A"
+  _name: "\u0422\u0430\u043D\u043A"
+  _sprite: {fileID: 0}
+  _defaultRespawnPosition: {fileID: 0}
 --- !u!1001 &7080956970725332023
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System;
+using System.Net.Mail;
 
 using Aqua.SocketSystem;
 
@@ -14,6 +15,17 @@ namespace Aqua.SceneController
 
     public class ScenarioTask
     {
+        protected string _failMessage;
+
+        public virtual string FailMessage
+        {
+            get => _failMessage;
+            protected set
+            {
+                _failMessage = value;
+            }
+        }
+
         private readonly MulticonnectionSocket<string, string> _descriptionSocket;
         private readonly MulticonnectionSocket<Guid, Guid> _guidSocket;
         private readonly MulticonnectionSocket<string, string> _nameSocket;
@@ -75,11 +87,12 @@ namespace Aqua.SceneController
 
         public IOutputSocket<TaskState> StateSocket => _stateSocket;
 
-        public ScenarioTask (string name, string description, TaskState completed = default)
+        public ScenarioTask (string name, string description, string failMessage = "Task failed", TaskState completed = default)
         {
             _guidSocket = new(Guid.NewGuid());
             _nameSocket = new(name ?? throw new NullReferenceException(nameof(name)));
             _descriptionSocket = new(description ?? throw new NullReferenceException(nameof(description)));
+            FailMessage = failMessage;
             _stateSocket = new(completed);
         }
     }

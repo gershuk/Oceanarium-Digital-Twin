@@ -39,10 +39,11 @@ namespace Aqua.UIBaseElements
                 _children[i] = _transform.GetChild(i).GetComponent<RectTransform>();
 
             var offset = 0f;
+            var width = _transform.rect.width - (_children.Length-1)* _horizontalSpace;
             for (var i = 0; i < _children.Length; i++)
             {
                 var child = _children[i];
-                var newWidth = _transform.rect.width * _fractions[i];
+                var newWidth = width * _fractions[i];
 
                 var parameters = new RectTransformParameters
                 (

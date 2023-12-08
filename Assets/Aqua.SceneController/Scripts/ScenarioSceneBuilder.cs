@@ -10,7 +10,7 @@ namespace Aqua.SceneController
     public class ScenarioSceneBuilder : SceneBuilder
     {
         [SerializeField]
-        private PlayerModel _playerModel;
+        protected PlayerModel _playerModel;
 
         protected override void SubInit ()
         {
