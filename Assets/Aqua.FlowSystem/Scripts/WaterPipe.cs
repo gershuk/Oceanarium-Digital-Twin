@@ -23,6 +23,12 @@ namespace Aqua.FlowSystem
             _sockets = GetComponentsInChildren<WaterSocket>().ToList();
         }
 
+        private void Start ()
+        {
+            _sockets.RemoveAll((socket) => !socket.IsConnected);
+            CalcCoefficients();
+        }
+
         private void FixedUpdate ()
         {
             PassiveFlow();
@@ -30,53 +36,80 @@ namespace Aqua.FlowSystem
 
         public double MaxVolume => _maxVolume;
 
+        public double FreeVolume => _maxVolume - _substance.Volume;
+
         public Water StoredSubstance => _substance;
 
-        public bool IsFull => _substance.Volume >= _maxVolume; // TODO Use comparator
+        public bool IsFull => !_substance.IsVolumeApproximatelyLess(_maxVolume, 1e-3);  // TODO Define and use eps
 
-        public void AddSubstance (Water substance)
-        {
-            _substance = _substance.Combine(substance);
-        }
+        public void AddSubstance (Water substance) => _substance = _substance.Combine(substance);
 
         public IReadOnlyCollection<IFlowSocket<Water>> Sockets => _sockets;
 
         public void PassiveFlow ()
         {
-            if (_substance.IsVolumeApproximatelyEqual(0.0, 1e-6)) // TODO Define and use eps
+            if (_substance.IsVolumeApproximatelyEqual(0.0, 1e-3)) // TODO Define and use eps
                 return;
 
-            var flowSockets = _sockets.FindAll((socket) => IsSocketAvailableToFlow(socket));
-            if (flowSockets.Count == 0)
+            var passiveFlowSockets = _sockets.FindAll((socket) => IsPassiveFlowSocket(socket));
+            if (passiveFlowSockets.Count == 0)
                 return;
 
-            var count = flowSockets.Count + 1;
+            var count = passiveFlowSockets.Count;
             var amount = _substance.Volume;
-            foreach (IFlowSocket<Water> socket in flowSockets)
-                amount += socket.OtherSubstance.Volume;
+            foreach (var socket in passiveFlowSockets)
+                amount += socket.ConnectedSubstance.Volume;
 
-            var average = amount / count;
-            if (average > _substance.Volume)
-                throw new InvalidOperationException();
+            var average = amount / (count + 1);
 
-            var delta = (_substance.Volume - average) * Time.fixedDeltaTime;
+            var deltas = new double[count + 1];
+            for(var i = 0; i < count; ++i)
+            {
+                deltas[i] = Math.Min(average - passiveFlowSockets[i].ConnectedSubstance.Volume,
+                                     passiveFlowSockets[i].ConnectedContainer.FreeVolume)
+                                        * Time.fixedDeltaTime;
+            }
 
-            var coefficients = new double[count];
-            coefficients[0] = (_substance.Volume - delta) / _substance.Volume;
+            deltas[count] = _substance.Volume - deltas.Sum();
+            var coefficients = GetNormalizedCoefficients(deltas);
 
-            for (var i = 1; i < count; ++i)
-                coefficients[i] = (1 - coefficients[0]) / (coefficients.Length - 1);
+            Debug.Log(count + " " + coefficients.Sum());
 
             var substances = _substance.Separate(coefficients);
-            _substance = substances[0];
-            for (var i = 0; i < flowSockets.Count; ++i)
-                flowSockets[i].Push(substances[i + 1]);
+            for (var i = 0; i < count; ++i)
+                passiveFlowSockets[i].Push(substances[i]);
+
+            _substance = substances[count];
         }
 
-        private bool IsSocketAvailableToFlow (IFlowSocket<Water> socket) =>
-            socket.IsConnected &&
-            !socket.ConnectedSocket.Container.IsFull &&
-            socket.OtherSubstance.Volume < _substance.Volume; // TODO Define and use eps
+        private void CalcCoefficients ()
+        {
+            var totalFlowVolume = 0.0;
 
+            foreach (var socket in _sockets)
+                totalFlowVolume += socket.MaxFlowVolume;
+
+            foreach (var socket in _sockets)
+                socket.SetFlowCoefficient(socket.MaxFlowVolume / totalFlowVolume);
+        }
+
+        private double[] GetNormalizedCoefficients (double[] values)
+        {
+            var cefficiensSum = 0.0;
+
+            foreach (var coef in values)
+                cefficiensSum += coef;
+
+            var coefficients = new double[values.Length];
+
+            for (var i = 0; i < values.Length; ++i)
+                coefficients[i] = values[i] / cefficiensSum;
+
+            return coefficients;
+        }
+
+        private bool IsPassiveFlowSocket (IFlowSocket<Water> socket) =>
+            !socket.ConnectedSocket.Container.IsFull &&
+            socket.ConnectedSubstance.IsVolumeApproximatelyLess(_substance.Volume, 1e-3);  // TODO Define and use eps
     }
 }

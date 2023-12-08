@@ -9,20 +9,23 @@ namespace Aqua.FlowSystem
     {
         public double MaxFlowVolume { get; }
 
+        public double FlowCoefficient { get; }
+
         public IVolumeContainer<T> Container { get; }
 
         public IFlowSocket<T>? ConnectedSocket { get; }
 
-        public bool IsConnected => ConnectedSocket is not null;
+        public IVolumeContainer<T> ConnectedContainer { get; }
 
-        public T OtherSubstance =>
-            ConnectedSocket is not null
-            ? ConnectedSocket.Container.StoredSubstance
-            : throw new InvalidOperationException();
+        public T ConnectedSubstance { get; }
+
+        public bool IsConnected { get; }
 
         public void Connect (IFlowSocket<T> socket);
 
         public void Disconnect ();
+
+        public void SetFlowCoefficient (double coefficient);
 
         public void Push (T substance);
     }

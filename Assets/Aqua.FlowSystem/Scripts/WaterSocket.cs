@@ -11,6 +11,8 @@ namespace Aqua.FlowSystem
         [SerializeField]
         private double _maxFlowVolume;
         [SerializeField]
+        private double _flowCoefficient;
+        [SerializeField]
         private WaterSocket? _connection;
         private IVolumeContainer<Water> _parentContainer;
         private IFlowSocket<Water>? _connectedSocket;
@@ -28,9 +30,20 @@ namespace Aqua.FlowSystem
 
         public double MaxFlowVolume => _maxFlowVolume;
 
+        public double FlowCoefficient => _flowCoefficient;
+
         public IVolumeContainer<Water> Container => _parentContainer;
 
         public IFlowSocket<Water>? ConnectedSocket => _connectedSocket;
+
+        public IVolumeContainer<Water> ConnectedContainer =>
+            _connectedSocket is not null
+            ? _connectedSocket.Container
+            : throw new InvalidOperationException();
+
+        public Water ConnectedSubstance => ConnectedContainer.StoredSubstance;
+
+        public bool IsConnected => _connectedSocket != null;
 
         public void Connect (IFlowSocket<Water> socket)
         {
@@ -48,6 +61,8 @@ namespace Aqua.FlowSystem
 
         public void Disconnect () =>
             _connectedSocket = _connectedSocket is not null ? null : throw new InvalidOperationException();
+
+        public void SetFlowCoefficient (double coefficient) => _flowCoefficient = coefficient;
 
         public void Push (Water substance)
         {

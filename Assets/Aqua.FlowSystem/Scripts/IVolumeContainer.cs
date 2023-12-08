@@ -7,6 +7,8 @@ namespace Aqua.FlowSystem
     {
         public double MaxVolume { get; }
 
+        public double FreeVolume { get; }
+
         public T StoredSubstance { get; }
 
         public bool IsFull { get; }

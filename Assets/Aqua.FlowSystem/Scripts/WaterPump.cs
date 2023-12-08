@@ -14,6 +14,8 @@ namespace Aqua.FlowSystem
 
         public double MaxVolume => 0;
 
+        public double FreeVolume => 0;
+
         public Water StoredSubstance => new(0);
 
         public bool IsFull => true;

@@ -14,5 +14,7 @@ namespace Aqua.FlowSystem
         public T Combine (params T[] substances);
 
         public bool IsVolumeApproximatelyEqual (double value, double eps);
+
+        public bool IsVolumeApproximatelyLess (double value, double eps);
     }
 }

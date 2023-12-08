@@ -38,5 +38,8 @@ namespace Aqua.FlowSystem
 
         public bool IsVolumeApproximatelyEqual (double value, double eps) =>
             Math.Abs(_volume - value) < eps;
+
+        public bool IsVolumeApproximatelyLess (double value, double eps) =>
+            value - _volume > eps;
     }
 }
