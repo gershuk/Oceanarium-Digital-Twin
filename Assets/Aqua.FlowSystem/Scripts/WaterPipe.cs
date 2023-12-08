@@ -46,7 +46,7 @@ namespace Aqua.FlowSystem
 
         public IReadOnlyCollection<IFlowSocket<Water>> Sockets => _sockets;
 
-        public void PassiveFlow ()
+        private void PassiveFlow ()
         {
             if (_substance.IsVolumeApproximatelyEqual(0.0, 1e-3)) // TODO Define and use eps
                 return;
@@ -72,8 +72,6 @@ namespace Aqua.FlowSystem
 
             deltas[count] = _substance.Volume - deltas.Sum();
             var coefficients = GetNormalizedCoefficients(deltas);
-
-            Debug.Log(count + " " + coefficients.Sum());
 
             var substances = _substance.Separate(coefficients);
             for (var i = 0; i < count; ++i)

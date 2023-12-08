@@ -5,22 +5,22 @@ using UnityEngine;
 
 namespace Aqua.FlowSystem
 {
-    public class WaterPump : MonoBehaviour, IVolumeContainer<Water>
+    public class WaterDrain : MonoBehaviour, IVolumeContainer<Water>
     {
         [SerializeField]
-        private double _waterPerSecond;
+        private double _waterFlowDisplay;
         [SerializeField]
         private WaterSocket _socket;
 
-        public double MaxVolume => 0;
+        public double MaxVolume => double.MaxValue;
 
-        public double FreeVolume => 0;
+        public double FreeVolume => double.MaxValue;
 
         public Water StoredSubstance => new(0);
 
-        public bool IsFull => true;
+        public bool IsFull => false;
 
-        public void AddSubstance (Water substance) => throw new InvalidOperationException();
+        public void AddSubstance (Water substance) => _waterFlowDisplay = substance.Volume;
 
         public IReadOnlyCollection<IFlowSocket<Water>> Sockets => new IFlowSocket<Water>[] { _socket };
     }

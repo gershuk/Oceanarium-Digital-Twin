@@ -16,7 +16,5 @@ namespace Aqua.FlowSystem
         public void AddSubstance (T substance);
 
         public IReadOnlyCollection<IFlowSocket<T>> Sockets { get; }
-
-        public void PassiveFlow ();
     }
 }
