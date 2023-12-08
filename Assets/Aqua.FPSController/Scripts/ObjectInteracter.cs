@@ -56,10 +56,10 @@ namespace Aqua.FPSController
 
         private bool TryDoProcessing ()
         {
-            if ((_doProcessingTime + _doProcessingCooldown) <= Time.time
-                && _objectScaner.ObservedObjectSocket.GetValue() is IInteractableObject interactableObject and not null)
+            var intObj = GetInteractableObjectFromInfo(_objectScaner.ObservedObjectSocket.GetValue());
+            if ((_doProcessingTime + _doProcessingCooldown) <= Time.time &&  intObj != null)
             {
-                interactableObject.DoProcessingAction();
+                intObj.DoProcessingAction();
                 return true;
             }
 
@@ -68,10 +68,10 @@ namespace Aqua.FPSController
 
         private bool TryUndoProcessing ()
         {
-            if ((_undoProcessingTime + _undoProcessingCooldown) <= Time.time
-                && _objectScaner.ObservedObjectSocket.GetValue() is IInteractableObject interactableObject and not null)
+            var intObj = GetInteractableObjectFromInfo(_objectScaner.ObservedObjectSocket.GetValue());
+            if ((_undoProcessingTime + _undoProcessingCooldown) <= Time.time && intObj != null)
             {
-                interactableObject.UndoProcessingAction();
+                intObj.UndoProcessingAction();
                 return true;
             }
 
@@ -80,10 +80,10 @@ namespace Aqua.FPSController
 
         private bool TryUse ()
         {
-            if ((_useTime + _useCooldown) <= Time.time
-                && _objectScaner.ObservedObjectSocket.GetValue() is IInteractableObject interactableObject and not null)
+            var intObj = GetInteractableObjectFromInfo(_objectScaner.ObservedObjectSocket.GetValue());
+            if ((_useTime + _useCooldown) <= Time.time && intObj != null)
             {
-                interactableObject.Use();
+                intObj.Use();
                 return true;
             }
 
@@ -101,6 +101,12 @@ namespace Aqua.FPSController
             if (_undoProcessingAction.action.IsPressed())
                 TryUndoProcessing();
         }
+
+        protected IInteractableObject? GetInteractableObjectFromInfo (IInfo? info) =>
+            info is MonoBehaviour behaviour and not null
+            && behaviour.gameObject.GetComponent<IInteractableObject>() is var interactableObject and not null
+                ? interactableObject
+                : null;
 
         public void ForceInit ()
         {

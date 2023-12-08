@@ -128,17 +128,9 @@ namespace Aqua.FPSController
                 switch (hit.transform.gameObject.GetComponent<IInfo>())
                 {
                     case ItemSlot itemSlotScript:
-                        if (itemSlotScript.CurrentItem is null)
-                        {
-                            itemSlotScript.SetItem(item);
-                        }
-                        else
-                        {
+                        if (!(itemSlotScript.CurrentItem == null && itemSlotScript.TrySetItem(item)))
                             return false;
-                        }
-
                         break;
-
                     default:
                         item.transform.rotation = _fpsCamera.Camera.transform.rotation;
                         item.transform.position = hit.point + hit.normal;
@@ -204,6 +196,7 @@ namespace Aqua.FPSController
                 {
                     Item itemObject => itemObject,
                     ItemSlot itemSlot => itemSlot.TakeItem(),
+                    InfoObject => null,
                     null => null,
                     _ => throw new NotImplementedException(),
                 };

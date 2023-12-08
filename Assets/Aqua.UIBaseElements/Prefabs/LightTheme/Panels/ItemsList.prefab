@@ -63,7 +63,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.11372549}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -145,6 +145,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70a159b6c08ea4b42adf28bbe235ac9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _selectItemViewPrefab: {fileID: 3607815123019363708, guid: 22e103053baacf54a96719b6e5147f84, type: 3}
   _content: {fileID: 759725093413415254}
   _model: {fileID: 0}
+  _selectItemViewPrefab: {fileID: 3607815123019363708, guid: 22e103053baacf54a96719b6e5147f84, type: 3}

@@ -1,5 +1,7 @@
 #nullable enable
 
+using System.Linq;
+
 using Aqua.SocketSystem;
 
 using UnityEngine;
@@ -9,51 +11,51 @@ namespace Aqua.Items
     [RequireComponent(typeof(Collider))]
     public class ItemSlot : MonoBehaviour, IInfo
     {
-        private bool _isInited;
+        protected bool _isInited;
 
-        private static Sprite? _deafultSprite;
+        protected static Sprite? _deafultSprite;
 
         #region Item slot start parameters
         [Header("Item slot start parameters")]
         [SerializeField]
-        private string _descritption;
+        protected string _descritption;
 
         [SerializeField]
-        private string _name;
+        protected string _name;
 
         [SerializeField]
-        private Sprite _sprite;
+        protected Sprite _sprite;
 
         [SerializeField]
-        private string _requiredName;
+        protected string[] _requiredNames;
 
         [SerializeField]
-        private Item _defaultItem;
+        protected Item _defaultItem;
 
         #endregion Item slot start parameters
 
         #region Sockets
-        private MulticonnectionSocket<string, string> _descriptionSocket { get; set; }
-        private MulticonnectionSocket<string, string> _nameSocket { get; set; }
-        private MulticonnectionSocket<Sprite, Sprite> _spriteSocket { get; set; }
+        protected MulticonnectionSocket<string, string> _descriptionSocket { get; set; }
+        protected MulticonnectionSocket<string, string> _nameSocket { get; set; }
+        protected MulticonnectionSocket<Sprite, Sprite> _spriteSocket { get; set; }
+        protected MulticonnectionSocket<Item?,Item?> _itemSocket { get; set; }
 
         public IOutputSocket<string> DescriptionSocket => _descriptionSocket;
 
         public IOutputSocket<string> NameSocket => _nameSocket;
 
         public IOutputSocket<Sprite> SpriteSocket => _spriteSocket;
+        public IOutputSocket<Item?> ItemSocket => _itemSocket;
         #endregion Sockets
-
-        protected Item? _item = null;
 
         [SerializeField]
         protected Transform _itemPosition;
 
-        private Transform Anchor => _itemPosition == null ? transform : _itemPosition;
+        protected Transform Anchor => _itemPosition == null ? transform : _itemPosition;
 
         public const string IgnorRayCastLayerName = "Ignore Raycast";
         public const string ItemsLayerName = "Items";
-        public Item CurrentItem => _item;
+        public Item? CurrentItem => _itemSocket.GetValue();
 
         public void ForceInit ()
         {
@@ -73,13 +75,15 @@ namespace Aqua.Items
                 _spriteSocket.TrySetValue(_deafultSprite);
             }
 
-            _isInited = true;
+            _itemSocket = new();
 
             if (_defaultItem != null)
             {
                 _defaultItem.ForceInit();
-                SetItem(_defaultItem);
+                TrySetItem(_defaultItem);
             }
+
+            _isInited = true;
         }
 
         protected void Awake ()
@@ -96,11 +100,11 @@ namespace Aqua.Items
 
             if (CurrentItem != null)
             {
-                Debug.Log($"Slot is not empty. Item '{CurrentItem}' already attached");
+                Debug.Log($"Slot is not empty. Item '{CurrentItem}' already attached. Slot {gameObject.name}.");
                 return;
             }
 
-            SetItem(item);
+            TrySetItem(item);
         }
 
         protected void OnTriggerExit (Collider other)
@@ -113,7 +117,7 @@ namespace Aqua.Items
 
         public Item? TakeItem ()
         {
-            var item = _item;
+            var item = _itemSocket.GetValue();
             if (item != null)
                 RemoveItem();
             return item;
@@ -121,29 +125,34 @@ namespace Aqua.Items
 
         public void RemoveItem ()
         {
-            if (_item == null)
+            if (_itemSocket.GetValue() == null)
             {
                 Debug.LogError("Item is not setted");
                 return;
             }
-            _item.gameObject.layer = LayerMask.NameToLayer(ItemsLayerName);
-            _item = null;
+            _itemSocket.GetValue()!.gameObject.layer = LayerMask.NameToLayer(ItemsLayerName);
+            _itemSocket.TrySetValue(null);
         }
 
-        public void SetItem (Item item)
+        public bool TrySetItem (Item item)
         {
+            if (_requiredNames.Length > 0 && !_requiredNames.Contains(item.NameSocket.GetValue()))
+            {
+                Debug.Log("Wrang item name. Can't set it.");
+                return false;
+            }
+
             item.transform.position = Anchor.position;
             item.transform.rotation = Anchor.rotation;
 
-            if (!string.IsNullOrEmpty(_requiredName) && _requiredName != item.NameSocket.GetValue())
-            {
-                Debug.Log("Wrang item name. Can't set it.");
-                return;
-            }
-            
             item.gameObject.layer = LayerMask.NameToLayer(IgnorRayCastLayerName);
             item.Rigidbody.isKinematic = true;
-            _item = item;
+            if (!_itemSocket.TrySetValue(item))
+            {
+                Debug.LogError("Can't set value when socket has input link.");
+            }
+
+            return true;
         }
     }
 }

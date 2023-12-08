@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Aqua.Items
 {
     public interface IInteractableObject

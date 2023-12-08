@@ -86,6 +86,16 @@ namespace Aqua.FPSController
             }
         }
 
+        public bool IsInventoryAcitve
+        {
+            get => _isInventoryAcitve;
+            private set
+            {
+                _isInventoryAcitve = value;
+                Inventory.enabled = _isInventoryAcitve;
+            }
+        }
+
         public ObjectScaner ObjectScaner { get => _objectScaner; private set => _objectScaner = value; }
         public PlayerMovement PlayerMovement { get => _playerMovement; private set => _playerMovement = value; }
 
@@ -104,6 +114,7 @@ namespace Aqua.FPSController
                 {
                     case PlayerControllerState.None:
                         IsMovementInputAcitve = false;
+                        IsInventoryAcitve = false;
                         IsObjectInteracterAcitve = false;
                         IsCursorAcitve = false;
                         IsCameraAcitve = false;
@@ -111,6 +122,7 @@ namespace Aqua.FPSController
 
                     case PlayerControllerState.MovementInput:
                         IsMovementInputAcitve = true;
+                        IsInventoryAcitve = true;
                         IsObjectInteracterAcitve = true;
                         IsCursorAcitve = false;
                         IsCameraAcitve = true;
@@ -118,6 +130,7 @@ namespace Aqua.FPSController
 
                     case PlayerControllerState.Cursor:
                         IsMovementInputAcitve = false;
+                        IsInventoryAcitve = false;
                         IsObjectInteracterAcitve = false;
                         IsCursorAcitve = true;
                         IsCameraAcitve = true;
@@ -125,6 +138,8 @@ namespace Aqua.FPSController
 
                     case PlayerControllerState.Menu:
                         IsMovementInputAcitve = false;
+                        IsInventoryAcitve = false;
+                        IsInventoryAcitve = false;
                         IsObjectInteracterAcitve = false;
                         IsCursorAcitve = true;
                         IsCameraAcitve = true;
@@ -155,6 +170,7 @@ namespace Aqua.FPSController
 
         #endregion Input actions
 
+        private bool _isInventoryAcitve;
         private void Awake ()
         {
             ForceInit();

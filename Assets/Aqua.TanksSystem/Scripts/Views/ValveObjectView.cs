@@ -1,5 +1,6 @@
 #nullable enable
 
+using Aqua.Items;
 using Aqua.TanksSystem.ViewModels;
 
 using UniRx;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace Aqua.TanksSystem
 {
-    public sealed class ValveObjectView : MonoBehaviour
+    public sealed class ValveObjectView : MonoBehaviour, IInteractableObject
     {
         [SerializeField]
         private Transform _base;
@@ -69,6 +70,17 @@ namespace Aqua.TanksSystem
         {
             if (TryExecuteCommand())
                 OpenCommand.Execute();
+        }
+
+        public void Use () { }
+        public void DoProcessingAction ()
+        {
+            Open();
+        }
+
+        public void UndoProcessingAction ()
+        {
+            Close();
         }
 
         #endregion Rotation methods
