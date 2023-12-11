@@ -1306,7 +1306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb4e9e0fa10f6bc49a933ac39d436690, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _waterPerSecond: 1
+  _litersPerMinute: 0
   _socket: {fileID: 945971081}
 --- !u!1 &2020328481
 GameObject:

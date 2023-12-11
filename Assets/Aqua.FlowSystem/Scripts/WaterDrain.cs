@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -16,11 +15,16 @@ namespace Aqua.FlowSystem
 
         public double FreeVolume => double.MaxValue;
 
-        public Water StoredSubstance => new(0);
+        public Water StoredSubstance => default;
 
         public bool IsFull => false;
 
-        public void AddSubstance (Water substance) => _waterFlowDisplay = substance.Volume;
+        public Water AddSubstance (Water substance)
+        {
+            _waterFlowDisplay = substance.Volume * Time.fixedDeltaTime;
+
+            return default;
+        }
 
         public IReadOnlyCollection<IFlowSocket<Water>> Sockets => new IFlowSocket<Water>[] { _socket };
     }

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 
 using UnityEngine;
-
-using static PlasticPipe.PlasticProtocol.Client.ConnectionCreator.PlasticProtoSocketConnection;
 
 namespace Aqua.FlowSystem
 {
@@ -40,15 +37,29 @@ namespace Aqua.FlowSystem
 
         public Water StoredSubstance => _substance;
 
-        public bool IsFull => !_substance.IsVolumeApproximatelyLess(_maxVolume, 1e-3);  // TODO Define and use eps
+        public bool IsFull => !_substance.IsVolumeApproximatelyLess(_maxVolume);
 
-        public void AddSubstance (Water substance) => _substance = _substance.Combine(substance);
+        public Water AddSubstance (Water substance)
+        {
+            _substance = _substance.Combine(substance);
+            if (_substance.Volume > MaxVolume)
+            {
+                var coefs = new double[2];
+                coefs[0] = MaxVolume / _substance.Volume;
+                coefs[1] = 1 - coefs[0];
+                var substanceParts = _substance.Separate(coefs);
+                _substance = substanceParts[0];
+                return substanceParts[1];
+            }
+
+            return default;
+        }
 
         public IReadOnlyCollection<IFlowSocket<Water>> Sockets => _sockets;
 
         private void PassiveFlow ()
         {
-            if (_substance.IsVolumeApproximatelyEqual(0.0, 1e-3)) // TODO Define and use eps
+            if (_substance.IsVolumeApproximatelyEqual(0))
                 return;
 
             var passiveFlowSockets = _sockets.FindAll((socket) => IsPassiveFlowSocket(socket));
@@ -63,7 +74,7 @@ namespace Aqua.FlowSystem
             var average = amount / (count + 1);
 
             var deltas = new double[count + 1];
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 deltas[i] = Math.Min(average - passiveFlowSockets[i].ConnectedSubstance.Volume,
                                      passiveFlowSockets[i].ConnectedContainer.FreeVolume)
@@ -71,11 +82,11 @@ namespace Aqua.FlowSystem
             }
 
             deltas[count] = _substance.Volume - deltas.Sum();
-            var coefficients = GetNormalizedCoefficients(deltas);
+            Utils.NormalizeCoefficients(deltas);
 
-            var substances = _substance.Separate(coefficients);
+            var substances = _substance.Separate(deltas);
             for (var i = 0; i < count; ++i)
-                passiveFlowSockets[i].Push(substances[i]);
+                passiveFlowSockets[i].PassivePush(substances[i]);
 
             _substance = substances[count];
         }
@@ -91,23 +102,8 @@ namespace Aqua.FlowSystem
                 socket.SetFlowCoefficient(socket.MaxFlowVolume / totalFlowVolume);
         }
 
-        private double[] GetNormalizedCoefficients (double[] values)
-        {
-            var cefficiensSum = 0.0;
-
-            foreach (var coef in values)
-                cefficiensSum += coef;
-
-            var coefficients = new double[values.Length];
-
-            for (var i = 0; i < values.Length; ++i)
-                coefficients[i] = values[i] / cefficiensSum;
-
-            return coefficients;
-        }
-
         private bool IsPassiveFlowSocket (IFlowSocket<Water> socket) =>
             !socket.ConnectedSocket.Container.IsFull &&
-            socket.ConnectedSubstance.IsVolumeApproximatelyLess(_substance.Volume, 1e-3);  // TODO Define and use eps
+            socket.ConnectedSubstance.IsVolumeApproximatelyLess(_substance.Volume);
     }
 }

@@ -5,6 +5,8 @@ namespace Aqua.FlowSystem
     public interface ISubstance
     {
         public double Volume { get; }
+        public double PH { get; }
+        public double Temperature { get; }
     }
 
     public interface ISubstanceOperations<T> where T : struct, ISubstance
@@ -15,6 +17,6 @@ namespace Aqua.FlowSystem
 
         public bool IsVolumeApproximatelyEqual (double value, double eps);
 
-        public bool IsVolumeApproximatelyLess (double value, double eps);
+        public bool IsVolumeApproximatelyLess (double value);
     }
 }

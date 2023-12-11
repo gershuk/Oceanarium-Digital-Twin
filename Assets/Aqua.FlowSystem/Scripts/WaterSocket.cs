@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -64,12 +65,48 @@ namespace Aqua.FlowSystem
 
         public void SetFlowCoefficient (double coefficient) => _flowCoefficient = coefficient;
 
-        public void Push (Water substance)
+        public void PassivePush (Water substance)
         {
             if (_connectedSocket is null)
-                throw new InvalidOperationException ();
+                throw new InvalidOperationException();
 
             _connectedSocket.Container.AddSubstance(substance);
+        }
+
+        public Water ActivePush (Water substance)
+        {
+            if (_connectedSocket is null)
+                throw new InvalidOperationException();
+
+            //var maxFlowRemainSubstance =
+
+            var container = _connectedSocket.Container;
+            substance = container.AddSubstance(substance);
+
+            if (substance.IsVolumeApproximatelyEqual(0))
+                return default;
+
+            var sockets = new List<IFlowSocket<Water>>(container.Sockets.Count);
+            var coefficients = new List<double>(container.Sockets.Count);
+            foreach (var socket in container.Sockets)
+            {
+                if (socket.IsConnected &&
+                    socket != ConnectedSocket &&
+                    socket.MaxFlowVolume != 0.0)
+                {
+                    sockets.Add(socket);
+                    coefficients.Add(socket.MaxFlowVolume);
+                }
+            }
+
+            Utils.NormalizeCoefficients(coefficients);
+            var substaceParts = substance.Separate(coefficients.ToArray());
+
+            Water remains = default;
+            for (var i = 0; i < sockets.Count; ++i)
+                remains = sockets[i].ActivePush(substaceParts[i].Combine(remains));
+
+            return remains;
         }
     }
 }

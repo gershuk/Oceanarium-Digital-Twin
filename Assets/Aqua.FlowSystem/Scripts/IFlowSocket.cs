@@ -1,8 +1,5 @@
 ﻿#nullable enable
 
-using System;
-using System.Collections.Generic;
-
 namespace Aqua.FlowSystem
 {
     public interface IFlowSocket<T> where T : struct, ISubstance, ISubstanceOperations<T>
@@ -27,6 +24,8 @@ namespace Aqua.FlowSystem
 
         public void SetFlowCoefficient (double coefficient);
 
-        public void Push (T substance);
+        public void PassivePush (T substance);
+
+        public T ActivePush (T substance);
     }
 }

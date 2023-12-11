@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Aqua.FlowSystem
 {
@@ -13,7 +12,7 @@ namespace Aqua.FlowSystem
 
         public bool IsFull { get; }
 
-        public void AddSubstance (T substance);
+        public T AddSubstance (T substance);
 
         public IReadOnlyCollection<IFlowSocket<T>> Sockets { get; }
     }
