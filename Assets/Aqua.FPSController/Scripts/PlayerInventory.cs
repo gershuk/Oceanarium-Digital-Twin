@@ -121,23 +121,28 @@ namespace Aqua.FPSController
             {
                 item.transform.rotation = _fpsCamera.Camera.transform.rotation;
                 item.transform.position = _fpsCamera.Camera.transform.TransformPoint(Vector3.forward * _distanceOfItemDrop);
+                item.Drop();
             }
             else
             {
                 switch (hit.transform.gameObject.GetComponent<IInfo>())
                 {
                     case ItemSlot itemSlotScript:
+                        item.Drop();
                         if (!(itemSlotScript.CurrentItem == null && itemSlotScript.TrySetItem(item)))
+                        {
+                            item.Take(true);
                             return false;
+                        }
                         break;
                     default:
                         item.transform.rotation = _fpsCamera.Camera.transform.rotation;
                         item.transform.position = hit.point + hit.normal;
+                        item.Drop();
                         break;
                 }
             }
-            _inventory.RemoveAt(InventoryIndex);
-            item.Drop();
+            _inventory.RemoveAt(InventoryIndex);            
 
             InventoryIndex = InventoryIndex - 1 >= 0 ? InventoryIndex - 1 : _inventory.Count - 1;
             return true;
