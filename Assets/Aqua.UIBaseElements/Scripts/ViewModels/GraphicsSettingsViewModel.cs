@@ -8,6 +8,8 @@ namespace Aqua.UIBaseElements
 {
     public sealed class GraphicsSettingsViewModel : MonoBehaviour
     {
+        private bool _isInited = false;
+
         [SerializeField]
         private UnityGraphicsSettingsHelper _helper;
 
@@ -16,8 +18,11 @@ namespace Aqua.UIBaseElements
 
         public GraphicsSettingsModel Model { get; private set; }
 
-        private void Start ()
+        public void ForceInit ()
         {
+            if (_isInited) 
+                return;
+
             Model = new();
 
             if (_helper == null)
@@ -34,6 +39,13 @@ namespace Aqua.UIBaseElements
             SubscribeHelperToModel();
             SubscribeViewToModel();
             SubscribeModelToView();
+
+            _isInited = true;
+        }
+
+        private void Start ()
+        {
+            ForceInit();
         }
 
         private void SubscribeHelperToModel ()
