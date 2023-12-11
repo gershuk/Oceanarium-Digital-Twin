@@ -80,7 +80,7 @@ namespace Aqua.Items
                 _spriteSocket.TrySetValue(_deafultSprite);
             }
 
-            GameObject = GetComponent<GameObject>();
+            GameObject = gameObject;
             Collider = GetComponent<Collider>();
         }
 

@@ -1,7 +1,8 @@
 using System;
-using System.Net.Mail;
+using UniRx;
 
 using Aqua.SocketSystem;
+using System.Runtime.InteropServices;
 
 namespace Aqua.SceneController
 {
@@ -13,9 +14,12 @@ namespace Aqua.SceneController
         Failed = 2,
     }
 
-    public class ScenarioTask
+    public class ScenarioTask : IDisposable
     {
+        private CompositeDisposable _disposables;
+
         protected string _failMessage;
+        protected bool _isDisposed = false;
 
         public virtual string FailMessage
         {
@@ -26,10 +30,10 @@ namespace Aqua.SceneController
             }
         }
 
-        private readonly MulticonnectionSocket<string, string> _descriptionSocket;
-        private readonly MulticonnectionSocket<Guid, Guid> _guidSocket;
-        private readonly MulticonnectionSocket<string, string> _nameSocket;
-        private readonly MulticonnectionSocket<TaskState, TaskState> _stateSocket;
+        protected readonly MulticonnectionSocket<string, string> _descriptionSocket;
+        protected readonly MulticonnectionSocket<Guid, Guid> _guidSocket;
+        protected readonly MulticonnectionSocket<string, string> _nameSocket;
+        protected readonly MulticonnectionSocket<TaskState, TaskState> _stateSocket;
 
         public string Description
         {
@@ -87,13 +91,41 @@ namespace Aqua.SceneController
 
         public IOutputSocket<TaskState> StateSocket => _stateSocket;
 
+        protected CompositeDisposable Disposables 
+        { 
+            get => _disposables; 
+            set => _disposables = value; 
+        }
+
         public ScenarioTask (string name, string description, string failMessage = "Task failed", TaskState completed = default)
         {
+            Disposables = new();
             _guidSocket = new(Guid.NewGuid());
             _nameSocket = new(name ?? throw new NullReferenceException(nameof(name)));
             _descriptionSocket = new(description ?? throw new NullReferenceException(nameof(description)));
             FailMessage = failMessage;
             _stateSocket = new(completed);
+        }
+
+        ~ScenarioTask () => Dispose(false);
+
+        public void Dispose ()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose (bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                }
+
+                Disposables.Dispose();
+                _isDisposed = true;
+            }
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Aqua.Scenes.ChangingFilter
                 string s when s != ItemName => TaskState.Completed,
                 null => TaskState.Completed,
                 _ => TaskState.NotCompleted,
-            });
+            }).AddTo(Disposables);
         }
     }
 }

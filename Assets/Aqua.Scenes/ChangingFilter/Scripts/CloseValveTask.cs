@@ -23,7 +23,7 @@ namespace Aqua.Scenes.ChangingFilter
             {
                 0 => TaskState.Completed,
                 _ => TaskState.NotCompleted,
-            });
+            }).AddTo(Disposables);
         }
     }
 }

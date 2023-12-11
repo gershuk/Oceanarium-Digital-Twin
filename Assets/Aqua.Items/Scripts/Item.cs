@@ -8,11 +8,21 @@ using UnityEngine;
 
 namespace Aqua.Items
 {
+    public enum ItemState
+    {
+        Free = 0,
+        Picked = 1,
+    }
+
     [Serializable]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(Collider))]
     public class Item : InfoObject
     {
+        private MulticonnectionSocket<ItemState, ItemState> _stateSocket;
+
+        public IOutputSocket<ItemState> StateSocket => _stateSocket;
+
         public ItemSpawner? Spawner { get => _spawner; set => _spawner = value; }
 
         #region Item start parameters
@@ -41,6 +51,23 @@ namespace Aqua.Items
         {
             base.SubInit();
             Rigidbody = GetComponent<Rigidbody>();
+            _stateSocket = new (ItemState.Free);
+        }
+
+        public void Take (bool isActive = true)
+        {
+            _stateSocket.TrySetValue(ItemState.Picked);
+            Collider.enabled = false;
+            Rigidbody.isKinematic = true;
+            GameObject.SetActive(isActive);
+        }
+
+        public void Drop ()
+        {
+            _stateSocket.TrySetValue(ItemState.Free);
+            Collider.enabled = true;
+            Rigidbody.isKinematic = false;
+            GameObject.SetActive(true);
         }
     }
 }

@@ -41,6 +41,9 @@ namespace Aqua.Scenes.ChangingFilter
         [SerializeField]
         private ItemSlot _filterSlot;
 
+        [SerializeField]
+        private ItemsCounter _binCounter;
+
         protected override void SubInit ()
         {
             base.SubInit();
@@ -55,6 +58,8 @@ namespace Aqua.Scenes.ChangingFilter
 
             _coverSlot.ForceInit();
             _filterSlot.ForceInit();
+
+            _binCounter.ForceInit();
 
             if (_taskListViewModel == null)
                 _taskListViewModel = FindFirstObjectByType<TaskListViewModel>();
@@ -71,28 +76,43 @@ namespace Aqua.Scenes.ChangingFilter
 
             _playerModel.ForceInit();
             _playerModel.State = PlayerControllerState.None;
+            _buildingPercentSocket.TrySetValue(0.1f);
+
+            yield return null;
+
+            ScenarioTask[] tasks =
+            {
+                new CloseValveTask(_inputWaterValve, "Закройте вентиль на вход"),
+                new CloseValveTask(_outputWaterValve, "Закройте вентиль на выход"),
+                new OpenValveTask(_filterValve, "Откройте клапан фильтра"),
+                new RemoveItemFromSlotTask(_coverSlot, _cover.NameSocket.GetValue(), "Снимите крышку фильтра"),
+                new RemoveItemFromSlotTask(_filterSlot, _dirtyFilter.NameSocket.GetValue(), "Уберите грязный фильтр"),
+                new AddItemToSlotTask(_filterSlot, _cleanFilter.NameSocket.GetValue(), "Вставьте чистый фильтр"),
+                new AddItemToSlotTask(_coverSlot, _cover.NameSocket.GetValue(), "Закрутите крышку фильтра"),
+                new ItemCounterTask(_binCounter,
+                                    _dirtyFilter.NameSocket.GetValue(),
+                                    1,
+                                    "Выбрость грязный фильтр в ведро",
+                                    "Выбрость грязный фильтр в ведро",
+                                    "Грязный фильтр не был выброшен")
+            };
+
             _buildingPercentSocket.TrySetValue(0.2f);
 
             yield return null;
 
-            _taskListViewModel.Model.Add(new CloseValveTask(_inputWaterValve, "Закройте вентиль на вход"));
-            _taskListViewModel.Model.Add(new CloseValveTask(_outputWaterValve, "Закройте вентиль на выход"));
-            _taskListViewModel.Model.Add(new OpenValveTask(_filterValve, "Откройте клапан фильтра"));
+            for (var i = 0; i < tasks.Length; i++)
+            {
+                var task = tasks[i];
+                _taskListViewModel.Model.Add(task);
 
-            _buildingPercentSocket.TrySetValue(0.6f);
+                _buildingPercentSocket.TrySetValue(0.2f + 0.8f * i / tasks.Length);
 
-            yield return null;
-
-            _taskListViewModel.Model.Add(new RemoveItemFromSlotTask(_coverSlot, _cover.NameSocket.GetValue(), "Снимите крышку фильтра"));
-            _taskListViewModel.Model.Add(new RemoveItemFromSlotTask(_filterSlot, _dirtyFilter.NameSocket.GetValue(), "Уберите грязный фильтр"));
-            _taskListViewModel.Model.Add(new AddItemToSlotTask(_filterSlot, _cleanFilter.NameSocket.GetValue(), "Вставьте чистый фильтр"));
-            _taskListViewModel.Model.Add(new AddItemToSlotTask(_coverSlot, _cover.NameSocket.GetValue(), "Закрутите крышку фильтра"));
-
-            _buildingPercentSocket.TrySetValue(0.8f);
-
-            yield return null;
+                yield return null;
+            }
 
             _stateScoket.TrySetValue(BuilderState.BuildingEnded);
+
             _buildingPercentSocket.TrySetValue(1);
         }
     }

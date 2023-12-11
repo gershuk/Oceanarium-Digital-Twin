@@ -121,7 +121,6 @@ namespace Aqua.FPSController
             {
                 item.transform.rotation = _fpsCamera.Camera.transform.rotation;
                 item.transform.position = _fpsCamera.Camera.transform.TransformPoint(Vector3.forward * _distanceOfItemDrop);
-                item.GetComponent<Rigidbody>().isKinematic = false;
             }
             else
             {
@@ -134,12 +133,11 @@ namespace Aqua.FPSController
                     default:
                         item.transform.rotation = _fpsCamera.Camera.transform.rotation;
                         item.transform.position = hit.point + hit.normal;
-                        item.GetComponent<Rigidbody>().isKinematic = false;
                         break;
                 }
             }
             _inventory.RemoveAt(InventoryIndex);
-            item.gameObject.SetActive(true);
+            item.Drop();
 
             InventoryIndex = InventoryIndex - 1 >= 0 ? InventoryIndex - 1 : _inventory.Count - 1;
             return true;
@@ -164,8 +162,7 @@ namespace Aqua.FPSController
             {
                 _currentGrabbedItem.gameObject.layer = LayerMask.NameToLayer(IgnoreRaycastLayerName);
                 _currentGrabbedItem.transform.parent = _fpsCamera.Camera.transform;
-                _currentGrabbedItem.Rigidbody.isKinematic = true;
-                _currentGrabbedItem.Collider.enabled = false;
+                _currentGrabbedItem.Take(true);
                 return true;
             }
             else
@@ -180,8 +177,7 @@ namespace Aqua.FPSController
             {
                 _currentGrabbedItem.gameObject.layer = LayerMask.NameToLayer(ItemsLayerName);
                 _currentGrabbedItem.transform.parent = null;
-                _currentGrabbedItem.Rigidbody.isKinematic = false;
-                _currentGrabbedItem.Collider.enabled = true;
+                _currentGrabbedItem.Drop();
                 _currentGrabbedItem = null;
                 return true;
             }
@@ -204,8 +200,7 @@ namespace Aqua.FPSController
                 if (item is not null)
                 {
                     _inventory.Add(item);
-                    item.Rigidbody.isKinematic = true;
-                    item.gameObject.SetActive(false);
+                    item.Take(false);
                     InventoryIndex = _inventory.Count - 1;
                     return true;
                 }
