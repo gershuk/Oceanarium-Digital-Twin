@@ -1,7 +1,10 @@
+#nullable enable
+
 using System.Collections;
 using System.Collections.Generic;
 
 using Aqua.FPSController;
+using Aqua.SocketSystem;
 
 using UnityEngine;
 
@@ -9,11 +12,21 @@ namespace Aqua.SceneController
 {
     public class ScenarioSceneBuilder : SceneBuilder
     {
+
+        protected ScenarioTask[] _tasks;
+
+        private MulticonnectionSocket<ScenarioTask?, ScenarioTask?> _firstFailedTaskSocket;
+
+        public IOutputSocket<ScenarioTask?> FirstFailedTaskSocket => _firstFailedTaskSocket;
+
         [SerializeField]
         protected PlayerModel _playerModel;
 
+        public IReadOnlyList<ScenarioTask> Tasks => _tasks;
+
         protected override void SubInit ()
         {
+            _firstFailedTaskSocket = new();
             if (_playerModel == null)
                 _playerModel = FindFirstObjectByType<PlayerModel>();
         }

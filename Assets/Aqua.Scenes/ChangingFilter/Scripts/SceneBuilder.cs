@@ -80,7 +80,7 @@ namespace Aqua.Scenes.ChangingFilter
 
             yield return null;
 
-            ScenarioTask[] tasks =
+            _tasks = new ScenarioTask[]
             {
                 new CloseValveTask(_inputWaterValve, "Закройте вентиль на вход"),
                 new CloseValveTask(_outputWaterValve, "Закройте вентиль на выход"),
@@ -101,12 +101,12 @@ namespace Aqua.Scenes.ChangingFilter
 
             yield return null;
 
-            for (var i = 0; i < tasks.Length; i++)
+            for (var i = 0; i < _tasks.Length; i++)
             {
-                var task = tasks[i];
+                var task = _tasks[i];
                 _taskListViewModel.Model.Add(task);
 
-                _buildingPercentSocket.TrySetValue(0.2f + 0.8f * i / tasks.Length);
+                _buildingPercentSocket.TrySetValue(0.2f + 0.8f * i / _tasks.Length);
 
                 yield return null;
             }

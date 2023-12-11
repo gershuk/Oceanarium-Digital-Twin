@@ -16,6 +16,8 @@ namespace Aqua.FPSController
         MovementInput = 1,
         Cursor = 2,
         Menu = 3,
+        Win = 4,
+        Lose = 5,
     }
 
     public sealed class PlayerModel : MonoBehaviour
@@ -144,7 +146,22 @@ namespace Aqua.FPSController
                         IsCursorAcitve = true;
                         IsCameraAcitve = true;
                         break;
-
+                    case PlayerControllerState.Win:
+                        IsMovementInputAcitve = false;
+                        IsInventoryAcitve = false;
+                        IsInventoryAcitve = false;
+                        IsObjectInteracterAcitve = false;
+                        IsCursorAcitve = true;
+                        IsCameraAcitve = true;
+                        break;
+                    case PlayerControllerState.Lose:
+                        IsMovementInputAcitve = false;
+                        IsInventoryAcitve = false;
+                        IsInventoryAcitve = false;
+                        IsObjectInteracterAcitve = false;
+                        IsCursorAcitve = true;
+                        IsCameraAcitve = true;
+                        break;
                     default:
                         throw new NotImplementedException();
                 }
@@ -205,6 +222,8 @@ namespace Aqua.FPSController
             PlayerControllerState.MovementInput => PlayerControllerState.Cursor,
             PlayerControllerState.Cursor => PlayerControllerState.MovementInput,
             PlayerControllerState.Menu => PlayerControllerState.Menu,
+            PlayerControllerState.Win => PlayerControllerState.Win,
+            PlayerControllerState.Lose => PlayerControllerState.Lose,
             _ => throw new NotImplementedException(),
         };
 
@@ -214,6 +233,8 @@ namespace Aqua.FPSController
             PlayerControllerState.MovementInput => PlayerControllerState.Menu,
             PlayerControllerState.Cursor => PlayerControllerState.Menu,
             PlayerControllerState.Menu => PlayerControllerState.MovementInput,
+            PlayerControllerState.Win => PlayerControllerState.Win,
+            PlayerControllerState.Lose => PlayerControllerState.Lose,
             _ => throw new NotImplementedException(),
         };
 

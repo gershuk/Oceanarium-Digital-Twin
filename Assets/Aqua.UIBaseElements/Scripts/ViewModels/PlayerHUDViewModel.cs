@@ -12,13 +12,14 @@ namespace Aqua.UIBaseElements
         None = 0,
         Info = 1,
         MenuPanel = 2,
+        Win = 3,
+        Lose= 4,
     }
 
     public sealed class PlayerHUDViewModel : MonoBehaviour
     {
         private bool _isInited = false;
         private ConverterSocket<PlayerControllerState, HUDState> _stateSocket;
-        
 
         [SerializeField]
         private TaskListViewModel _taskListViewModel;
@@ -31,6 +32,9 @@ namespace Aqua.UIBaseElements
 
         [SerializeField]
         private HUDSubpanelViewModel _hudSubpanelViewModel;
+
+        [SerializeField]
+        private EndGamePanelViewModel _endGamePanelViewModel;
 
         [SerializeField]
         private PlayerModel _model;
@@ -52,6 +56,8 @@ namespace Aqua.UIBaseElements
             _hudSubpanelViewModel.ForceInit();
             _hudSubpanelViewModel.CloseHUDSubpanel = ClosePanel;
 
+            _endGamePanelViewModel.ForceInit();
+
             _stateSocket = new(HUDState.Info);
             
             SubscriveSockets();
@@ -66,6 +72,8 @@ namespace Aqua.UIBaseElements
                 PlayerControllerState.None => HUDState.None,
                 PlayerControllerState.MovementInput or PlayerControllerState.Cursor => HUDState.Info,
                 PlayerControllerState.Menu => HUDState.MenuPanel,
+                PlayerControllerState.Win => HUDState.Win,
+                PlayerControllerState.Lose => HUDState.Lose,
                 _ => throw new System.NotImplementedException(),
             });
             _stateSocket.ReadOnlyProperty.Subscribe(UpdateState);
@@ -80,18 +88,37 @@ namespace Aqua.UIBaseElements
                     _itemsPanelViewModel.gameObject.SetActive(false);
                     _hudSubpanelViewModel.gameObject.SetActive(false);
                     _aimViewModel.gameObject.SetActive(false);
+                    _endGamePanelViewModel.gameObject.SetActive(false);
                     break;
                 case HUDState.Info:
                     _taskListViewModel.gameObject.SetActive(true);
                     _itemsPanelViewModel.gameObject.SetActive(true);
                     _hudSubpanelViewModel.gameObject.SetActive(false);
                     _aimViewModel.gameObject.SetActive(true);
+                    _endGamePanelViewModel.gameObject.SetActive(false);
                     break;
                 case HUDState.MenuPanel:
                     _taskListViewModel.gameObject.SetActive(false);
                     _itemsPanelViewModel.gameObject.SetActive(false);
                     _hudSubpanelViewModel.gameObject.SetActive(true);
                     _aimViewModel.gameObject.SetActive(false);
+                    _endGamePanelViewModel.gameObject.SetActive(false);
+                    break;
+                case HUDState.Win:
+                    _taskListViewModel.gameObject.SetActive(false);
+                    _itemsPanelViewModel.gameObject.SetActive(false);
+                    _hudSubpanelViewModel.gameObject.SetActive(false);
+                    _aimViewModel.gameObject.SetActive(false);
+                    _endGamePanelViewModel.gameObject.SetActive(true);
+                    _endGamePanelViewModel.State = EndGamePanelState.Win;
+                    break;
+                case HUDState.Lose:
+                    _taskListViewModel.gameObject.SetActive(false);
+                    _itemsPanelViewModel.gameObject.SetActive(false);
+                    _hudSubpanelViewModel.gameObject.SetActive(false);
+                    _aimViewModel.gameObject.SetActive(false);
+                    _endGamePanelViewModel.gameObject.SetActive(true);
+                    _endGamePanelViewModel.State = EndGamePanelState.Lose;
                     break;
             }
         }
