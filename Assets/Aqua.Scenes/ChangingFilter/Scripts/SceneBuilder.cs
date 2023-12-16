@@ -12,6 +12,7 @@ using Aqua.TanksSystem.ViewModels;
 using Aqua.UIBaseElements;
 
 using UnityEngine;
+using Aqua.BaseTasks;
 
 namespace Aqua.Scenes.ChangingFilter
 {
@@ -156,7 +157,6 @@ namespace Aqua.Scenes.ChangingFilter
             {
                 task.StateSocket.ReadOnlyProperty.Subscribe(s=>CheckOrder(task));
             }
-
 
             SetFirstTasksHalfActive();
 

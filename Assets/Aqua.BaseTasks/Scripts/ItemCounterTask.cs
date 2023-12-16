@@ -8,7 +8,7 @@ using Aqua.SceneController;
 
 using UniRx;
 
-namespace Aqua.Scenes.ChangingFilter
+namespace Aqua.BaseTasks
 {
     public class ItemCounterTask : ScenarioTask
     {

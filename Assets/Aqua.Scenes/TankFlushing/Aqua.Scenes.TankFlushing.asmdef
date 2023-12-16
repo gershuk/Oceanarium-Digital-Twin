@@ -1,6 +1,6 @@
 {
-    "name": "Aqua.Scenes.ChangingFilter",
-    "rootNamespace": "Aqua.Scenes.ChangingFilter",
+    "name": "Aqua.Scenes.TankFlushing",
+    "rootNamespace": "Aqua.Scenes.TankFlushing",
     "references": [
         "GUID:aef38acb4acce274698f4c65e2956312",
         "GUID:f52c881e3a01bd4459588757d81478e3",

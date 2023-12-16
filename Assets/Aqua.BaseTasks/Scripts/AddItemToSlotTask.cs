@@ -6,7 +6,7 @@ using Aqua.TanksSystem.ViewModels;
 
 using UniRx;
 
-namespace Aqua.Scenes.ChangingFilter
+namespace Aqua.BaseTasks
 {
     public class AddItemToSlotTask : ScenarioTask
     {

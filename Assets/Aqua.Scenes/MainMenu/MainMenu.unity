@@ -4055,7 +4055,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6578721231451054424, guid: 6b6acb218539fae47a8bd917701d4ecb, type: 3}
       propertyPath: _scenesData.Array.size
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6578721231451054424, guid: 6b6acb218539fae47a8bd917701d4ecb, type: 3}
       propertyPath: _scenesData.Array.data[0]._name
@@ -4067,8 +4067,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6578721231451054424, guid: 6b6acb218539fae47a8bd917701d4ecb, type: 3}
       propertyPath: _scenesData.Array.data[2]._name
-      value: "\u0418\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435 \u0443\u0440\u043E\u0432\u043D\u044F
-        ph"
+      value: "\u041E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u043D\u0435
+        \u043D\u0430\u0441\u043E\u0441\u0430"
       objectReference: {fileID: 0}
     - target: {fileID: 6578721231451054424, guid: 6b6acb218539fae47a8bd917701d4ecb, type: 3}
       propertyPath: _scenesData.Array.data[3]._name
@@ -4081,7 +4081,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6578721231451054424, guid: 6b6acb218539fae47a8bd917701d4ecb, type: 3}
       propertyPath: _scenesData.Array.data[1]._fileName
-      value: ChangingFilter
+      value: TankFlushing
       objectReference: {fileID: 0}
     - target: {fileID: 6578721231451054424, guid: 6b6acb218539fae47a8bd917701d4ecb, type: 3}
       propertyPath: _scenesData.Array.data[2]._fileName
@@ -4097,7 +4097,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6578721231451054424, guid: 6b6acb218539fae47a8bd917701d4ecb, type: 3}
       propertyPath: _scenesData.Array.data[1]._description
-      value: ChangingFilter
+      value: TankFlushing
       objectReference: {fileID: 0}
     - target: {fileID: 6578721231451054424, guid: 6b6acb218539fae47a8bd917701d4ecb, type: 3}
       propertyPath: _scenesData.Array.data[2]._description
