@@ -21,7 +21,8 @@ namespace Aqua.Scenes.ChangingFilter
             ValveViewModel.Output.ReadOnlyProperty.Subscribe(v => State = v switch
             {
                 1 => TaskState.Completed,
-                _ => TaskState.NotCompleted,
+                >0 => TaskState.InProgress,
+                0 => TaskState.NotCompleted,
             }).AddTo(Disposables);
         }
     }

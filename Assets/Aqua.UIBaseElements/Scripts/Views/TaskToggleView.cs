@@ -63,6 +63,9 @@ namespace Aqua.UIBaseElements
                     Checkmark.enabled = true;
                     break;
 
+                case TaskState.InProgress:
+                    break;
+
                 case TaskState.Failed:
                     break;
 

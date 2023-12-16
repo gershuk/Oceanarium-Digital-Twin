@@ -11,18 +11,19 @@ namespace Aqua.Scenes.ChangingFilter
     {
         public ValveViewModel ValveViewModel { get; }
 
-        // ToDo : AddTo (this)
         public CloseValveTask (ValveViewModel valveViewModel,
                                string name = "Закройте вентиль",
                                string description = "Закройте вентиль",
-                               string failMessage = "Внетиль не был закрыт",
+                               string failMessage = "Вентиль не был закрыт",
                                TaskState completed = TaskState.NotCompleted) : base(name, description, failMessage, completed)
         {
             ValveViewModel = valveViewModel;
             ValveViewModel.Output.ReadOnlyProperty.Subscribe(v => State = v switch
             {
                 0 => TaskState.Completed,
-                _ => TaskState.NotCompleted,
+                1 => TaskState.NotCompleted,
+                > 0 => TaskState.InProgress,
+                _ => throw new System.NotImplementedException(),
             }).AddTo(Disposables);
         }
     }

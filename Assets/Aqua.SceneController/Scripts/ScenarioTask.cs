@@ -10,8 +10,15 @@ namespace Aqua.SceneController
     public enum TaskState
     {
         NotCompleted = 0,
-        Completed = 1,
-        Failed = 2,
+        InProgress = 1,
+        Completed = 2,
+        Failed = 3,
+    }
+
+    public enum ProcessingType
+    {
+        Active = 0,
+        Freeze = 1,
     }
 
     public class ScenarioTask : IDisposable
@@ -20,6 +27,10 @@ namespace Aqua.SceneController
 
         protected string _failMessage;
         protected bool _isDisposed = false;
+
+        private readonly MulticonnectionSocket<ProcessingType, ProcessingType> _processingTypeSocket = new(ProcessingType.Active);
+
+        public IOutputSocket<ProcessingType> ProcessingTypeSocket => _processingTypeSocket;
 
         public virtual string FailMessage
         {
@@ -82,6 +93,9 @@ namespace Aqua.SceneController
             get => _stateSocket.GetValue();
             set
             {
+                if (ProcessingType == ProcessingType.Freeze)
+                    return;
+
                 if (!_stateSocket.TrySetValue(value))
                 {
                     throw new InvalidOperationException();
@@ -91,10 +105,16 @@ namespace Aqua.SceneController
 
         public IOutputSocket<TaskState> StateSocket => _stateSocket;
 
-        protected CompositeDisposable Disposables 
-        { 
-            get => _disposables; 
-            set => _disposables = value; 
+        protected CompositeDisposable Disposables
+        {
+            get => _disposables;
+            set => _disposables = value;
+        }
+
+        public ProcessingType ProcessingType
+        {
+            get => _processingTypeSocket.GetValue();
+            set => _processingTypeSocket.TrySetValue(value);
         }
 
         public ScenarioTask (string name, string description, string failMessage = "Task failed", TaskState completed = default)

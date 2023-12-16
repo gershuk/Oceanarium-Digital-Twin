@@ -15,7 +15,7 @@ namespace Aqua.SceneController
 
         protected ScenarioTask[] _tasks;
 
-        private MulticonnectionSocket<ScenarioTask?, ScenarioTask?> _firstFailedTaskSocket;
+        protected MulticonnectionSocket<ScenarioTask?, ScenarioTask?> _firstFailedTaskSocket;
 
         public IOutputSocket<ScenarioTask?> FirstFailedTaskSocket => _firstFailedTaskSocket;
 

@@ -41,7 +41,8 @@ namespace Aqua.Scenes.ChangingFilter
             State = itemsCounts switch
             {
                 int c when c >= RequiredCount => TaskState.Completed,
-                int c when c < RequiredCount => TaskState.NotCompleted,
+                int c when c == 0 => TaskState.NotCompleted,
+                int c when c < RequiredCount => TaskState.InProgress,
                 _ => throw new NotImplementedException(),
             };
         }
