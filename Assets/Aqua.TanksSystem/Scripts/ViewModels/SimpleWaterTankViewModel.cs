@@ -30,6 +30,9 @@ namespace Aqua.TanksSystem
         [SerializeField]
         protected SimpleWaterTankObjectView _objectView;
 
+        [SerializeField]
+        protected WaterInfoPanelView _waterInfoPanel;
+
         public IOutputSocket<Water> StoredSubstanceSocket => _waterTank.StoredSubstanceSocket;
         public IInputSocket<Water> InputHotWaterSocket => _waterTank.InputHotWaterSocket;
         public IInputSocket<Water> InputColdWaterSocket => _waterTank.InputColdWaterSocket;
@@ -46,9 +49,22 @@ namespace Aqua.TanksSystem
             if (_objectView == null)
                 _objectView = GetComponent<SimpleWaterTankObjectView>();
 
-            _objectView.ForceInit();
-            _objectView.WaterSocket.SubscribeTo(StoredSubstanceSocket);
-            _objectView.MaxVolumeSocket.SubscribeTo(MaxVolumeSocket);
+            if (_objectView != null)
+            {
+                _objectView.ForceInit();
+                _objectView.WaterSocket.SubscribeTo(StoredSubstanceSocket);
+                _objectView.MaxVolumeSocket.SubscribeTo(MaxVolumeSocket);
+            }
+
+            if (_waterInfoPanel == null)
+                _waterInfoPanel = GetComponent<WaterInfoPanelView>();
+
+            if (_waterInfoPanel != null)
+            {
+                _waterInfoPanel.ForceInit();
+                _waterInfoPanel.WaterSocket.SubscribeTo(StoredSubstanceSocket);
+                _waterInfoPanel.MaxVolumeSocket.SubscribeTo(MaxVolumeSocket);
+            }
 
             _isInited = true;
         }

@@ -218,8 +218,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -9.57, y: 0}
-  m_SizeDelta: {x: 160, y: 120}
+  m_AnchoredPosition: {x: 11.58, y: 0}
+  m_SizeDelta: {x: 202.29, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3869214845785673866
 Canvas:
@@ -511,8 +511,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 49, y: 0}
-  m_SizeDelta: {x: 98, y: 25.48}
+  m_AnchoredPosition: {x: 56.528496, y: 0}
+  m_SizeDelta: {x: 113.05699, y: 25.48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4340560176995349151
 CanvasRenderer:
@@ -739,7 +739,7 @@ GameObject:
   - component: {fileID: 21753483621222058}
   - component: {fileID: 7076787905811871459}
   m_Layer: 5
-  m_Name: ValueLabel
+  m_Name: TemperatureValueLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -761,8 +761,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 119, y: 0}
-  m_SizeDelta: {x: 42, y: 25.48}
+  m_AnchoredPosition: {x: 137.2835, y: 0}
+  m_SizeDelta: {x: 48.453, y: 25.48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &21753483621222058
 CanvasRenderer:
@@ -792,7 +792,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 00
+  m_text: 00.00
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -950,7 +950,7 @@ GameObject:
   - component: {fileID: 5062437671434703193}
   - component: {fileID: 840673054962509131}
   m_Layer: 5
-  m_Name: ValueLabel
+  m_Name: VolumeValueLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -972,8 +972,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 115.5, y: 0}
-  m_SizeDelta: {x: 49, y: 25.48}
+  m_AnchoredPosition: {x: 133.24574, y: 0}
+  m_SizeDelta: {x: 56.528496, y: 25.48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5062437671434703193
 CanvasRenderer:
@@ -1003,7 +1003,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 00%
+  m_text: 00.00%
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1030,8 +1030,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1106,8 +1106,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 49, y: 0}
-  m_SizeDelta: {x: 98, y: 25.48}
+  m_AnchoredPosition: {x: 56.528496, y: 0}
+  m_SizeDelta: {x: 113.05699, y: 25.48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5516728163447759398
 CanvasRenderer:
@@ -1218,7 +1218,7 @@ GameObject:
   - component: {fileID: 8559899466797976417}
   - component: {fileID: 530046194514745636}
   m_Layer: 5
-  m_Name: ValueLabel
+  m_Name: AcidityValueLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1240,8 +1240,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 119, y: 0}
-  m_SizeDelta: {x: 42, y: 25.48}
+  m_AnchoredPosition: {x: 137.2835, y: 0}
+  m_SizeDelta: {x: 48.453, y: 25.48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8559899466797976417
 CanvasRenderer:
@@ -1271,7 +1271,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 00
+  m_text: 00.00
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1490,8 +1490,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 45.5, y: 0}
-  m_SizeDelta: {x: 91, y: 25.48}
+  m_AnchoredPosition: {x: 52.490746, y: 0}
+  m_SizeDelta: {x: 104.98149, y: 25.48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4855298950831553915
 CanvasRenderer:
@@ -1599,6 +1599,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6725515774363123756}
+  - component: {fileID: 4594097883920205525}
   m_Layer: 0
   m_Name: WaterInfoPanel
   m_TagString: Untagged
@@ -1622,3 +1623,18 @@ Transform:
   - {fileID: 3774186637302337088}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4594097883920205525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9177843807572444687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04f6b875a9b4ef04e818e7ba0ec07661, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _volumeText: {fileID: 840673054962509131}
+  _temperatureText: {fileID: 7076787905811871459}
+  _phText: {fileID: 530046194514745636}
