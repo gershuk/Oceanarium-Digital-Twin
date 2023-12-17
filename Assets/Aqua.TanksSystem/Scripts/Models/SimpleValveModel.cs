@@ -8,5 +8,10 @@ namespace Aqua.TanksSystem.Models
                                                                 value is >= 0 and <= 1
                                                                 ? value
                                                                 : throw new ArgumentOutOfRangeException(nameof(value));
+
+        public SimpleValveModel(float value = 0) : base(value, true)
+        {
+
+        }
     }
 }

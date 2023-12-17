@@ -76,7 +76,7 @@ namespace Aqua.UIBaseElements
         {
             if (FindFirstObjectByType<SceneBuilder>() is var oldSceneBuilder and not null)
                 oldSceneBuilder.DestroyScene();
-
+            yield return null;
             _cursorViewModel.IsCursorAcitve = true;
 
             var loadingOperation = SceneLoader.Instance.LoadSceneAsync(name, parameters);

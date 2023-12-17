@@ -40,14 +40,14 @@ namespace Aqua.FlowSystem
             var volumes = new Water[coefficients.Length];
 
             for (var i = 0; i < coefficients.Length; ++i)
-                volumes[i] = new Water(Volume * coefficients[i], PH * coefficients[i], Temperature);
+                volumes[i] = new Water(Volume * coefficients[i], Temperature, PH * coefficients[i]);
 
             return volumes;
         }
 
         public Water Combine (params Water[] substances)
         {
-            var newSubstance = new Water(Volume, PH, Temperature);
+            var newSubstance = new Water(Volume, Temperature, PH);
 
             for (var i = 0; i < substances.Length; ++i)
             {

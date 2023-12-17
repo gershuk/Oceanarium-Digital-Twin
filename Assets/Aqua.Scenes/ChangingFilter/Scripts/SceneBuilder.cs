@@ -16,7 +16,7 @@ using Aqua.BaseTasks;
 
 namespace Aqua.Scenes.ChangingFilter
 {
-    public class SceneBuilder : ScenarioSceneBuilder
+    public sealed class SceneBuilder : ScenarioSceneBuilder
     {
         private int _taskIndex = 0;
 

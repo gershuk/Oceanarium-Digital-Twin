@@ -11,13 +11,17 @@ namespace Aqua.TanksSystem
 {
     public sealed class SimpleWaterSourceViewModel : MonoBehaviour, ITickObject
     {
-        private readonly Source<Water> _waterSource;
+        private ConverterSocket<Water, double> _maxVolumeConverter;
+
+        private bool _isInited = false;
+
+        [SerializeField]
+        private WaterInfoPanelView _waterInfoPanel;
+
+        private Source<Water> _waterSource;
 
         [SerializeField]
         private Water _initValue;
-
-        [SerializeField]
-        private bool _isMulticonnection = false;
 
         [SerializeField]
         [Range(0.0f, 1e6f)]
@@ -33,9 +37,34 @@ namespace Aqua.TanksSystem
 
         public IOutputSocket<Water> OutputSocket => _waterSource.OutputSocket;
 
-        private SimpleWaterSourceViewModel () : base() => _waterSource = new Source<Water>(new Water(), _isMulticonnection);
+        public void ForceInit ()
+        {
+            if (_isInited)
+                return;
 
-        public void Init (float startTime) => _waterSource.OutputSocket.TrySetValue(new Water(_volume, _ph, _temp));
+            _waterSource = new Source<Water>(new Water(_volume, _temp, _ph), true);
+            _maxVolumeConverter = new();
+            _maxVolumeConverter.SubscribeTo(_waterSource.OutputSocket, static w=>w.Volume);
+
+            if (_waterInfoPanel == null)
+                _waterInfoPanel = GetComponent<WaterInfoPanelView>();
+
+            if (_waterInfoPanel != null)
+            {
+                _waterInfoPanel.ForceInit();
+                _waterInfoPanel.WaterSocket.SubscribeTo(OutputSocket);
+                _waterInfoPanel.MaxVolumeSocket.SubscribeTo(_maxVolumeConverter);
+            }
+
+            _isInited = true;
+        }
+
+        private void Awake ()
+        {
+            ForceInit();
+        }
+
+        public void Init (float startTime) => ForceInit();
 
         public void Tick (int tickNumber, float startTime, float tickTime)
         {

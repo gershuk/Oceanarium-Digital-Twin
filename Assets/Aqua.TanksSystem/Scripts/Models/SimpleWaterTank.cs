@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using UnityEngine;
 
 using Aqua.FlowSystem;
 using Aqua.SocketSystem;
@@ -12,19 +12,29 @@ namespace Aqua.TanksSystem
         protected readonly IUniversalSocket<Water, Water> _inputColdWaterSocket = new UniversalSocket<Water, Water>();
         protected readonly IUniversalSocket<Water, Water> _outputSocket = new UniversalSocket<Water, Water>();
 
+        public double OutVolume { get; protected set; }
 
-        public float OutVolume { get; protected set; }
+        public double? LocalTickTime { get; protected set; }
+
+        public double TickScale (double tickTime) => LocalTickTime.HasValue ? tickTime / LocalTickTime.Value : 1;
 
         public IInputSocket<Water> InputHotWaterSocket => _inputHotWaterSocket;
         public IInputSocket<Water> InputColdWaterSocket => _inputColdWaterSocket;
         public IOutputSocket<Water> OutputWaterSocket => _outputSocket;
 
-        public SimpleWaterTank (double maxVolume = 1) : base(maxVolume)
+        public SimpleWaterTank (double maxVolume = 1, double outVolume = 0, double? localTickTime = default) : base(maxVolume)
         {
+            OutVolume = outVolume;
+            LocalTickTime = localTickTime;
         }
 
-        public SimpleWaterTank (Water waterData, double maxVolume = 1) : base(waterData, maxVolume)
+        public SimpleWaterTank (Water waterData,
+                                double maxVolume = 1,
+                                double outVolume = 0,
+                                double? localTickTime = default) : base(waterData, maxVolume)
         {
+            OutVolume = outVolume;
+            LocalTickTime = localTickTime;
         }
 
         public override void Init (float startTime) => base.Init(startTime);
@@ -33,10 +43,12 @@ namespace Aqua.TanksSystem
         {
             base.Tick(tickNumber, startTime, tickTime);
 
-            StoredValue = StoredValue.Combine(_inputHotWaterSocket.GetValue())
-                                     .Combine(_inputColdWaterSocket.GetValue());
+            var hotInput = _inputHotWaterSocket.GetValue().Separate(TickScale(tickTime));
+            var coldInput = _inputColdWaterSocket.GetValue().Separate(TickScale(tickTime));
 
-            var remCoef = Math.Max(StoredValue.Volume - OutVolume, 0) / StoredValue.Volume;
+            StoredValue = StoredValue.Combine(hotInput).Combine(coldInput);
+            
+            var remCoef = Math.Max(StoredValue.Volume - OutVolume * TickScale(tickTime), 0) / StoredValue.Volume;
             var sep = StoredValue.Separate(remCoef, 1 - remCoef);
 
             StoredValue = sep[0];

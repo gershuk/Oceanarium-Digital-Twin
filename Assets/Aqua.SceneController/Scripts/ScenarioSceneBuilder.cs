@@ -12,7 +12,6 @@ namespace Aqua.SceneController
 {
     public class ScenarioSceneBuilder : SceneBuilder
     {
-
         protected ScenarioTask[] _tasks;
 
         protected MulticonnectionSocket<ScenarioTask?, ScenarioTask?> _firstFailedTaskSocket;
@@ -61,6 +60,7 @@ namespace Aqua.SceneController
         public override void DestroyScene ()
         {
             _playerModel.State = PlayerControllerState.None;
+            Destroy(_playerModel.gameObject);
         }
     }
 }

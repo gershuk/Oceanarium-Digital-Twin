@@ -2,6 +2,7 @@ using Aqua.FPSController;
 using Aqua.SocketSystem;
 
 using UniRx;
+using UniRx.Triggers;
 
 using UnityEngine;
 
@@ -46,6 +47,7 @@ namespace Aqua.UIBaseElements
 
             _model = FindObjectOfType<PlayerModel>();
             _model.ForceInit();
+            _model.OnDestroyAsObservable().Subscribe(u=>Destroy(gameObject)).AddTo(this);
 
             _itemsPanelViewModel.ForceInit();
             _itemsPanelViewModel.Model = _model.Inventory;

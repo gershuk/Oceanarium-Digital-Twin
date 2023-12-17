@@ -7,23 +7,31 @@ namespace Aqua.TanksSystem
 {
     public class SimpleWaterTankViewModel : MonoBehaviour, ITickObject
     {
-        private bool _isInited = false;
+        protected bool _isInited = false;
 
         [SerializeField]
         [Range(0.0f, 1e6f)]
-        private float _ph = 17;
+        protected float _ph = 17;
 
         [SerializeField]
         [Range(-272, 272)]
-        private float _temp = 20;
+        protected float _temp = 20;
 
         [SerializeField]
         [Range(0.0f, 1e6f)]
-        private float _volume = 1;
+        protected float _volume = 1;
 
         [SerializeField]
         [Range(0.0f, 1e6f)]
-        private double _maxVolume = 1;
+        protected double _maxVolume = 1;
+
+        [SerializeField]
+        [Range(0.0f, 1e6f)]
+        public double _outVolume = 0;
+
+        [SerializeField]
+        [Range(0.0f, 1e6f)]
+        public double _localTickTime = 1;
 
         protected SimpleWaterTank _waterTank;
 
@@ -44,7 +52,7 @@ namespace Aqua.TanksSystem
             if (_isInited) 
                 return;
 
-            _waterTank = new SimpleWaterTank(new Water(_volume, _temp, _ph), _maxVolume);
+            _waterTank = new SimpleWaterTank(new Water(_volume, _temp, _ph), _maxVolume, _outVolume, _localTickTime);
 
             if (_objectView == null)
                 _objectView = GetComponent<SimpleWaterTankObjectView>();

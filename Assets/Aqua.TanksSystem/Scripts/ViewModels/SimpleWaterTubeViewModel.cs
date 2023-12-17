@@ -8,9 +8,9 @@ namespace Aqua.TanksSystem
 {
     public class SimpleWaterTubeViewModel : MonoBehaviour
     {
-        private readonly OneWayTubeModel<Water, Water> _tubeModel = new();
+        protected readonly OneWayTubeModel<Water, Water> _tubeModel = new();
 
-        public IInputSocket<Water> InputSocket => _tubeModel.InSocket;
-        public IOutputSocket<Water> OutputSocket => _tubeModel.OutSocket;
+        public virtual IInputSocket<Water> InputSocket => _tubeModel.InSocket;
+        public virtual IOutputSocket<Water> OutputSocket => _tubeModel.OutSocket;
     }
 }
