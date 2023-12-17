@@ -14,7 +14,7 @@ namespace Aqua.FlowSystem
         [SerializeField]
         private double _temperature;
 
-        public Water (double volume = 0, double ph = 0, double temperature = 0) => 
+        public Water (double volume = 0,  double temperature = 0, double ph = 0) => 
             (_volume, _ph, _temperature) = (volume, ph, temperature);
 
         public double Volume
