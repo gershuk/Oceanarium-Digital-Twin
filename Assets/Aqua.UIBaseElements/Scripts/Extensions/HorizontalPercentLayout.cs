@@ -13,6 +13,9 @@ namespace Aqua.UIBaseElements
     [RequireComponent(typeof(RectTransform))]
     public class HorizontalPercentLayout : MonoBehaviour
     {
+        [SerializeField]
+        private bool _shouldUpdate = false;
+
         private RectTransform[] _children;
 
         [SerializeField]
@@ -28,7 +31,10 @@ namespace Aqua.UIBaseElements
         {
             _fractions ??= new float[1];
             _transform = GetComponent<RectTransform>();
-            _transform.OnRectTransformDimensionsChangeAsObservable().Subscribe(v => UpdateChildWidth());
+            if (_shouldUpdate)
+            {
+                _transform.OnRectTransformDimensionsChangeAsObservable().Subscribe(v => UpdateChildWidth());
+            }
         }
 
         [ContextMenu(nameof(UpdateChildWidth))]

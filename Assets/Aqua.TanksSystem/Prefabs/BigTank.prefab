@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 4168887176891878628}
   - component: {fileID: 7405900289693379534}
   - component: {fileID: 4481705368046572560}
+  - component: {fileID: 3822774421813232283}
+  - component: {fileID: 6887510111961254286}
   m_Layer: 0
   m_Name: BigTank
   m_TagString: Untagged
@@ -34,6 +36,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8550276710635330838}
+  - {fileID: 397039783249561564}
+  - {fileID: 243893003052978519}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 90}
 --- !u!33 &3727424332386807284
@@ -123,6 +127,144 @@ MonoBehaviour:
   _name: "\u0422\u0430\u043D\u043A"
   _sprite: {fileID: 0}
   _defaultRespawnPosition: {fileID: 0}
+--- !u!114 &3822774421813232283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6386715489387565468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8c29f3856137504382ca892c98a0702, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _autoSetCustomStartScale: 1
+  _customStartScale: {x: 0, y: 0, z: 0}
+  _scale:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.00035095215
+      value: -0.000013232231
+      inSlope: 48.181885
+      outSlope: 48.181885
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.010720536
+      value: 0.49961287
+      inSlope: 1.9230326
+      outSlope: 1.9230326
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.0463711
+    - serializedVersion: 3
+      time: 0.031848848
+      value: 0.98012435
+      inSlope: 0.05315768
+      outSlope: 0.05315768
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.065840125
+    - serializedVersion: 3
+      time: 0.9936546
+      value: 0.99764836
+      inSlope: 0.0604807
+      outSlope: 0.0604807
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.07946111
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _endPosition: {fileID: 397039783249561564}
+  _startPosition: {fileID: 243893003052978519}
+  _water: {fileID: 8550276710635330838}
+--- !u!114 &6887510111961254286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6386715489387565468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41e5cc2b1f656f44685bd280e852ef07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ph: 17
+  _temp: 20
+  _volume: 0
+  _maxVolume: 1
+  _objectView: {fileID: 0}
+--- !u!1 &7067237295318117137
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 243893003052978519}
+  m_Layer: 0
+  m_Name: WaterStart
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &243893003052978519
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7067237295318117137}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: -0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: 0.000516, y: 0.000158, z: 0.00201}
+  m_LocalScale: {x: 0.005, y: 0.005, z: 0.005}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3368013763869315346}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8986215820584299839
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 397039783249561564}
+  m_Layer: 0
+  m_Name: WaterEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &397039783249561564
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8986215820584299839}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: -0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: 0.000516, y: 0.000158, z: 0.01021}
+  m_LocalScale: {x: 0.005, y: 0.005, z: 0.005}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3368013763869315346}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &7080956970725332023
 PrefabInstance:
   m_ObjectHideFlags: 0

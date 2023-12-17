@@ -6,21 +6,21 @@ using UniRx;
 
 namespace Aqua.SocketSystem
 {
-    public sealed class СombiningSocket<TIn1, TIn2, TOut> : UniversalSocket<TIn1?, TOut?>, IInputSocket<TIn2?>
+    public sealed class CombiningSocket<TIn1, TIn2, TOut> : UniversalSocket<TIn1?, TOut?>, IInputSocket<TIn2?>
     {
         private readonly CompositeDisposable _additionalDisposable = new();
         private IOutputSocket<TIn2?>? _additionalPublisher;
         public Func<TIn2?, TIn2?>? AdditionalInputDataModificationFunction { get; private set; }
         public ReactiveProperty<Func<TIn1?, TIn2?, TOut>?> CombineFunction { get; private set; }
 
-        public СombiningSocket (ReactiveProperty<TOut?>? property = null,
+        public CombiningSocket (ReactiveProperty<TOut?>? property = null,
                                 Func<TIn1?, TIn2?, TOut>? combineFunction = null) : base(property)
         {
             CombineFunction = new ReactiveProperty<Func<TIn1?, TIn2?, TOut>?>(combineFunction ?? DefaultCombineFunction!);
             CombineFunction.Subscribe((f) => UpdateData());
         }
 
-        ~СombiningSocket () => Dispose(false);
+        ~CombiningSocket () => Dispose(false);
 
         private TOut? DefaultCombineFunction (TIn1? in1, TIn2? in2) =>
             (in1, in2) is TOut tuple
