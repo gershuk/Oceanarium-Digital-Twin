@@ -18,14 +18,6 @@ namespace Aqua.FPSController
         private Item? _currentGrabbedItem = null;
         private bool _isInited = false;
 
-        #region Layers names
-        public const string DefaultLayerName = "Default";
-        public const string IgnoreRaycastLayerName = "Ignore Raycast";
-        public const string ItemsLayerName = "Items";
-        public const string ItemsSlotsLayerName = "ItemSlots";
-        public const string NothingLayerName = "Nothing";
-        #endregion Layers names
-
         #region Input actions
 
         [Header("Input actions")]
@@ -102,85 +94,75 @@ namespace Aqua.FPSController
         }
 
         public int InventorySize { get => _inventorySize; private set => _inventorySize = value; }
-        public IInfo? SelectedItem => InventoryIndex > -1 ? _inventory[InventoryIndex] : null;
+        public Item? SelectedItem => InventoryIndex > -1 ? _inventory[InventoryIndex] : null;
 
         private void Awake () => ForceInit();
 
         private bool TryDropItem ()
         {
-            if (InventoryIndex >= _inventory.Count || InventoryIndex < 0)
+            if (SelectedItem == null)
                 return false;
 
-            var item = _inventory[InventoryIndex];
-
-            if (!Physics.Raycast(_fpsCamera.Camera.transform.position,
+            var isHitted = Physics.Raycast(_fpsCamera.Camera.transform.position,
                                 _fpsCamera.Camera.transform.TransformDirection(Vector3.forward),
                                 out var hit,
                                 _distanceOfItemDrop,
-                                _obstacleLayerMask))
-            {
-                item.transform.rotation = _fpsCamera.Camera.transform.rotation;
-                item.transform.position = _fpsCamera.Camera.transform.TransformPoint(Vector3.forward * _distanceOfItemDrop);
-                item.Drop();
-            }
-            else
-            {
-                switch (hit.transform.gameObject.GetComponent<IInfo>())
-                {
-                    case ItemSlot itemSlotScript:
-                        item.Drop();
-                        if (!(itemSlotScript.CurrentItem == null && itemSlotScript.TrySetItem(item)))
-                        {
-                            item.Take(true);
-                            return false;
-                        }
-                        break;
-                    default:
-                        item.transform.rotation = _fpsCamera.Camera.transform.rotation;
-                        item.transform.position = hit.point + hit.normal;
-                        item.Drop();
-                        break;
-                }
-            }
-            _inventory.RemoveAt(InventoryIndex);            
+                                _obstacleLayerMask);
 
-            InventoryIndex = InventoryIndex - 1 >= 0 ? InventoryIndex - 1 : _inventory.Count - 1;
-            return true;
+            var info = isHitted ? hit.transform.gameObject.GetComponent<IInfo>() : null;
+
+            var itemDroped = false;
+
+            switch (isHitted, info)
+            {
+                case (false, _):
+                    SelectedItem.transform.rotation = _fpsCamera.Camera.transform.rotation;
+                    SelectedItem.transform.position = _fpsCamera.Camera.transform.TransformPoint(Vector3.forward * _distanceOfItemDrop);
+                    SelectedItem.Drop();
+                    itemDroped = true;
+                    break;
+                case (true, ItemSlot itemSlot and not null):
+                    itemDroped = itemSlot.TrySetItem(SelectedItem);
+                    break;
+                case (true, null):
+                    SelectedItem.transform.rotation = _fpsCamera.Camera.transform.rotation;
+                    SelectedItem.transform.position = hit.point + hit.normal;
+                    SelectedItem.Drop();
+                    itemDroped = true;
+                    break;
+            }
+
+            if (itemDroped)
+            {
+                _inventory.RemoveAt(InventoryIndex);
+                InventoryIndex = InventoryIndex - 1 >= 0 ? InventoryIndex - 1 : _inventory.Count - 1;
+            }
+
+            return itemDroped;
         }
 
         private bool TryGrabItem ()
         {
-            if (_objectScaner.ObservedObjectSocket.GetValue() is Item item and not null)
+            _currentGrabbedItem = _objectScaner.ObservedObjectSocket.GetValue() switch
             {
-                _currentGrabbedItem = item;
-            }
+                Item item and not null => item,
+                ItemSlot slot and not null => slot.TakeItem(),
+                _ => throw new NotImplementedException(),
+            };
 
-            if (_objectScaner.ObservedObjectSocket.GetValue() is ItemSlot slot and not null)
+            if (_currentGrabbedItem != null)
             {
-                var itemSlot = slot;
-                _currentGrabbedItem = itemSlot.CurrentItem;
-                if (_currentGrabbedItem is not null)
-                    itemSlot.RemoveItem();
-            }
-
-            if (_currentGrabbedItem is not null)
-            {
-                _currentGrabbedItem.gameObject.layer = LayerMask.NameToLayer(IgnoreRaycastLayerName);
                 _currentGrabbedItem.transform.parent = _fpsCamera.Camera.transform;
                 _currentGrabbedItem.Take(true);
-                return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return _currentGrabbedItem != null;
         }
 
         private bool TryReleaseItem ()
         {
-            if (_currentGrabbedItem is not null)
+            if (_currentGrabbedItem != null)
             {
-                _currentGrabbedItem.gameObject.layer = LayerMask.NameToLayer(ItemsLayerName);
                 _currentGrabbedItem.transform.parent = null;
                 _currentGrabbedItem.Drop();
                 _currentGrabbedItem = null;
@@ -202,7 +184,7 @@ namespace Aqua.FPSController
                     _ => throw new NotImplementedException(),
                 };
 
-                if (item is not null)
+                if (item != null)
                 {
                     _inventory.Add(item);
                     item.Take(false);
@@ -223,10 +205,9 @@ namespace Aqua.FPSController
 
             if (_grabReleaseItemAction.action.WasPressedThisFrame())
             {
-                if (_currentGrabbedItem is null)
-                    TryGrabItem();
-                else
-                    TryReleaseItem();
+                _ = _currentGrabbedItem == null 
+                    ? TryGrabItem()
+                    : TryReleaseItem();
             }
 
             UpdateSelectedItem();
@@ -238,14 +219,13 @@ namespace Aqua.FPSController
                 return;
 
             var delta = _invenoryIndexDelta.action.ReadValue<Vector2>().y;
-            if (delta > 0.0f)
+            InventoryIndex = _invenoryIndexDelta.action.ReadValue<Vector2>().y switch
             {
-                InventoryIndex = (InventoryIndex + 1) % _inventory.Count;
-            }
-            if (delta < 0.0f)
-            {
-                InventoryIndex = (InventoryIndex - 1) < 0 ? _inventory.Count - 1 : InventoryIndex - 1;
-            }
+                > 0.0f => (InventoryIndex + 1) % _inventory.Count,
+                < 0.0f => (InventoryIndex - 1) < 0 ? _inventory.Count - 1 : InventoryIndex - 1,
+                0 => InventoryIndex,
+                _ => throw new NotImplementedException(),
+            };
         }
 
         public void ForceInit ()
@@ -253,11 +233,11 @@ namespace Aqua.FPSController
             if (_isInited)
                 return;
 
-            if(_objectScaner == null)
+            if (_objectScaner == null)
                 _objectScaner = GetComponent<ObjectScaner>();
 
-            if (_obstacleLayerMask.value == LayerMask.GetMask(NothingLayerName))
-                _obstacleLayerMask = LayerMask.GetMask(DefaultLayerName, ItemsLayerName, ItemsSlotsLayerName);
+            if (_obstacleLayerMask.value == LayerMask.GetMask(Item.NothingLayerName))
+                _obstacleLayerMask = LayerMask.GetMask(Item.DefaultLayerName, Item.ItemsLayerName, Item.ItemsSlotsLayerName);
             _indexSocket = new(_inventoryIndex);
             _selectedItemSocket = new(SelectedItem);
 

@@ -23,10 +23,15 @@ namespace Aqua.BaseTasks
         {
             ItemSlot = itemSlot;
             ItemName = itemName;
-            ItemSlot.ItemSocket.ReadOnlyProperty.Subscribe(v => State = v?.NameSocket.GetValue() switch
+            ItemSlot.ItemSocket.ReadOnlyProperty.Subscribe(v =>
             {
-                string s when s == ItemName => TaskState.Completed,
-                _ => TaskState.NotCompleted,
+                var val = v != null ? v.NameSocket.GetValue() : null;
+                State = val switch
+                {
+                    string s when s == ItemName => TaskState.Completed,
+                    null => TaskState.NotCompleted,
+                    _ => TaskState.NotCompleted,
+                };
             }).AddTo(Disposables);
         }
     }

@@ -49,17 +49,13 @@ namespace Aqua.Items
 
         public GameObject GameObject { get; protected set; }
 
-        protected void Awake ()
-        {
-            ForceInit();
-        }
+        protected void Awake () => ForceInit();
 
         public virtual bool TryResetPosition ()
         {
             if (_defaultRespawnPosition != null)
             {
-                transform.position = _defaultRespawnPosition.position;
-                transform.rotation = _defaultRespawnPosition.rotation;
+                transform.SetPositionAndRotation(_defaultRespawnPosition.position, _defaultRespawnPosition.rotation);
             }
 
             return _defaultRespawnPosition;

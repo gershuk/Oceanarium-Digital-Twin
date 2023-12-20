@@ -19,6 +19,14 @@ namespace Aqua.Items
     [RequireComponent(typeof(Collider))]
     public class Item : InfoObject
     {
+        #region Layers names
+        public const string DefaultLayerName = "Default";
+        public const string IgnoreRaycastLayerName = "Ignore Raycast";
+        public const string ItemsLayerName = "Items";
+        public const string ItemsSlotsLayerName = "ItemSlots";
+        public const string NothingLayerName = "Nothing";
+        #endregion Layers names
+
         private MulticonnectionSocket<ItemState, ItemState> _stateSocket;
 
         public IOutputSocket<ItemState> StateSocket => _stateSocket;
@@ -57,6 +65,7 @@ namespace Aqua.Items
         public void Take (bool isActive = true)
         {
             _stateSocket.TrySetValue(ItemState.Picked);
+            GameObject.layer = LayerMask.NameToLayer(IgnoreRaycastLayerName);
             Collider.enabled = false;
             Rigidbody.isKinematic = true;
             GameObject.SetActive(isActive);
@@ -65,6 +74,7 @@ namespace Aqua.Items
         public void Drop ()
         {
             _stateSocket.TrySetValue(ItemState.Free);
+            GameObject.layer = LayerMask.NameToLayer(ItemsLayerName);
             Collider.enabled = true;
             Rigidbody.isKinematic = false;
             GameObject.SetActive(true);

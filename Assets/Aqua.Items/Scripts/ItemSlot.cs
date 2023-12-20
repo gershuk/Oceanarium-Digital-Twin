@@ -86,16 +86,11 @@ namespace Aqua.Items
             _isInited = true;
         }
 
-        protected void Awake ()
-        {
-            ForceInit();
-        }
+        protected void Awake () => ForceInit();
 
         protected void OnTriggerEnter (Collider other)
         {
-            var item = other.GetComponent<Item>();
-
-            if (item == null)
+            if (!other.TryGetComponent<Item>(out var item))
                 return;
 
             if (CurrentItem != null)
@@ -119,11 +114,14 @@ namespace Aqua.Items
         {
             var item = _itemSocket.GetValue();
             if (item != null)
-                RemoveItem();
+            {
+                RemoveItemFromSlot();
+                item.Take(false);
+            }
             return item;
         }
 
-        public void RemoveItem ()
+        public void RemoveItemFromSlot ()
         {
             if (_itemSocket.GetValue() == null)
             {
@@ -142,11 +140,15 @@ namespace Aqua.Items
                 return false;
             }
 
-            item.transform.position = Anchor.position;
-            item.transform.rotation = Anchor.rotation;
+            if (_itemSocket.GetValue() != null)
+            {
+                Debug.Log($"Can't set item to slot '{NameSocket.GetValue()}'. It's not empty.");
+                return false;
+            }
 
-            item.gameObject.layer = LayerMask.NameToLayer(IgnorRayCastLayerName);
-            item.Rigidbody.isKinematic = true;
+            item.transform.SetPositionAndRotation(Anchor.position, Anchor.rotation);
+
+            item.Take(true);
             if (!_itemSocket.TrySetValue(item))
             {
                 Debug.LogError("Can't set value when socket has input link.");
