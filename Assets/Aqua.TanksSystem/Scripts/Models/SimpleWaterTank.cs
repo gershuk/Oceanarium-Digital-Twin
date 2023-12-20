@@ -1,19 +1,35 @@
+using System;
+
+using Aqua.FlowSystem;
 using Aqua.SocketSystem;
 
 namespace Aqua.TanksSystem
 {
-    public class SimpleWaterTank : SimpleTank<WaterData>
+    public class SimpleWaterTank : SimpleTank<Water>
     {
-        protected readonly UniversalSocket<WaterData, WaterData> _inputSocket = new();
+        protected readonly IUniversalSocket<Water, Water> _inputColdWaterSocket = new UniversalSocket<Water, Water>();
+        protected readonly IUniversalSocket<Water, Water> _inputHotWaterSocket = new UniversalSocket<Water, Water>();
+        protected readonly IUniversalSocket<Water, Water> _outputSocket = new UniversalSocket<Water, Water>();
 
-        public IInputSocket<WaterData> InputSocket => _inputSocket;
+        public IInputSocket<Water> InputColdWaterSocket => _inputColdWaterSocket;
+        public IInputSocket<Water> InputHotWaterSocket => _inputHotWaterSocket;
+        public double? LocalTickTime { get; protected set; }
+        public IOutputSocket<Water> OutputWaterSocket => _outputSocket;
+        public double OutVolume { get; protected set; }
 
-        public SimpleWaterTank () : base()
+        public SimpleWaterTank (double maxVolume = 1, double outVolume = 0, double? localTickTime = default) : base(maxVolume)
         {
+            OutVolume = outVolume;
+            LocalTickTime = localTickTime;
         }
 
-        public SimpleWaterTank (WaterData waterData) : base(waterData)
+        public SimpleWaterTank (Water waterData,
+                                double maxVolume = 1,
+                                double outVolume = 0,
+                                double? localTickTime = default) : base(waterData, maxVolume)
         {
+            OutVolume = outVolume;
+            LocalTickTime = localTickTime;
         }
 
         public override void Init (float startTime) => base.Init(startTime);
@@ -21,7 +37,19 @@ namespace Aqua.TanksSystem
         public override void Tick (int tickNumber, float startTime, float tickTime)
         {
             base.Tick(tickNumber, startTime, tickTime);
-            _data.Value += _inputSocket.GetValue();
+
+            var hotInput = _inputHotWaterSocket.GetValue().Separate(TickScale(tickTime));
+            var coldInput = _inputColdWaterSocket.GetValue().Separate(TickScale(tickTime));
+
+            StoredValue = StoredValue.Combine(hotInput).Combine(coldInput);
+
+            var remCoef = Math.Max(StoredValue.Volume - (OutVolume * TickScale(tickTime)), 0) / StoredValue.Volume;
+            var sep = StoredValue.Separate(remCoef, 1 - remCoef);
+
+            StoredValue = sep[0];
+            _outputSocket.TrySetValue(sep[1]);
         }
+
+        public double TickScale (double tickTime) => LocalTickTime.HasValue ? tickTime / LocalTickTime.Value : 1;
     }
 }

@@ -6,10 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
+    path: Assets/Aqua.Scenes/StartScene/StartScene.unity
+    guid: ae61a008e54265e4cac796c51bdfa411
+  - enabled: 1
+    path: Assets/Aqua.Scenes/MainMenu/MainMenu.unity
     guid: 42441c847abefc84290a91c241cca216
   - enabled: 1
-    path: Assets/Scenes/ValveTestScene.unity
+    path: Assets/Aqua.Scenes/ChangingFilter/ChangingFilter.unity
     guid: e26ad53702f44f34cb5acc955359800b
+  - enabled: 1
+    path: Assets/Aqua.Scenes/TankFlushing/TankFlushing.unity
+    guid: 4420f7f31fffd9343a7a2f89edb587ec
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 5a6d860f007b89e41b95731a9c5d7a80, type: 2}

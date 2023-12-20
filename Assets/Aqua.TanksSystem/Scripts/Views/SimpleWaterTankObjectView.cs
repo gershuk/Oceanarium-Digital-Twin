@@ -1,5 +1,8 @@
 #nullable enable
 
+using Aqua.FlowSystem;
+using Aqua.SocketSystem;
+
 using UniRx;
 
 using UnityEngine;
@@ -8,35 +11,66 @@ namespace Aqua.TanksSystem
 {
     public class SimpleWaterTankObjectView : MonoBehaviour
     {
-        [SerializeField]
-        protected Transform _base;
+        private bool _isInited = false;
 
         [SerializeField]
-        protected Vector3 _endPosition;
+        protected bool _autoSetCustomStartScale = false;
+
+        protected CombiningSocket<Water, double, (Water, double)> _combiningSocket;
 
         [SerializeField]
-        protected float _maxLevel;
+        protected Vector3 _customStartScale;
 
         [SerializeField]
-        protected Vector3 _startPosition;
+        protected Transform _endPosition;
+
+        protected IUniversalSocket<double, double> _maxVolumeSocket;
 
         [SerializeField]
-        protected SimpleWaterTankViewModel _viewmodel;
+        protected AnimationCurve _scale;
+
+        [SerializeField]
+        protected Transform _startPosition;
 
         [SerializeField]
         protected Transform _water;
 
-        protected void DataListener (WaterData? waterData) => SetLevel((waterData?.Volume ?? 0) / _maxLevel);
+        protected IUniversalSocket<Water, Water> _waterSocket;
+        public IInputSocket<double> MaxVolumeSocket => _maxVolumeSocket;
 
-        protected void SetLevel (float value) =>
-                    _water.position = _base.TransformVector(Vector3.Lerp(_startPosition, _endPosition, value));
+        public IInputSocket<Water> WaterSocket => _waterSocket;
 
-        protected void Start ()
+        protected void SetLevel (double value)
         {
-            if (_viewmodel == null)
-                _viewmodel = GetComponent<SimpleWaterTankViewModel>();
+            if (!double.IsFinite(value))
+            {
+                Debug.LogWarning("Value is not valide. Can't update water level.");
+                return;
+            }
+            _water.position = Vector3.Lerp(_startPosition.position, _endPosition.position, (float) value);
+            _water.localScale = _customStartScale * _scale.Evaluate((float) value);
+        }
 
-            _viewmodel.DataSocket.ReadOnlyProperty.Subscribe(DataListener).AddTo(this);
+        protected void Start () => ForceInit();
+
+        protected void UpdateWaterLevel ((Water water, double maxLevel) data) => SetLevel(data.water.Volume / data.maxLevel);
+
+        public void ForceInit ()
+        {
+            if (_isInited)
+                return;
+
+            if (_autoSetCustomStartScale)
+                _customStartScale = _water.localScale;
+
+            _waterSocket = new UniversalSocket<Water, Water>();
+            _maxVolumeSocket = new UniversalSocket<double, double>();
+            _combiningSocket = new CombiningSocket<Water, double, (Water, double)>(combineFunction: static (w, l) => (w, l));
+            _combiningSocket.SubscribeTo(_waterSocket);
+            _combiningSocket.SubscribeTo(_maxVolumeSocket);
+            _combiningSocket.ReadOnlyProperty.Subscribe(UpdateWaterLevel);
+
+            _isInited = true;
         }
     }
 }

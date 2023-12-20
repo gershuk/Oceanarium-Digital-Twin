@@ -1,51 +1,157 @@
+#nullable enable
+
+using System.Linq;
+
+using Aqua.SocketSystem;
+
 using UnityEngine;
 
 namespace Aqua.Items
 {
+    [RequireComponent(typeof(Collider))]
     public class ItemSlot : MonoBehaviour, IInfo
     {
+        protected static Sprite? _deafultSprite;
+        protected bool _isInited;
+        #region Item slot start parameters
+
+        [SerializeField]
+        protected Item _defaultItem;
+
+        [Header("Item slot start parameters")]
+        [SerializeField]
+        protected string _descritption;
+
+        [SerializeField]
+        protected string _name;
+
+        [SerializeField]
+        protected string[] _requiredNames;
+
+        [SerializeField]
+        protected Sprite _sprite;
+
+        #endregion Item slot start parameters
+
+        #region Sockets
+        protected MulticonnectionSocket<string, string> _descriptionSocket { get; set; }
+        protected MulticonnectionSocket<Item?, Item?> _itemSocket { get; set; }
+        protected MulticonnectionSocket<string, string> _nameSocket { get; set; }
+        protected MulticonnectionSocket<Sprite, Sprite> _spriteSocket { get; set; }
+        public IOutputSocket<string> DescriptionSocket => _descriptionSocket;
+
+        public IOutputSocket<Item?> ItemSocket => _itemSocket;
+        public IOutputSocket<string> NameSocket => _nameSocket;
+
+        public IOutputSocket<Sprite> SpriteSocket => _spriteSocket;
+        #endregion Sockets
+
         [SerializeField]
         protected Transform _itemPosition;
 
-        protected Item _itemScript = null;
-
-        [SerializeField]
-        protected string _slotDescription = "slot";
-
-        [SerializeField]
-        protected string _slotName = "slot";
-
         public const string IgnorRayCastLayerName = "Ignore Raycast";
         public const string ItemsLayerName = "Items";
-        public Item CurrentItem => _itemScript;
-        public string Description => _slotDescription;
-        public string Name => _slotName;
+        protected Transform Anchor => _itemPosition == null ? transform : _itemPosition;
+        public Item? CurrentItem => _itemSocket.GetValue();
+
+        protected void Awake () => ForceInit();
 
         protected void OnTriggerEnter (Collider other)
         {
+            if (!other.TryGetComponent<Item>(out var item))
+                return;
+
             if (CurrentItem != null)
             {
-                Debug.Log($"Slot is not empty. Item '{CurrentItem}' already attached");
+                Debug.Log($"Slot is not empty. Item '{CurrentItem}' already attached. Slot {gameObject.name}.");
                 return;
             }
+
+            TrySetItem(item);
+        }
+
+        protected void OnTriggerExit (Collider other)
+        {
             var item = other.GetComponent<Item>();
+
+            if (item != null && CurrentItem == item)
+                TakeItem();
+        }
+
+        public void ForceInit ()
+        {
+            if (_isInited)
+                return;
+
+            _nameSocket = new(_name);
+            _descriptionSocket = new(_descritption);
+            _spriteSocket = new(_sprite);
+
+            if (_spriteSocket.GetValue() == null)
+            {
+                if (_deafultSprite == null)
+                {
+                    _deafultSprite = Resources.Load<Sprite>(DefaultResourcePathes.DefaultItemSpritePath);
+                }
+                _spriteSocket.TrySetValue(_deafultSprite);
+            }
+
+            _itemSocket = new();
+
+            if (_defaultItem != null)
+            {
+                _defaultItem.ForceInit();
+                TrySetItem(_defaultItem);
+            }
+
+            _isInited = true;
+        }
+
+        public void RemoveItemFromSlot ()
+        {
+            if (_itemSocket.GetValue() == null)
+            {
+                Debug.LogError("Item is not setted");
+                return;
+            }
+            _itemSocket.GetValue()!.gameObject.layer = LayerMask.NameToLayer(ItemsLayerName);
+            _itemSocket.TrySetValue(null);
+        }
+
+        public Item? TakeItem ()
+        {
+            var item = _itemSocket.GetValue();
             if (item != null)
-                SetItem(item);
+            {
+                RemoveItemFromSlot();
+                item.Take(false);
+            }
+            return item;
         }
 
-        public void RemoveItem ()
+        public bool TrySetItem (Item item)
         {
-            _itemScript.gameObject.layer = LayerMask.NameToLayer(ItemsLayerName);
-            _itemScript = null;
-        }
+            if (_requiredNames.Length > 0 && !_requiredNames.Contains(item.NameSocket.GetValue()))
+            {
+                Debug.Log("Wrang item name. Can't set it.");
+                return false;
+            }
 
-        public void SetItem (Item itemScript)
-        {
-            itemScript.transform.position = transform.position;
-            itemScript.transform.rotation = transform.rotation;
-            itemScript.gameObject.layer = LayerMask.NameToLayer(IgnorRayCastLayerName);
-            itemScript.Rigidbody.isKinematic = true;
-            _itemScript = itemScript;
+            if (_itemSocket.GetValue() != null)
+            {
+                Debug.Log($"Can't set item to slot '{NameSocket.GetValue()}'. It's not empty.");
+                return false;
+            }
+
+            item.transform.SetPositionAndRotation(Anchor.position, Anchor.rotation);
+
+            item.Take(true);
+            if (!_itemSocket.TrySetValue(item))
+            {
+                Debug.LogError("Can't set value when socket has input link.");
+            }
+
+            return true;
         }
     }
 }

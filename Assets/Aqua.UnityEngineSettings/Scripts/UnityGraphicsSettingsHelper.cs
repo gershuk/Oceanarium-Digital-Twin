@@ -101,14 +101,18 @@ namespace Aqua.UnityEngineSettings
 
         private void Awake ()
         {
+            if (FindObjectsOfType<UnityGraphicsSettingsHelper>().Length > 1)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             DontDestroyOnLoad(gameObject);
 
-            InitObject();
+            ForceInit();
         }
 
-        public Resolution[] GetResolutions () => Screen.resolutions;
-
-        public void InitObject ()
+        public void ForceInit ()
         {
             if (_isInit)
                 return;
@@ -123,5 +127,7 @@ namespace Aqua.UnityEngineSettings
 
             _isInit = true;
         }
+
+        public Resolution[] GetResolutions () => Screen.resolutions;
     }
 }

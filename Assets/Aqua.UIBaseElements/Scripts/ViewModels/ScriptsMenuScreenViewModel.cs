@@ -2,8 +2,6 @@
 
 using System;
 
-using Aqua.SceneController;
-
 using UnityEngine;
 
 namespace Aqua.UIBaseElements
@@ -36,6 +34,8 @@ namespace Aqua.UIBaseElements
 
     public class ScriptsMenuScreenViewModel : MonoBehaviour
     {
+        private LoadingScreenViewModel _loadingScreenViewModel;
+
         [SerializeField]
         private ElementPickerViewModel _scenePicker;
 
@@ -44,11 +44,12 @@ namespace Aqua.UIBaseElements
 
         private void Start ()
         {
+            _loadingScreenViewModel = FindFirstObjectByType<LoadingScreenViewModel>();
             if (_scenesData != null)
             {
                 foreach (var sceneData in _scenesData)
                 {
-                    _scenePicker.AddElement(sceneData.Name, () => SceneLoader.Instance.LoadScene(sceneData.FileName));
+                    _scenePicker.AddElement(sceneData.Name, () => _loadingScreenViewModel.StartLoadingCoroutine(sceneData.FileName)); //SceneLoader.Instance.LoadScene(sceneData.FileName));
                 }
             }
         }

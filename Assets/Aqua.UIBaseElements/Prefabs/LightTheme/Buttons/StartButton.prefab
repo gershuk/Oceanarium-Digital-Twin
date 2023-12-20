@@ -102,7 +102,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7211643076705807021, guid: 7734dd85f2de6104eb4662e54ab76ac8, type: 3}
       propertyPath: m_text
-      value: START
+      value: "\u041D\u0410\u0427\u0410\u0422\u042C"
       objectReference: {fileID: 0}
     - target: {fileID: 7284175679595165316, guid: 7734dd85f2de6104eb4662e54ab76ac8, type: 3}
       propertyPath: m_Name

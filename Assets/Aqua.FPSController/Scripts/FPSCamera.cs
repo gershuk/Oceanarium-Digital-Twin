@@ -11,6 +11,10 @@ namespace Aqua.FPSController
         private Camera _camera;
 
         private Transform _cameraTransform;
+
+        [SerializeField]
+        private bool _isCameraChildOfPlayerBody = false;
+
         private Vector2 _mouseMovement;
 
         #region Camera transfrom properties
@@ -56,7 +60,11 @@ namespace Aqua.FPSController
 
             _cameraTransform = _camera.transform;
 
-            HideCursor();
+            if (_isCameraChildOfPlayerBody)
+            {
+                _cameraTransform.position = _cameraPosition.position;
+                _cameraTransform.rotation = _cameraPosition.rotation;
+            }
         }
 
         private IEnumerator IShake (float mag, float dur)
@@ -78,23 +86,19 @@ namespace Aqua.FPSController
             _rotX = Mathf.Clamp(_rotX, _maxDownAngle, _maxUpAngle);
             _rotY += _mouseMovement.x;
 
-            _cameraTransform.localRotation = Quaternion.Euler(_rotX, _rotY, _rotZ);
-            _player.Rotate(Vector3.up * _mouseMovement.x);
-            _cameraTransform.position = _cameraPosition.position;
-        }
+            if (!_isCameraChildOfPlayerBody)
+            {
+                _cameraTransform.rotation = Quaternion.Euler(_rotX, _rotY, _rotZ);
+                _cameraTransform.position = _cameraPosition.position;
+            }
+            else
+            {
+                _cameraTransform.localEulerAngles = Vector3.right * _rotX;
+            }
 
-        public void HideCursor ()
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            _player.Rotate(Vector3.up * _mouseMovement.x);
         }
 
         public void Shake (float magnitude, float duration) => StartCoroutine(IShake(magnitude, duration));
-
-        public void ShowCursor ()
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
     }
 }
