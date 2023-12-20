@@ -2,8 +2,6 @@
 
 using System;
 
-using Aqua.SceneController;
-
 using UnityEngine;
 
 namespace Aqua.UIBaseElements

@@ -1,43 +1,38 @@
 using System;
 
+using UniRx;
 using UniRx.Triggers;
 
 using UnityEngine;
 using UnityEngine.UI;
 
-using UniRx;
-
 namespace Aqua.UIBaseElements
 {
     public class HUDSubpanelViewModel : MonoBehaviour
     {
+        [SerializeField]
+        private Button _continueButton;
+
         private bool _isInited = false;
 
+        [SerializeField]
+        private Button _loadButton;
+
         private LoadingScreenViewModel _loadingScreenViewModel;
-
-        public Action CloseHUDSubpanel { get; set; }
-
-        public const string MainMenuName = "MainMenu";
 
         [SerializeField]
         private Button _mainMenuButton;
 
         [SerializeField]
-        private Button _loadButton;
-
-        [SerializeField]
         private Button _saveButton;
 
-        [SerializeField]
-        private Button _continueButton;
-
-        public Button MainMenuButton => _mainMenuButton;
-        public Button LoadButton => _loadButton;
-        public Button SaveButton => _saveButton;
+        public const string MainMenuName = "MainMenu";
+        public Action CloseHUDSubpanel { get; set; }
         public Button ContinueButton => _continueButton;
+        public Button LoadButton => _loadButton;
 
-        public LoadingScreenViewModel LoadingScreenViewModel 
-        { 
+        public LoadingScreenViewModel LoadingScreenViewModel
+        {
             get => _loadingScreenViewModel;
             protected set
             {
@@ -52,6 +47,9 @@ namespace Aqua.UIBaseElements
             }
         }
 
+        public Button MainMenuButton => _mainMenuButton;
+        public Button SaveButton => _saveButton;
+
         private void OnDestroy () => UnregisterButtons();
 
         private void RegisterButtons ()
@@ -62,10 +60,17 @@ namespace Aqua.UIBaseElements
             SaveButton.onClick.AddListener(Save);
         }
 
-        private void Start ()
+        private void Start () => ForceInit();
+
+        private void UnregisterButtons ()
         {
-            ForceInit();
+            MainMenuButton.onClick.RemoveListener(GoToMainMenu);
+            ContinueButton.onClick.RemoveListener(Continue);
+            LoadButton.onClick.RemoveListener(Load);
+            SaveButton.onClick.RemoveListener(Save);
         }
+
+        public void Continue () => CloseHUDSubpanel();
 
         public void ForceInit ()
         {
@@ -79,20 +84,10 @@ namespace Aqua.UIBaseElements
             _isInited = true;
         }
 
-        private void UnregisterButtons ()
-        {
-            MainMenuButton.onClick.RemoveListener(GoToMainMenu);
-            ContinueButton.onClick.RemoveListener(Continue);
-            LoadButton.onClick.RemoveListener(Load);
-            SaveButton.onClick.RemoveListener(Save);
-        }
-
-        public void Continue () => CloseHUDSubpanel();
-
         public void GoToMainMenu () => LoadingScreenViewModel.StartLoadingCoroutine(MainMenuName);
 
-        public void Save () => Debug.Log($"{nameof(Save)} not implemented");
-
         public void Load () => Debug.Log($"{nameof(Load)} not implemented");
+
+        public void Save () => Debug.Log($"{nameof(Save)} not implemented");
     }
 }

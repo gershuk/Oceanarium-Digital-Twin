@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -9,15 +8,15 @@ namespace Aqua.Items
     [Serializable]
     public class ItemSpawner : MonoBehaviour
     {
-        private Transform Anchor => _spwanPosition == null ? transform : _spwanPosition;
-
-        [SerializeField]
-        private Transform _spwanPosition;
+        private readonly List<Item> _spawnedItems = new();
 
         [SerializeField]
         private GameObject[] _itemPrefabs;
 
-        private List<Item> _spawnedItems = new();
+        [SerializeField]
+        private Transform _spwanPosition;
+
+        private Transform Anchor => _spwanPosition == null ? transform : _spwanPosition;
 
         private void SpawnItem (GameObject prefab)
         {
@@ -33,12 +32,10 @@ namespace Aqua.Items
             _spawnedItems.Add(item);
         }
 
-        public void SpawnAll ()
+        public void ResetAllItemsPosition ()
         {
-            foreach (var prefab in _itemPrefabs)
-            {
-                SpawnItem(prefab);
-            }
+            foreach (var item in _spawnedItems)
+                ResetSpawnedItemPosition(item);
         }
 
         public void ResetSpawnedItemPosition (Item item)
@@ -53,10 +50,12 @@ namespace Aqua.Items
             item.transform.rotation = Anchor.rotation;
         }
 
-        public void ResetAllItemsPosition ()
+        public void SpawnAll ()
         {
-            foreach (var item in _spawnedItems)
-                ResetSpawnedItemPosition(item);
+            foreach (var prefab in _itemPrefabs)
+            {
+                SpawnItem(prefab);
+            }
         }
     }
 }

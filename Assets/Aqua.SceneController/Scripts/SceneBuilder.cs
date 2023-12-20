@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 
-using Aqua.FPSController;
 using Aqua.SocketSystem;
 
 using UnityEngine;
@@ -22,26 +20,44 @@ namespace Aqua.SceneController
     public class SceneBuilder : MonoBehaviour
     {
         protected Coroutine _buildingCoroutine;
-        protected Coroutine _startingCoroutine;
-
         protected MulticonnectionSocket<float, float> _buildingPercentSocket;
-
+        protected bool _isInited = false;
+        protected Coroutine _startingCoroutine;
         protected MulticonnectionSocket<BuilderState, BuilderState> _stateScoket;
 
         public IOutputSocket<float> BuildingPercentSocket => _buildingPercentSocket;
 
         public IOutputSocket<BuilderState> StateSocket => _stateScoket;
 
-        protected bool _isInited = false;
+        protected void Awake () => ForceInit();
 
-        protected void Awake ()
+        protected virtual IEnumerator BuildScene ()
         {
-            ForceInit();
+            _stateScoket.TrySetValue(BuilderState.Building);
+            _buildingPercentSocket.TrySetValue(0);
+            yield return null;
+            _stateScoket.TrySetValue(BuilderState.BuildingEnded);
+            _buildingPercentSocket.TrySetValue(1);
+        }
+
+        protected virtual IEnumerator StartScene ()
+        {
+            _stateScoket.TrySetValue(BuilderState.Starting);
+
+            _stateScoket.TrySetValue(BuilderState.StartingEnded);
+
+            _startingCoroutine = null;
+
+            yield break;
         }
 
         protected virtual void SubInit ()
         {
+        }
 
+        [ContextMenu(nameof(DestroyScene))]
+        public virtual void DestroyScene ()
+        {
         }
 
         public void ForceInit ()
@@ -58,15 +74,6 @@ namespace Aqua.SceneController
             SubInit();
 
             _isInited = true;
-        }
-
-        protected virtual IEnumerator BuildScene ()
-        {
-            _stateScoket.TrySetValue(BuilderState.Building);
-            _buildingPercentSocket.TrySetValue(0);
-            yield return null;
-            _stateScoket.TrySetValue(BuilderState.BuildingEnded);
-            _buildingPercentSocket.TrySetValue(1);
         }
 
         [ContextMenu(nameof(StartBuildingCorutine))]
@@ -86,17 +93,6 @@ namespace Aqua.SceneController
             _buildingCoroutine = StartCoroutine(BuildScene());
         }
 
-        protected virtual IEnumerator StartScene ()
-        {
-            _stateScoket.TrySetValue(BuilderState.Starting);
-
-            _stateScoket.TrySetValue(BuilderState.StartingEnded);
-
-            _startingCoroutine = null;
-
-            yield break;
-        }
-
         [ContextMenu(nameof(StartStartingCorutine))]
         public void StartStartingCorutine ()
         {
@@ -113,12 +109,6 @@ namespace Aqua.SceneController
             }
 
             _startingCoroutine = StartCoroutine(StartScene());
-        }
-
-        [ContextMenu(nameof(DestroyScene))]
-        public virtual void DestroyScene ()
-        {
-
         }
     }
 }

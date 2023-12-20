@@ -1,6 +1,5 @@
 #nullable enable
 
-using UniRx;
 using Aqua.SceneController;
 
 using TMPro;
@@ -19,20 +18,19 @@ namespace Aqua.UIBaseElements
     // ToDo : Add sockets
     public class EndGamePanelViewModel : MonoBehaviour
     {
-        private ScenarioSceneBuilder _scenarioSceneBuilder;
+        [SerializeField]
+        private TMP_Text _infoLabel;
 
         private bool _isInited = false;
-
-        private EndGamePanelState _state;
 
         [SerializeField]
         private TMP_Text _mainLabel;
 
-        [SerializeField]
-        private TMP_Text _infoLabel;
+        private ScenarioSceneBuilder? _scenarioSceneBuilder;
+        private EndGamePanelState _state;
 
-        public EndGamePanelState State 
-        { 
+        public EndGamePanelState State
+        {
             get => _state;
             set
             {
@@ -44,10 +42,12 @@ namespace Aqua.UIBaseElements
                         _mainLabel.text = "None";
                         _infoLabel.text = "None";
                         break;
+
                     case EndGamePanelState.Lose:
                         _mainLabel.text = "Задание провалено.";
                         _infoLabel.text = _scenarioSceneBuilder.FirstFailedTaskSocket.GetValue()?.FailMessage ?? "Задача провалена.";
                         break;
+
                     case EndGamePanelState.Win:
                         _mainLabel.text = "Задание пройдено.";
                         _infoLabel.text = "Все задачи выполнены.";

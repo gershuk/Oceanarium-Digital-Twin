@@ -11,6 +11,13 @@ namespace Aqua.TanksSystem
 
         [SerializeField]
         [Range(0.0f, 1e6f)]
+        protected double _maxVolume = 1;
+
+        [SerializeField]
+        protected SimpleWaterTankObjectView _objectView;
+
+        [SerializeField]
+        [Range(0.0f, 1e6f)]
         protected float _ph = 17;
 
         [SerializeField]
@@ -22,34 +29,29 @@ namespace Aqua.TanksSystem
         protected float _volume = 1;
 
         [SerializeField]
-        [Range(0.0f, 1e6f)]
-        protected double _maxVolume = 1;
+        protected WaterInfoPanelView _waterInfoPanel;
 
-        [SerializeField]
-        [Range(0.0f, 1e6f)]
-        public double _outVolume = 0;
+        protected SimpleWaterTank _waterTank;
 
         [SerializeField]
         [Range(0.0f, 1e6f)]
         public double _localTickTime = 1;
 
-        protected SimpleWaterTank _waterTank;
-
         [SerializeField]
-        protected SimpleWaterTankObjectView _objectView;
+        [Range(0.0f, 1e6f)]
+        public double _outVolume = 0;
 
-        [SerializeField]
-        protected WaterInfoPanelView _waterInfoPanel;
-
-        public IOutputSocket<Water> StoredSubstanceSocket => _waterTank.StoredSubstanceSocket;
-        public IInputSocket<Water> InputHotWaterSocket => _waterTank.InputHotWaterSocket;
         public IInputSocket<Water> InputColdWaterSocket => _waterTank.InputColdWaterSocket;
-        public IOutputSocket<Water> OutputWaterSocket => _waterTank.OutputWaterSocket;
+        public IInputSocket<Water> InputHotWaterSocket => _waterTank.InputHotWaterSocket;
         public IOutputSocket<double> MaxVolumeSocket => _waterTank.MaxVolumeSocket;
+        public IOutputSocket<Water> OutputWaterSocket => _waterTank.OutputWaterSocket;
+        public IOutputSocket<Water> StoredSubstanceSocket => _waterTank.StoredSubstanceSocket;
+
+        public void Awake () => ForceInit();
 
         public void ForceInit ()
         {
-            if (_isInited) 
+            if (_isInited)
                 return;
 
             _waterTank = new SimpleWaterTank(new Water(_volume, _temp, _ph), _maxVolume, _outVolume, _localTickTime);
@@ -75,11 +77,6 @@ namespace Aqua.TanksSystem
             }
 
             _isInited = true;
-        }
-
-        public void Awake ()
-        {
-            ForceInit();
         }
 
         public void Init (float startTime) => _waterTank.Init(startTime);

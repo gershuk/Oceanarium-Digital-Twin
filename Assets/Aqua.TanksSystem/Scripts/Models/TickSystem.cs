@@ -16,8 +16,11 @@ namespace Aqua.TanksSystem
     public interface ITickSystem
     {
         void AddToEnd (ITickObject tickObject);
+
         void Init ();
+
         void Remove (ITickObject tickObject);
+
         void Tick ();
     }
 
@@ -36,6 +39,8 @@ namespace Aqua.TanksSystem
         [SerializeField]
         private float _tickTime;
 
+        public void AddToEnd (ITickObject tickObject) => _tickObjectQueue.AddLast(tickObject);
+
         public void Init ()
         {
             foreach (var tickObject in _tickObjectQueue)
@@ -43,6 +48,8 @@ namespace Aqua.TanksSystem
                 tickObject.Init(_startTime);
             }
         }
+
+        public void Remove (ITickObject tickObject) => _tickObjectQueue.Remove(tickObject);
 
         public void Tick ()
         {
@@ -57,9 +64,5 @@ namespace Aqua.TanksSystem
                 _lastTickTime = Time.time;
             }
         }
-
-        public void AddToEnd (ITickObject tickObject) => _tickObjectQueue.AddLast(tickObject);
-
-        public void Remove (ITickObject tickObject) => _tickObjectQueue.Remove(tickObject);
     }
 }

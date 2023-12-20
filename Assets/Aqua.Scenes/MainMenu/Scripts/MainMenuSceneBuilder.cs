@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Aqua.SceneController;
 using Aqua.UIBaseElements;
 

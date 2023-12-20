@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-
 using Aqua.FlowSystem;
 using Aqua.SocketSystem;
 using Aqua.TanksSystem.ViewModels;
@@ -11,20 +8,20 @@ namespace Aqua.TanksSystem
 {
     public class SimpleWaterTubeWithValveViewModel : SimpleWaterTubeViewModel
     {
+        protected CombiningSocket<Water, float, Water> _combiningSocket;
         protected bool _isInited = false;
 
         [SerializeField]
         protected ValveViewModel _valveViewModel;
 
-        protected CombiningSocket<Water, float, Water> _combiningSocket;
-
+        public override IOutputSocket<Water> OutputSocket => _combiningSocket;
         public ValveViewModel Valve => _valveViewModel;
 
-        public override IOutputSocket<Water> OutputSocket => _combiningSocket;
+        protected void Awake () => ForceInit();
 
         public void ForceInit ()
         {
-            if (_isInited) 
+            if (_isInited)
                 return;
 
             _valveViewModel.ForceInit();
@@ -34,11 +31,6 @@ namespace Aqua.TanksSystem
             _combiningSocket.SubscribeTo(_valveViewModel.Output);
 
             _isInited = true;
-        }
-
-        protected void Awake ()
-        {
-            ForceInit();
         }
     }
 }

@@ -2,14 +2,15 @@
 
 using System;
 
+using Aqua.Items;
 using Aqua.SocketSystem;
+
+using TMPro;
+
+using UniRx;
 
 using UnityEngine;
 using UnityEngine.UI;
-
-using UniRx;
-using TMPro;
-using Aqua.Items;
 
 namespace Aqua.UIBaseElements
 {
@@ -28,18 +29,20 @@ namespace Aqua.UIBaseElements
         private Image _aimImage;
 
         [SerializeField]
-        private TMP_Text _objectName;
-
-        [SerializeField]
         private Color _highlightedColor;
+
+        private UniversalSocket<IInfo, IInfo> _infoSocket;
 
         private bool _isInited = false;
 
         [SerializeField]
         private Color _normalColor;
 
+        [SerializeField]
+        private TMP_Text _objectName;
+
         private ConverterSocket<IInfo, AimState> _stateSocket;
-        private UniversalSocket<IInfo, IInfo> _infoSocket;
+        public IInputSocket<IInfo> InfoSocket => _infoSocket;
 
         public AimState State
         {
@@ -54,28 +57,32 @@ namespace Aqua.UIBaseElements
         }
 
         public IOutputSocket<AimState> StateSocket => _stateSocket;
-        public IInputSocket<IInfo> InfoSocket => _infoSocket;
 
-        private void UpdateGraphicalState (AimState state)
+        private void Awake () => ForceInit();
+
+        private void OnDestroy () => UnsubcribeFromInfoObject();
+
+        private void SubscribeToInfoObject (IInfo infoObject) => infoObject.NameSocket.ReadOnlyProperty.Subscribe(UpdateName).AddTo(_disposables);
+
+        private void UnsubcribeFromInfoObject () => _disposables.Dispose();
+
+        private void UpdateGraphicalState (AimState state) => _aimImage.color = state switch
         {
-            switch (state)
-            {
-                case AimState.Normal:
-                    _aimImage.color = _normalColor;
-                    break;
+            AimState.Normal => _normalColor,
+            AimState.Highlighted => _highlightedColor,
+            _ => throw new NotImplementedException(),
+        };
 
-                case AimState.Highlighted:
-                    _aimImage.color = _highlightedColor;
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
+        private void UpdateName (string? name)
+        {
+            _objectName.text = name;
+            _objectName.enabled = name is not null;
         }
 
-        private void Awake ()
+        private void UpdateSubscriptions (IInfo? info)
         {
-            ForceInit();
+            UnsubcribeFromInfoObject();
+            SubscribeToInfoObject(info ?? EmptyInfo.Instance);
         }
 
         public void ForceInit ()
@@ -97,33 +104,6 @@ namespace Aqua.UIBaseElements
             _stateSocket.ReadOnlyProperty.Subscribe(UpdateGraphicalState).AddTo(this);
 
             _isInited = true;
-        }
-
-        private void UpdateName (string? name)
-        {
-            _objectName.text = name;
-            _objectName.enabled = name is null ? false : true;
-        }
-
-        private void UpdateSubscriptions (IInfo? info)
-        {
-            UnsubcribeFromInfoObject();
-            SubscribeToInfoObject(info ?? EmptyInfo.Instance);
-        }
-
-        private void SubscribeToInfoObject (IInfo infoObject)
-        {
-            infoObject.NameSocket.ReadOnlyProperty.Subscribe(UpdateName).AddTo(_disposables);
-        }
-
-        private void UnsubcribeFromInfoObject ()
-        {
-            _disposables.Dispose();
-        }
-
-        private void OnDestroy ()
-        {
-            UnsubcribeFromInfoObject();
         }
     }
 }

@@ -1,16 +1,15 @@
-using UniRx;
-
 using Aqua.FlowSystem;
 using Aqua.SceneController;
 using Aqua.SocketSystem;
 
-using UnityEngine;
+using UniRx;
 
 namespace Aqua.BaseTasks
 {
     public class WaterLevelTask : ScenarioTask
     {
-        private CombiningSocket<Water, double, double> _combiningSocket;
+        private readonly CombiningSocket<Water, double, double> _combiningSocket;
+
         public WaterLevelTask (IOutputSocket<double> maxLevelSocket,
                               IOutputSocket<Water> waterSocket,
                               double maxLevel = 1,
@@ -28,8 +27,8 @@ namespace Aqua.BaseTasks
             _combiningSocket.SubscribeTo(waterSocket);
             _combiningSocket.ReadOnlyProperty.Subscribe(ñ => State = ñ switch
             {
-                double coef when coef <= maxLevel && coef>=minLevel => TaskState.Completed,
-                double coef when coef <= maxLevel+0.01 && coef>=minLevel-0.01 => TaskState.InProgress,
+                double coef when coef <= maxLevel && coef >= minLevel => TaskState.Completed,
+                double coef when coef <= maxLevel + 0.01 && coef >= minLevel - 0.01 => TaskState.InProgress,
                 double coef when coef > maxLevel + 0.01 || coef < minLevel - 0.01 => TaskState.Failed,
             }).AddTo(Disposables);
         }

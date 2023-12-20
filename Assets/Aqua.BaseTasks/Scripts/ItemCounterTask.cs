@@ -12,10 +12,8 @@ namespace Aqua.BaseTasks
 {
     public class ItemCounterTask : ScenarioTask
     {
-        public ItemsCounter ItemsCounter { get; }
-
         public string ItemName { get; }
-
+        public ItemsCounter ItemsCounter { get; }
         public int RequiredCount { get; }
 
         public ItemCounterTask (ItemsCounter itemsCounter,

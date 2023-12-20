@@ -1,35 +1,30 @@
-using System;
-
 using Aqua.FlowSystem;
 using Aqua.SocketSystem;
-
-using UniRx;
 
 using UnityEngine;
 
 namespace Aqua.TanksSystem
 {
-    public class SimpleTank<T> : ITickObject  where T:ISubstance
+    public class SimpleTank<T> : ITickObject where T : ISubstance
     {
-        public double MaxVolume 
-        { 
-            get => _maxVolumeSocket.GetValue(); 
-            protected set => _maxVolumeSocket.TrySetValue(value); 
-        }
+        protected MulticonnectionSocket<bool, bool> _isOverflowSocket;
+
+        protected MulticonnectionSocket<double, double> _maxVolumeSocket;
 
         protected ConverterSocket<T, bool> _overflowCheckerSocket;
-
-        protected MulticonnectionSocket<bool, bool> _isOverflowSocket;
 
         protected MulticonnectionSocket<T, T> _storedSubstanceSocket;
 
         public IOutputSocket<bool> IsOverflowSocket => _isOverflowSocket;
 
-        public IOutputSocket<T> StoredSubstanceSocket => _storedSubstanceSocket;
-
-        protected MulticonnectionSocket<double, double> _maxVolumeSocket;
+        public double MaxVolume
+        {
+            get => _maxVolumeSocket.GetValue();
+            protected set => _maxVolumeSocket.TrySetValue(value);
+        }
 
         public IOutputSocket<double> MaxVolumeSocket => _maxVolumeSocket;
+        public IOutputSocket<T> StoredSubstanceSocket => _storedSubstanceSocket;
 
         public T StoredValue
         {
@@ -41,16 +36,8 @@ namespace Aqua.TanksSystem
             }
         }
 
-        protected void SetUpOverflowSockets()
-        {
-            _overflowCheckerSocket = new();
-            _isOverflowSocket = new();
-            _overflowCheckerSocket.SubscribeTo(_storedSubstanceSocket, w => w.Volume > MaxVolume);
-            _isOverflowSocket.SubscribeTo(_overflowCheckerSocket);
-        }
-
         public SimpleTank (double maxVolume = 1)
-        { 
+        {
             _storedSubstanceSocket = new MulticonnectionSocket<T, T>();
             _maxVolumeSocket = new(maxVolume);
             SetUpOverflowSockets();
@@ -61,6 +48,14 @@ namespace Aqua.TanksSystem
             _storedSubstanceSocket = new MulticonnectionSocket<T, T>(parameters);
             _maxVolumeSocket = new(maxVolume);
             SetUpOverflowSockets();
+        }
+
+        protected void SetUpOverflowSockets ()
+        {
+            _overflowCheckerSocket = new();
+            _isOverflowSocket = new();
+            _overflowCheckerSocket.SubscribeTo(_storedSubstanceSocket, w => w.Volume > MaxVolume);
+            _isOverflowSocket.SubscribeTo(_overflowCheckerSocket);
         }
 
         public virtual void Init (float startTime)

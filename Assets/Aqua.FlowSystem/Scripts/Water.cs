@@ -8,20 +8,13 @@ namespace Aqua.FlowSystem
     public struct Water : ISubstance, ISubstanceOperations<Water>
     {
         [SerializeField]
-        private double _volume;
-        [SerializeField]
         private double _ph;
+
         [SerializeField]
         private double _temperature;
 
-        public Water (double volume = 0,  double temperature = 0, double ph = 0) => 
-            (_volume, _ph, _temperature) = (volume, ph, temperature);
-
-        public double Volume
-        {
-            get => _volume;
-            private set => _volume = value;
-        }
+        [SerializeField]
+        private double _volume;
 
         public double PH
         {
@@ -35,15 +28,14 @@ namespace Aqua.FlowSystem
             private set => _temperature = value;
         }
 
-        public Water[] Separate (params double[] coefficients)
+        public double Volume
         {
-            var volumes = new Water[coefficients.Length];
-
-            for (var i = 0; i < coefficients.Length; ++i)
-                volumes[i] = new Water(Volume * coefficients[i], Temperature, PH * coefficients[i]);
-
-            return volumes;
+            get => _volume;
+            private set => _volume = value;
         }
+
+        public Water (double volume = 0, double temperature = 0, double ph = 0) =>
+                                    (_volume, _ph, _temperature) = (volume, ph, temperature);
 
         public Water Combine (params Water[] substances)
         {
@@ -51,8 +43,8 @@ namespace Aqua.FlowSystem
 
             for (var i = 0; i < substances.Length; ++i)
             {
-                newSubstance.Temperature = (newSubstance.Temperature * newSubstance.Volume + 
-                                           substances[i].Temperature * substances[i].Volume) / (newSubstance.Volume + substances[i].Volume);
+                newSubstance.Temperature = ((newSubstance.Temperature * newSubstance.Volume) +
+                                           (substances[i].Temperature * substances[i].Volume)) / (newSubstance.Volume + substances[i].Volume);
                 newSubstance.Volume += substances[i].Volume;
                 newSubstance.PH += substances[i].PH;
             }
@@ -63,5 +55,15 @@ namespace Aqua.FlowSystem
         public bool IsVolumeApproximatelyEqual (double value, double eps = double.Epsilon) => Math.Abs(Volume - value) < eps;
 
         public bool IsVolumeApproximatelyLess (double value, double eps = double.Epsilon) => Math.Abs(value - Volume) > eps;
+
+        public Water[] Separate (params double[] coefficients)
+        {
+            var volumes = new Water[coefficients.Length];
+
+            for (var i = 0; i < coefficients.Length; ++i)
+                volumes[i] = new Water(Volume * coefficients[i], Temperature, PH * coefficients[i]);
+
+            return volumes;
+        }
     }
 }

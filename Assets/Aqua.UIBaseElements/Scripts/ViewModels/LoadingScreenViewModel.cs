@@ -2,6 +2,7 @@ using System.Collections;
 using System;
 
 using Aqua.SceneController;
+
 #nullable enable
 
 using Aqua.SocketSystem;
@@ -13,44 +14,23 @@ namespace Aqua.UIBaseElements
 {
     public class LoadingScreenViewModel : MonoBehaviour
     {
-        [SerializeField]
-        private CursorViewModel _cursorViewModel;
-
-        private Coroutine? _loadingCoroutine;
-
-        [SerializeField]
-        private GameObject _loadingCamera;
-
-        public const int EndLoadingWaitTime = 5;
-        public const float LoadingSceneCoefficient = 0.5f;
+        private readonly IUniversalSocket<float, float> _progressSocket = new UniversalSocket<float, float>(0);
 
         [SerializeField]
         private Canvas _canvas;
 
-        [SerializeField] 
+        [SerializeField]
+        private CursorViewModel _cursorViewModel;
+
+        [SerializeField]
         private LoadingBarView _loadingBar;
 
-        private readonly IUniversalSocket<float, float> _progressSocket = new UniversalSocket<float, float>(0);
+        [SerializeField]
+        private GameObject _loadingCamera;
 
-        public void Awake ()
-        {
-            if (FindObjectsOfType<LoadingScreenViewModel>().Length > 1)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            _loadingBar.ProgressSocket.SubscribeTo(_progressSocket);
-
-            if (_canvas == null )
-                _canvas = GetComponent<Canvas>();
-
-            if (_cursorViewModel == null )
-                _cursorViewModel = FindFirstObjectByType<CursorViewModel>();
-
-            DontDestroyOnLoad(gameObject);
-            DisableView();
-        }
+        private Coroutine? _loadingCoroutine;
+        public const int EndLoadingWaitTime = 5;
+        public const float LoadingSceneCoefficient = 0.5f;
 
         private void DisableView ()
         {
@@ -64,12 +44,10 @@ namespace Aqua.UIBaseElements
             _loadingCamera.SetActive(true);
         }
 
-        public void StartLoadingCoroutine (string name, LoadSceneParameters parameters = new())
+        private void OnDestroy ()
         {
             if (_loadingCoroutine != null)
-                throw new Exception("Already loading scene");
-
-            _loadingCoroutine = StartCoroutine(StartLoadingWithScreen(name, parameters));
+                StopCoroutine(_loadingCoroutine);
         }
 
         private IEnumerator StartLoadingWithScreen (string name, LoadSceneParameters parameters = new())
@@ -80,7 +58,7 @@ namespace Aqua.UIBaseElements
             _cursorViewModel.IsCursorAcitve = true;
 
             var loadingOperation = SceneLoader.Instance.LoadSceneAsync(name, parameters);
-            
+
             EnableView();
 
             do
@@ -101,7 +79,7 @@ namespace Aqua.UIBaseElements
 
             _progressSocket.TrySetValue(1);
 
-            yield return new WaitForSeconds(2);      
+            yield return new WaitForSeconds(2);
 
             DisableView();
 
@@ -110,10 +88,32 @@ namespace Aqua.UIBaseElements
             _loadingCoroutine = null;
         }
 
-        private void OnDestroy ()
+        public void Awake ()
+        {
+            if (FindObjectsOfType<LoadingScreenViewModel>().Length > 1)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            _loadingBar.ProgressSocket.SubscribeTo(_progressSocket);
+
+            if (_canvas == null)
+                _canvas = GetComponent<Canvas>();
+
+            if (_cursorViewModel == null)
+                _cursorViewModel = FindFirstObjectByType<CursorViewModel>();
+
+            DontDestroyOnLoad(gameObject);
+            DisableView();
+        }
+
+        public void StartLoadingCoroutine (string name, LoadSceneParameters parameters = new())
         {
             if (_loadingCoroutine != null)
-                StopCoroutine(_loadingCoroutine);
+                throw new Exception("Already loading scene");
+
+            _loadingCoroutine = StartCoroutine(StartLoadingWithScreen(name, parameters));
         }
     }
 }

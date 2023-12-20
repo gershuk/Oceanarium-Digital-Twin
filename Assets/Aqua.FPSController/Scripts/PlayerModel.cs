@@ -23,15 +23,17 @@ namespace Aqua.FPSController
     public sealed class PlayerModel : MonoBehaviour
     {
         [SerializeField]
-        private ObjectInteracter _objectInteracter;
-
-        [SerializeField]
         private FPSCamera _fpsCamera;
 
         [SerializeField]
         private PlayerInventory _inventory;
 
         private bool _isInited = false;
+
+        private bool _isInventoryAcitve;
+
+        [SerializeField]
+        private ObjectInteracter _objectInteracter;
 
         [SerializeField]
         private ObjectScaner _objectScaner;
@@ -67,13 +69,13 @@ namespace Aqua.FPSController
             }
         }
 
-        public bool IsObjectInteracterAcitve
+        public bool IsInventoryAcitve
         {
-            get => _isObjectInteracterAcitve;
-            set
+            get => _isInventoryAcitve;
+            private set
             {
-                _isObjectInteracterAcitve = value;
-                _objectInteracter.enabled = _isObjectInteracterAcitve;
+                _isInventoryAcitve = value;
+                Inventory.enabled = _isInventoryAcitve;
             }
         }
 
@@ -88,13 +90,13 @@ namespace Aqua.FPSController
             }
         }
 
-        public bool IsInventoryAcitve
+        public bool IsObjectInteracterAcitve
         {
-            get => _isInventoryAcitve;
-            private set
+            get => _isObjectInteracterAcitve;
+            set
             {
-                _isInventoryAcitve = value;
-                Inventory.enabled = _isInventoryAcitve;
+                _isObjectInteracterAcitve = value;
+                _objectInteracter.enabled = _isObjectInteracterAcitve;
             }
         }
 
@@ -146,6 +148,7 @@ namespace Aqua.FPSController
                         IsCursorAcitve = true;
                         IsCameraAcitve = true;
                         break;
+
                     case PlayerControllerState.Win:
                         IsMovementInputAcitve = false;
                         IsInventoryAcitve = false;
@@ -154,6 +157,7 @@ namespace Aqua.FPSController
                         IsCursorAcitve = true;
                         IsCameraAcitve = true;
                         break;
+
                     case PlayerControllerState.Lose:
                         IsMovementInputAcitve = false;
                         IsInventoryAcitve = false;
@@ -162,6 +166,7 @@ namespace Aqua.FPSController
                         IsCursorAcitve = true;
                         IsCameraAcitve = true;
                         break;
+
                     default:
                         throw new NotImplementedException();
                 }
@@ -177,21 +182,18 @@ namespace Aqua.FPSController
 
         private bool _isMovementInputAcitve;
 
+        private bool _isObjectInteracterAcitve;
+
         [SerializeField]
         private InputActionReference _showHideCursor;
 
         [Header("Input actions")]
         [SerializeField]
         private InputActionReference _showHideMenu;
-        private bool _isObjectInteracterAcitve;
 
         #endregion Input actions
 
-        private bool _isInventoryAcitve;
-        private void Awake ()
-        {
-            ForceInit();
-        }
+        private void Awake () => ForceInit();
 
         private void FindObjectsIfNull ()
         {
@@ -211,10 +213,16 @@ namespace Aqua.FPSController
                 _objectInteracter = GetComponent<ObjectInteracter>();
         }
 
-        private void OnDestroy ()
+        private void ForceInitSubcomponents ()
         {
-            UnsubscribeFromActions();
+            //_fpsCamera.ForceInit();
+            _inventory.ForceInit();
+            //_playerMovement.ForceInit();
+            _objectScaner.ForceInit();
+            _objectInteracter.ForceInit();
         }
+
+        private void OnDestroy () => UnsubscribeFromActions();
 
         private void OnShowHideCursorPerformed (InputAction.CallbackContext obj) => State = State switch
         {
@@ -248,15 +256,6 @@ namespace Aqua.FPSController
         {
             _showHideCursor.action.performed -= OnShowHideCursorPerformed;
             _showHideMenu.action.performed -= OnShowHideMenuPerformed;
-        }
-
-        private void ForceInitSubcomponents ()
-        {
-            //_fpsCamera.ForceInit();
-            _inventory.ForceInit();
-            //_playerMovement.ForceInit();
-            _objectScaner.ForceInit();
-            _objectInteracter.ForceInit();
         }
 
         public void ForceInit ()

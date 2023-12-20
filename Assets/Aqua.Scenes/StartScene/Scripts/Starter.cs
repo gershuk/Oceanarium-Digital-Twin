@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-
 using Aqua.UIBaseElements;
 
 using UnityEngine;
@@ -9,10 +6,10 @@ namespace Aqua.Scenes.StartScene
 {
     public class Starter : MonoBehaviour
     {
-        public const string MainMenuSceneName = "MainMenu";
-
         [SerializeField]
         private LoadingScreenViewModel _loadingScreenViewModel;
+
+        public const string MainMenuSceneName = "MainMenu";
 
         private void Start ()
         {

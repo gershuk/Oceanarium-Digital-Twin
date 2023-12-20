@@ -12,23 +12,22 @@ namespace Aqua.UIBaseElements
 {
     public class TaskListViewModel : MonoBehaviour
     {
-        private bool _isInited = false;
+        [SerializeField]
+        private Image _backgroundImage;
 
         [SerializeField]
         private RectTransform _content;
 
-        [SerializeField]
-        private Image _backgroundImage;
-
+        private bool _isInited = false;
         private TaskListModel _model;
 
         [SerializeField]
         private GameObject _taskViewPrefab;
 
-        public TaskListModel Model 
-        { 
-            get => _model; 
-            set => SetAndSubscribeToModel(value); 
+        public TaskListModel Model
+        {
+            get => _model;
+            set => SetAndSubscribeToModel(value);
         }
 
         private void AttachView (TaskToggleViewModel viewModel) => viewModel.GetComponent<RectTransform>().SetParent(_content);
@@ -54,24 +53,6 @@ namespace Aqua.UIBaseElements
             Destroy(taskToggleViewModels.gameObject);
         }
 
-        public void ForceInit ()
-        {
-            if (_isInited) 
-                return;
-
-            if (_backgroundImage == null)
-                _backgroundImage = GetComponent<Image>();
-
-            Model = new TaskListModel();
-
-            _isInited = true;
-        }
-
-        public void Awake ()
-        {
-            ForceInit();
-        }
-
         private void SetAndSubscribeToModel (TaskListModel model)
         {
             _model = model;
@@ -83,6 +64,21 @@ namespace Aqua.UIBaseElements
         }
 
         private void UpdateBackground (int count) => _backgroundImage.enabled = count > 0;
+
+        public void Awake () => ForceInit();
+
+        public void ForceInit ()
+        {
+            if (_isInited)
+                return;
+
+            if (_backgroundImage == null)
+                _backgroundImage = GetComponent<Image>();
+
+            Model = new TaskListModel();
+
+            _isInited = true;
+        }
     }
 
     public class WrongParentException : Exception

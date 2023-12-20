@@ -65,6 +65,8 @@ namespace Aqua.TanksSystem
                 CloseCommand.Execute();
         }
 
+        public void DoProcessingAction () => Open();
+
         [ContextMenu(nameof(Open))]
         public void Open ()
         {
@@ -72,16 +74,10 @@ namespace Aqua.TanksSystem
                 OpenCommand.Execute();
         }
 
-        public void Use () { }
-        public void DoProcessingAction ()
-        {
-            Open();
-        }
+        public void UndoProcessingAction () => Close();
 
-        public void UndoProcessingAction ()
-        {
-            Close();
-        }
+        public void Use ()
+        { }
 
         #endregion Rotation methods
     }

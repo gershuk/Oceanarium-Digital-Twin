@@ -12,23 +12,14 @@ namespace Aqua.SceneController
 {
     public class ScenarioSceneBuilder : SceneBuilder
     {
-        protected ScenarioTask[] _tasks;
-
         protected MulticonnectionSocket<ScenarioTask?, ScenarioTask?> _firstFailedTaskSocket;
-
-        public IOutputSocket<ScenarioTask?> FirstFailedTaskSocket => _firstFailedTaskSocket;
 
         [SerializeField]
         protected PlayerModel _playerModel;
 
+        protected ScenarioTask[] _tasks;
+        public IOutputSocket<ScenarioTask?> FirstFailedTaskSocket => _firstFailedTaskSocket;
         public IReadOnlyList<ScenarioTask> Tasks => _tasks;
-
-        protected override void SubInit ()
-        {
-            _firstFailedTaskSocket = new();
-            if (_playerModel == null)
-                _playerModel = FindFirstObjectByType<PlayerModel>();
-        }
 
         protected override IEnumerator BuildScene ()
         {
@@ -55,6 +46,13 @@ namespace Aqua.SceneController
             _startingCoroutine = null;
 
             yield break;
+        }
+
+        protected override void SubInit ()
+        {
+            _firstFailedTaskSocket = new();
+            if (_playerModel == null)
+                _playerModel = FindFirstObjectByType<PlayerModel>();
         }
 
         public override void DestroyScene ()

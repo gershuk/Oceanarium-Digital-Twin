@@ -16,6 +16,9 @@ namespace Aqua.Items
 
         #region Item start parameters
 
+        [SerializeField]
+        protected Transform _defaultRespawnPosition;
+
         [Header("Item start parameters")]
         [SerializeField]
         protected string _descritption = "description";
@@ -26,15 +29,12 @@ namespace Aqua.Items
         [SerializeField]
         protected Sprite _sprite;
 
-        [SerializeField]
-        protected Transform _defaultRespawnPosition;
-
         #endregion Item start parameters
 
         #region Sockets
-        protected MulticonnectionSocket<string, string> _descriptionSocket { get; set; }
-        protected MulticonnectionSocket<string, string> _nameSocket { get; set; }
-        protected MulticonnectionSocket<Sprite, Sprite> _spriteSocket { get; set; }
+        protected MulticonnectionSocket<string, string>? _descriptionSocket { get; set; }
+        protected MulticonnectionSocket<string, string>? _nameSocket { get; set; }
+        protected MulticonnectionSocket<Sprite, Sprite>? _spriteSocket { get; set; }
 
         public IOutputSocket<string> DescriptionSocket => _descriptionSocket;
 
@@ -43,23 +43,11 @@ namespace Aqua.Items
         public IOutputSocket<Sprite> SpriteSocket => _spriteSocket;
         #endregion Sockets
 
-        public Collider Collider { get; protected set; }
-
         protected bool _isInited = false;
-
-        public GameObject GameObject { get; protected set; }
+        public Collider? Collider { get; protected set; }
+        public GameObject? GameObject { get; protected set; }
 
         protected void Awake () => ForceInit();
-
-        public virtual bool TryResetPosition ()
-        {
-            if (_defaultRespawnPosition != null)
-            {
-                transform.SetPositionAndRotation(_defaultRespawnPosition.position, _defaultRespawnPosition.rotation);
-            }
-
-            return _defaultRespawnPosition;
-        }
 
         protected virtual void SubInit ()
         {
@@ -80,14 +68,24 @@ namespace Aqua.Items
             Collider = GetComponent<Collider>();
         }
 
-        public  void ForceInit ()
+        public void ForceInit ()
         {
             if (_isInited)
                 return;
 
-           SubInit();
+            SubInit();
 
             _isInited = true;
+        }
+
+        public virtual bool TryResetPosition ()
+        {
+            if (_defaultRespawnPosition != null)
+            {
+                transform.SetPositionAndRotation(_defaultRespawnPosition.position, _defaultRespawnPosition.rotation);
+            }
+
+            return _defaultRespawnPosition;
         }
     }
 }

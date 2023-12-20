@@ -1,30 +1,26 @@
 #nullable enable
 
-using UnityEngine;
-using UnityEngine.UI;
 using UniRx;
 using UniRx.Triggers;
+
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Aqua.UIBaseElements
 {
     public class EndGameSubpanelViewModel : MonoBehaviour
     {
-        private LoadingScreenViewModel _loadingScreenViewModel;
-
         private bool _isInited = false;
-
-        public const string MainMenuName = "MainMenu";
-
-        [SerializeField]
-        private Button _returnMenuButton;
+        private LoadingScreenViewModel _loadingScreenViewModel;
 
         [SerializeField]
         private Button _restartButton;
 
-        public Button ReturnMenuButton => _returnMenuButton;
+        [SerializeField]
+        private Button _returnMenuButton;
 
-        public Button RestartButton => _restartButton;
+        public const string MainMenuName = "MainMenu";
 
         public LoadingScreenViewModel LoadingScreenViewModel
         {
@@ -42,18 +38,18 @@ namespace Aqua.UIBaseElements
             }
         }
 
+        public Button RestartButton => _restartButton;
+        public Button ReturnMenuButton => _returnMenuButton;
+
+        private void OnDestroy () => UnregisterButtons();
+
         private void RegisterButtons ()
         {
             ReturnMenuButton.onClick.AddListener(GoToMainMenu);
             RestartButton.onClick.AddListener(Restart);
         }
 
-        private void OnDestroy () => UnregisterButtons();
-
-        private void Start ()
-        {
-            ForceInit();
-        }
+        private void Start () => ForceInit();
 
         private void UnregisterButtons ()
         {
@@ -73,8 +69,8 @@ namespace Aqua.UIBaseElements
             _isInited = true;
         }
 
-        public void Restart () => LoadingScreenViewModel.StartLoadingCoroutine(SceneManager.GetActiveScene().name);
-
         public void GoToMainMenu () => LoadingScreenViewModel.StartLoadingCoroutine(MainMenuName);
+
+        public void Restart () => LoadingScreenViewModel.StartLoadingCoroutine(SceneManager.GetActiveScene().name);
     }
 }

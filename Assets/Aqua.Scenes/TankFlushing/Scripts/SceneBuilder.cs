@@ -1,13 +1,12 @@
-using System;
 using System.Collections;
-using UniRx;
 
 using Aqua.BaseTasks;
 using Aqua.FPSController;
 using Aqua.SceneController;
 using Aqua.TanksSystem;
-using Aqua.TanksSystem.ViewModels;
 using Aqua.UIBaseElements;
+
+using UniRx;
 
 using UnityEngine;
 
@@ -16,13 +15,10 @@ namespace Aqua.Scenes.TankFlushing
     public class SceneBuilder : ScenarioSceneBuilder
     {
         [SerializeField]
-        private TaskListViewModel _taskListViewModel;
-
-        [SerializeField]
-        private SimpleWaterTankViewModel _simpleWaterTankViewModel;
-
-        [SerializeField]
         private SimpleWaterSourceViewModel _coldWaterSource;
+
+        [SerializeField]
+        private SimpleWaterTubeWithValveViewModel _coldWaterTube;
 
         [SerializeField]
         private SimpleWaterSourceViewModel _hotWaterSource;
@@ -31,33 +27,39 @@ namespace Aqua.Scenes.TankFlushing
         private SimpleWaterTubeWithValveViewModel _hotWaterTube;
 
         [SerializeField]
-        private SimpleWaterTubeWithValveViewModel _coldWaterTube;
+        private SimpleWaterTankViewModel _simpleWaterTankViewModel;
+
+        [SerializeField]
+        private TaskListViewModel _taskListViewModel;
 
         [SerializeField]
         private TickSystem _tickSystem;
 
         protected int _taskIndex;
 
-        protected override void SubInit ()
+        private void SetAllTaskActive ()
         {
-            base.SubInit();
+            foreach (var task in _tasks)
+            {
+                task.ProcessingType = ProcessingType.Active;
+            }
+        }
 
-            _coldWaterSource.ForceInit();
-            _hotWaterSource.ForceInit();
+        private void SetAllTaskNotCompleted ()
+        {
+            foreach (var task in _tasks)
+            {
+                task.State = TaskState.NotCompleted;
+            }
+        }
 
-            _coldWaterTube.ForceInit();
-            _hotWaterTube.ForceInit();
-
-            _coldWaterTube.InputSocket.SubscribeTo(_coldWaterSource.OutputSocket);
-            _hotWaterTube.InputSocket.SubscribeTo(_hotWaterSource.OutputSocket);
-
-            _simpleWaterTankViewModel.ForceInit();
-            _simpleWaterTankViewModel.InputColdWaterSocket.SubscribeTo(_coldWaterTube.OutputSocket);
-            _simpleWaterTankViewModel.InputHotWaterSocket.SubscribeTo(_hotWaterTube.OutputSocket);
-
-            if (_taskListViewModel == null)
-                _taskListViewModel = FindFirstObjectByType<TaskListViewModel>();
-            _taskListViewModel.ForceInit();
+        private void Update ()
+        {
+            if (_stateScoket.GetValue() == BuilderState.StartingEnded
+                && _playerModel.State is not (PlayerControllerState.Lose or PlayerControllerState.Win))
+            {
+                _tickSystem.Tick();
+            }
         }
 
         protected override IEnumerator BuildScene ()
@@ -108,16 +110,19 @@ namespace Aqua.Scenes.TankFlushing
                     {
                         case TaskState.NotCompleted:
                             break;
+
                         case TaskState.InProgress:
                             break;
+
                         case TaskState.Completed:
                             foreach (var taks in _tasks)
                             {
                                 if (taks.State != TaskState.Completed)
                                     return;
                             }
-                                _playerModel.State = PlayerControllerState.Win;
+                            _playerModel.State = PlayerControllerState.Win;
                             break;
+
                         case TaskState.Failed:
                             _firstFailedTaskSocket.TrySetValue(task);
                             _playerModel.State = PlayerControllerState.Lose;
@@ -125,7 +130,7 @@ namespace Aqua.Scenes.TankFlushing
                     }
                 });
 
-                _buildingPercentSocket.TrySetValue(0.3f + 0.7f * i / _tasks.Length);
+                _buildingPercentSocket.TrySetValue(0.3f + (0.7f * i / _tasks.Length));
 
                 yield return null;
             }
@@ -135,29 +140,26 @@ namespace Aqua.Scenes.TankFlushing
             _buildingPercentSocket.TrySetValue(1);
         }
 
-        private void Update ()
+        protected override void SubInit ()
         {
-            if (_stateScoket.GetValue() == BuilderState.StartingEnded 
-                && _playerModel.State is not (PlayerControllerState.Lose or PlayerControllerState.Win))
-            {
-                _tickSystem.Tick();
-            }
-        }
+            base.SubInit();
 
-        private void SetAllTaskNotCompleted ()
-        {
-            foreach (var task in _tasks)
-            {
-                task.State = TaskState.NotCompleted;
-            }
-        }
+            _coldWaterSource.ForceInit();
+            _hotWaterSource.ForceInit();
 
-        private void SetAllTaskActive ()
-        {
-            foreach (var task in _tasks)
-            {
-                task.ProcessingType = ProcessingType.Active;
-            }
+            _coldWaterTube.ForceInit();
+            _hotWaterTube.ForceInit();
+
+            _coldWaterTube.InputSocket.SubscribeTo(_coldWaterSource.OutputSocket);
+            _hotWaterTube.InputSocket.SubscribeTo(_hotWaterSource.OutputSocket);
+
+            _simpleWaterTankViewModel.ForceInit();
+            _simpleWaterTankViewModel.InputColdWaterSocket.SubscribeTo(_coldWaterTube.OutputSocket);
+            _simpleWaterTankViewModel.InputHotWaterSocket.SubscribeTo(_hotWaterTube.OutputSocket);
+
+            if (_taskListViewModel == null)
+                _taskListViewModel = FindFirstObjectByType<TaskListViewModel>();
+            _taskListViewModel.ForceInit();
         }
     }
 }

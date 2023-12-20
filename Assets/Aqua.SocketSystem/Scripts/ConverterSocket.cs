@@ -14,8 +14,8 @@ namespace Aqua.SocketSystem
         {
         }
 
-        public ConverterSocket(TOut? value = default) : base(value) 
-        { 
+        public ConverterSocket (TOut? value = default) : base(value)
+        {
         }
 
         public ConverterSocket (ReactiveProperty<TOut?>? property = null) : base(property)

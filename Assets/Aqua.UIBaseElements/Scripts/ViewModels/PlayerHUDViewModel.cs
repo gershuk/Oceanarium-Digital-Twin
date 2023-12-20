@@ -14,58 +14,36 @@ namespace Aqua.UIBaseElements
         Info = 1,
         MenuPanel = 2,
         Win = 3,
-        Lose= 4,
+        Lose = 4,
     }
 
     public sealed class PlayerHUDViewModel : MonoBehaviour
     {
-        private bool _isInited = false;
-        private ConverterSocket<PlayerControllerState, HUDState> _stateSocket;
-
-        [SerializeField]
-        private TaskListViewModel _taskListViewModel;
-
-        [SerializeField]
-        private ItemsPanelViewModel _itemsPanelViewModel;
-
         [SerializeField]
         private HUDAimViewModel _aimViewModel;
-
-        [SerializeField]
-        private HUDSubpanelViewModel _hudSubpanelViewModel;
 
         [SerializeField]
         private EndGamePanelViewModel _endGamePanelViewModel;
 
         [SerializeField]
+        private HUDSubpanelViewModel _hudSubpanelViewModel;
+
+        private bool _isInited = false;
+
+        [SerializeField]
+        private ItemsPanelViewModel _itemsPanelViewModel;
+
+        [SerializeField]
         private PlayerModel _model;
 
-        public void ForceInit ()
-        {
-            if (_isInited)
-                return;
+        private ConverterSocket<PlayerControllerState, HUDState> _stateSocket;
 
-            _model = FindObjectOfType<PlayerModel>();
-            _model.ForceInit();
-            _model.OnDestroyAsObservable().Subscribe(u=>Destroy(gameObject)).AddTo(this);
+        [SerializeField]
+        private TaskListViewModel _taskListViewModel;
 
-            _itemsPanelViewModel.ForceInit();
-            _itemsPanelViewModel.Model = _model.Inventory;
+        private void Awake () => ForceInit();
 
-            _aimViewModel.ForceInit();
-            _aimViewModel.InfoSocket.SubscribeTo(_model.ObjectScaner.ObservedObjectSocket);
-
-            _hudSubpanelViewModel.ForceInit();
-            _hudSubpanelViewModel.CloseHUDSubpanel = ClosePanel;
-
-            _endGamePanelViewModel.ForceInit();
-
-            _stateSocket = new(HUDState.Info);
-            
-            SubscriveSockets();
-
-            _isInited = true;
-        }
+        private void OnDestroy () => UnsubscriveSockets();
 
         private void SubscriveSockets ()
         {
@@ -81,6 +59,8 @@ namespace Aqua.UIBaseElements
             _stateSocket.ReadOnlyProperty.Subscribe(UpdateState);
         }
 
+        private void UnsubscriveSockets () => _stateSocket.UnsubscribeFrom(_model.StateSocket);
+
         private void UpdateState (HUDState state)
         {
             switch (state)
@@ -92,6 +72,7 @@ namespace Aqua.UIBaseElements
                     _aimViewModel.gameObject.SetActive(false);
                     _endGamePanelViewModel.gameObject.SetActive(false);
                     break;
+
                 case HUDState.Info:
                     _taskListViewModel.gameObject.SetActive(true);
                     _itemsPanelViewModel.gameObject.SetActive(true);
@@ -99,6 +80,7 @@ namespace Aqua.UIBaseElements
                     _aimViewModel.gameObject.SetActive(true);
                     _endGamePanelViewModel.gameObject.SetActive(false);
                     break;
+
                 case HUDState.MenuPanel:
                     _taskListViewModel.gameObject.SetActive(false);
                     _itemsPanelViewModel.gameObject.SetActive(false);
@@ -106,6 +88,7 @@ namespace Aqua.UIBaseElements
                     _aimViewModel.gameObject.SetActive(false);
                     _endGamePanelViewModel.gameObject.SetActive(false);
                     break;
+
                 case HUDState.Win:
                     _taskListViewModel.gameObject.SetActive(false);
                     _itemsPanelViewModel.gameObject.SetActive(false);
@@ -114,6 +97,7 @@ namespace Aqua.UIBaseElements
                     _endGamePanelViewModel.gameObject.SetActive(true);
                     _endGamePanelViewModel.State = EndGamePanelState.Win;
                     break;
+
                 case HUDState.Lose:
                     _taskListViewModel.gameObject.SetActive(false);
                     _itemsPanelViewModel.gameObject.SetActive(false);
@@ -125,26 +109,35 @@ namespace Aqua.UIBaseElements
             }
         }
 
-        public void SetTaskList(TaskListModel model) => _taskListViewModel.Model = model;
+        public void ClosePanel () => _model.State = PlayerControllerState.MovementInput;
 
-        private void UnsubscriveSockets ()
+        public void ForceInit ()
         {
-            _stateSocket.UnsubscribeFrom(_model.StateSocket);
+            if (_isInited)
+                return;
+
+            _model = FindObjectOfType<PlayerModel>();
+            _model.ForceInit();
+            _model.OnDestroyAsObservable().Subscribe(u => Destroy(gameObject)).AddTo(this);
+
+            _itemsPanelViewModel.ForceInit();
+            _itemsPanelViewModel.Model = _model.Inventory;
+
+            _aimViewModel.ForceInit();
+            _aimViewModel.InfoSocket.SubscribeTo(_model.ObjectScaner.ObservedObjectSocket);
+
+            _hudSubpanelViewModel.ForceInit();
+            _hudSubpanelViewModel.CloseHUDSubpanel = ClosePanel;
+
+            _endGamePanelViewModel.ForceInit();
+
+            _stateSocket = new(HUDState.Info);
+
+            SubscriveSockets();
+
+            _isInited = true;
         }
 
-        private void Awake ()
-        {
-            ForceInit();
-        }
-
-        public void ClosePanel()
-        {
-            _model.State = PlayerControllerState.MovementInput;
-        }
-
-        private void OnDestroy ()
-        {
-            UnsubscriveSockets();
-        }
+        public void SetTaskList (TaskListModel model) => _taskListViewModel.Model = model;
     }
 }

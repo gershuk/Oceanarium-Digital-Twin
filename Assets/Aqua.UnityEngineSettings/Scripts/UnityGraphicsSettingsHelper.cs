@@ -112,8 +112,6 @@ namespace Aqua.UnityEngineSettings
             ForceInit();
         }
 
-        public Resolution[] GetResolutions () => Screen.resolutions;
-
         public void ForceInit ()
         {
             if (_isInit)
@@ -129,5 +127,7 @@ namespace Aqua.UnityEngineSettings
 
             _isInit = true;
         }
+
+        public Resolution[] GetResolutions () => Screen.resolutions;
     }
 }

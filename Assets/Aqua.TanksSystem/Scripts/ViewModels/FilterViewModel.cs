@@ -2,21 +2,25 @@
 
 using Aqua.Items;
 
-using UnityEngine;
-
 using UniRx;
+
+using UnityEngine;
 
 namespace Aqua.TanksSystem
 {
     public class FilterViewModel : MonoBehaviour
     {
-        private bool _isInited = false;
-
         [SerializeField]
         private ItemSlot _coverSlot;
 
         [SerializeField]
         private ItemSlot _filterSlot;
+
+        private bool _isInited = false;
+
+        private void Awake () => ForceInit();
+
+        private void UpdateFilterState (Item? item) => _filterSlot.gameObject.SetActive(item == null);
 
         public void ForceInit ()
         {
@@ -29,16 +33,6 @@ namespace Aqua.TanksSystem
             _coverSlot.ItemSocket.ReadOnlyProperty.Subscribe(UpdateFilterState).AddTo(this);
 
             _isInited = true;
-        }
-
-        private void UpdateFilterState (Item? item)
-        {
-            _filterSlot.gameObject.SetActive(item == null);
-        }
-
-        private void Awake ()
-        {
-            ForceInit();
         }
     }
 }

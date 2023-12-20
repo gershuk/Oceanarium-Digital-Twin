@@ -1,27 +1,43 @@
 #nullable enable
 
-using UniRx;
-
 using System;
 using System.Collections;
 
+using Aqua.BaseTasks;
 using Aqua.FPSController;
 using Aqua.Items;
 using Aqua.SceneController;
 using Aqua.TanksSystem.ViewModels;
 using Aqua.UIBaseElements;
 
+using UniRx;
+
 using UnityEngine;
-using Aqua.BaseTasks;
 
 namespace Aqua.Scenes.ChangingFilter
 {
     public sealed class SceneBuilder : ScenarioSceneBuilder
     {
-        private int _taskIndex = 0;
+        [SerializeField]
+        private ItemsCounter _binCounter;
 
         [SerializeField]
-        private TaskListViewModel _taskListViewModel;
+        private Item _cleanFilter;
+
+        [SerializeField]
+        private Item _cover;
+
+        [SerializeField]
+        private ItemSlot _coverSlot;
+
+        [SerializeField]
+        private Item _dirtyFilter;
+
+        [SerializeField]
+        private ItemSlot _filterSlot;
+
+        [SerializeField]
+        private ValveViewModel _filterValve;
 
         [SerializeField]
         private ValveViewModel _inputWaterValve;
@@ -29,47 +45,69 @@ namespace Aqua.Scenes.ChangingFilter
         [SerializeField]
         private ValveViewModel _outputWaterValve;
 
-        [SerializeField]
-        private ValveViewModel _filterValve;
+        private int _taskIndex = 0;
 
         [SerializeField]
-        private Item _cover;
+        private TaskListViewModel _taskListViewModel;
 
-        [SerializeField]
-        private Item _dirtyFilter;
-
-        [SerializeField]
-        private Item _cleanFilter;
-
-        [SerializeField]
-        private ItemSlot _coverSlot;
-
-        [SerializeField]
-        private ItemSlot _filterSlot;
-
-        [SerializeField]
-        private ItemsCounter _binCounter;
-
-        protected override void SubInit ()
+        private void CheckOrder (ScenarioTask scenarioTask)
         {
-            base.SubInit();
+            if (_taskIndex == -1)
+                return;
 
-            _inputWaterValve.ForceInit();
-            _outputWaterValve.ForceInit();
-            _filterValve.ForceInit();
+            if (Array.IndexOf(_tasks, scenarioTask) != _taskIndex)
+            {
+                _firstFailedTaskSocket.TrySetValue(_tasks[_taskIndex]);
+                _playerModel.State = PlayerControllerState.Lose;
+                return;
+            }
 
-            _cover.ForceInit();
-            _dirtyFilter.ForceInit();
-            _cleanFilter.ForceInit();
+            if (scenarioTask.State == TaskState.Completed)
+                _taskIndex++;
 
-            _coverSlot.ForceInit();
-            _filterSlot.ForceInit();
+            if (_taskIndex == 6)
+            {
+                _taskIndex = -1;
+                SetSecondTasksHalfActive();
+                _taskIndex = 6;
+            }
 
-            _binCounter.ForceInit();
+            if (_taskIndex == 11)
+                _playerModel.State = PlayerControllerState.Win;
+        }
 
-            if (_taskListViewModel == null)
-                _taskListViewModel = FindFirstObjectByType<TaskListViewModel>();
-            _taskListViewModel.ForceInit();
+        private void SetAllTaskNotCompleted ()
+        {
+            foreach (var task in _tasks)
+            {
+                task.State = TaskState.NotCompleted;
+            }
+        }
+
+        private void SetFirstTasksHalfActive ()
+        {
+            for (var i = 0; i < 6; i++)
+            {
+                _tasks[i].ProcessingType = ProcessingType.Active;
+            }
+
+            for (var i = 6; i < 11; i++)
+            {
+                _tasks[i].ProcessingType = ProcessingType.Freeze;
+            }
+        }
+
+        private void SetSecondTasksHalfActive ()
+        {
+            for (var i = 0; i < 6; i++)
+            {
+                _tasks[i].ProcessingType = ProcessingType.Freeze;
+            }
+
+            for (var i = 6; i < 11; i++)
+            {
+                _tasks[i].ProcessingType = ProcessingType.Active;
+            }
         }
 
         // ToDo : Reduce copypasting
@@ -155,7 +193,7 @@ namespace Aqua.Scenes.ChangingFilter
             _taskIndex = -1;
             foreach (var task in _tasks)
             {
-                task.StateSocket.ReadOnlyProperty.Subscribe(s=>CheckOrder(task));
+                task.StateSocket.ReadOnlyProperty.Subscribe(s => CheckOrder(task));
             }
 
             SetFirstTasksHalfActive();
@@ -171,7 +209,7 @@ namespace Aqua.Scenes.ChangingFilter
                 var task = _tasks[i];
                 _taskListViewModel.Model.Add(task);
 
-                _buildingPercentSocket.TrySetValue(0.2f + 0.8f * i / _tasks.Length);
+                _buildingPercentSocket.TrySetValue(0.2f + (0.8f * i / _tasks.Length));
 
                 yield return null;
             }
@@ -181,64 +219,26 @@ namespace Aqua.Scenes.ChangingFilter
             _buildingPercentSocket.TrySetValue(1);
         }
 
-        private void SetAllTaskNotCompleted ()
+        protected override void SubInit ()
         {
-            foreach (var task in _tasks)
-            {
-                task.State = TaskState.NotCompleted;
-            }
-        }
+            base.SubInit();
 
-        private void SetFirstTasksHalfActive ()
-        {
-            for (var i = 0; i < 6; i++)
-            {
-                _tasks[i].ProcessingType = ProcessingType.Active;
-            }
+            _inputWaterValve.ForceInit();
+            _outputWaterValve.ForceInit();
+            _filterValve.ForceInit();
 
-            for (var i = 6; i < 11; i++)
-            {
-                _tasks[i].ProcessingType = ProcessingType.Freeze;
-            }
-        }
+            _cover.ForceInit();
+            _dirtyFilter.ForceInit();
+            _cleanFilter.ForceInit();
 
-        private void SetSecondTasksHalfActive ()
-        {
-            for (var i = 0; i < 6; i++)
-            {
-                _tasks[i].ProcessingType = ProcessingType.Freeze;
-            }
+            _coverSlot.ForceInit();
+            _filterSlot.ForceInit();
 
-            for (var i = 6; i < 11; i++)
-            {
-                _tasks[i].ProcessingType = ProcessingType.Active;
-            }
-        }
+            _binCounter.ForceInit();
 
-        private void CheckOrder(ScenarioTask scenarioTask)
-        {
-            if (_taskIndex == -1)
-                return;
-
-            if (Array.IndexOf(_tasks, scenarioTask) != _taskIndex)
-            {
-                _firstFailedTaskSocket.TrySetValue(_tasks[_taskIndex]);
-                _playerModel.State = PlayerControllerState.Lose;
-                return;
-            }
-
-            if (scenarioTask.State == TaskState.Completed)
-                _taskIndex++;
-
-            if (_taskIndex == 6)
-            {
-                _taskIndex = -1;
-                SetSecondTasksHalfActive();
-                _taskIndex = 6;
-            }
-
-            if (_taskIndex == 11)
-                _playerModel.State = PlayerControllerState.Win;
+            if (_taskListViewModel == null)
+                _taskListViewModel = FindFirstObjectByType<TaskListViewModel>();
+            _taskListViewModel.ForceInit();
         }
     }
 }

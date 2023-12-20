@@ -27,39 +27,32 @@ namespace Aqua.Items
         public const string NothingLayerName = "Nothing";
         #endregion Layers names
 
-        private MulticonnectionSocket<ItemState, ItemState> _stateSocket;
+        private MulticonnectionSocket<ItemState, ItemState>? _stateSocket;
 
-        public IOutputSocket<ItemState> StateSocket => _stateSocket;
-
+        public Rigidbody? Rigidbody { get; private set; }
         public ItemSpawner? Spawner { get => _spawner; set => _spawner = value; }
-
+        public IOutputSocket<ItemState> StateSocket => _stateSocket;
         #region Item start parameters
+
         [SerializeField]
         private ItemSpawner? _spawner;
 
         #endregion Item start parameters
 
-        public Rigidbody Rigidbody { get; private set; }
-
-        public override bool TryResetPosition ()
-        {
-            switch (_spawner, _defaultRespawnPosition)
-            {
-                case (not null, _): 
-                    _spawner.ResetSpawnedItemPosition(this);
-                    return true;
-                case (_, not null):
-                    return base.TryResetPosition();
-                default: 
-                    return false;
-            };
-        }
-
         protected override void SubInit ()
         {
             base.SubInit();
             Rigidbody = GetComponent<Rigidbody>();
-            _stateSocket = new (ItemState.Free);
+            _stateSocket = new(ItemState.Free);
+        }
+
+        public void Drop ()
+        {
+            _stateSocket.TrySetValue(ItemState.Free);
+            GameObject.layer = LayerMask.NameToLayer(ItemsLayerName);
+            Collider.enabled = true;
+            Rigidbody.isKinematic = false;
+            GameObject.SetActive(true);
         }
 
         public void Take (bool isActive = true)
@@ -71,13 +64,20 @@ namespace Aqua.Items
             GameObject.SetActive(isActive);
         }
 
-        public void Drop ()
+        public override bool TryResetPosition ()
         {
-            _stateSocket.TrySetValue(ItemState.Free);
-            GameObject.layer = LayerMask.NameToLayer(ItemsLayerName);
-            Collider.enabled = true;
-            Rigidbody.isKinematic = false;
-            GameObject.SetActive(true);
+            switch (_spawner, _defaultRespawnPosition)
+            {
+                case (not null, _):
+                    _spawner.ResetSpawnedItemPosition(this);
+                    return true;
+
+                case (_, not null):
+                    return base.TryResetPosition();
+
+                default:
+                    return false;
+            };
         }
     }
 }

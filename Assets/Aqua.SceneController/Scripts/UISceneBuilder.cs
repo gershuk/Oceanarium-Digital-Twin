@@ -9,13 +9,6 @@ namespace Aqua.SceneController
         [SerializeField]
         private GameObject _menuRoot;
 
-        protected override void SubInit ()
-        {
-            base.SubInit();
-
-            _menuRoot.SetActive(false);
-        }
-
         protected override IEnumerator BuildScene ()
         {
             _stateScoket.TrySetValue(BuilderState.Building);
@@ -40,6 +33,13 @@ namespace Aqua.SceneController
             _startingCoroutine = null;
 
             yield break;
+        }
+
+        protected override void SubInit ()
+        {
+            base.SubInit();
+
+            _menuRoot.SetActive(false);
         }
 
         public override void DestroyScene ()

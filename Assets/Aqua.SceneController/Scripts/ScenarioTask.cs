@@ -1,11 +1,17 @@
 using System;
-using UniRx;
 
 using Aqua.SocketSystem;
-using System.Runtime.InteropServices;
+
+using UniRx;
 
 namespace Aqua.SceneController
 {
+    public enum ProcessingType
+    {
+        Active = 0,
+        Freeze = 1,
+    }
+
     [Serializable]
     public enum TaskState
     {
@@ -15,36 +21,16 @@ namespace Aqua.SceneController
         Failed = 3,
     }
 
-    public enum ProcessingType
-    {
-        Active = 0,
-        Freeze = 1,
-    }
-
     public class ScenarioTask : IDisposable
     {
-        private CompositeDisposable _disposables;
-
-        protected string _failMessage;
-        protected bool _isDisposed = false;
-
         private readonly MulticonnectionSocket<ProcessingType, ProcessingType> _processingTypeSocket = new(ProcessingType.Active);
-
-        public IOutputSocket<ProcessingType> ProcessingTypeSocket => _processingTypeSocket;
-
-        public virtual string FailMessage
-        {
-            get => _failMessage;
-            protected set
-            {
-                _failMessage = value;
-            }
-        }
-
         protected readonly MulticonnectionSocket<string, string> _descriptionSocket;
         protected readonly MulticonnectionSocket<Guid, Guid> _guidSocket;
         protected readonly MulticonnectionSocket<string, string> _nameSocket;
         protected readonly MulticonnectionSocket<TaskState, TaskState> _stateSocket;
+        protected string _failMessage;
+        protected bool _isDisposed = false;
+        protected CompositeDisposable Disposables { get; set; }
 
         public string Description
         {
@@ -59,6 +45,12 @@ namespace Aqua.SceneController
         }
 
         public IOutputSocket<string> DescriptionSocket => _descriptionSocket!;
+
+        public virtual string FailMessage
+        {
+            get => _failMessage;
+            protected set => _failMessage = value;
+        }
 
         public Guid Guid
         {
@@ -88,6 +80,14 @@ namespace Aqua.SceneController
 
         public IOutputSocket<string> NameSocket => _nameSocket!;
 
+        public ProcessingType ProcessingType
+        {
+            get => _processingTypeSocket.GetValue();
+            set => _processingTypeSocket.TrySetValue(value);
+        }
+
+        public IOutputSocket<ProcessingType> ProcessingTypeSocket => _processingTypeSocket;
+
         public TaskState State
         {
             get => _stateSocket.GetValue();
@@ -105,18 +105,6 @@ namespace Aqua.SceneController
 
         public IOutputSocket<TaskState> StateSocket => _stateSocket;
 
-        protected CompositeDisposable Disposables
-        {
-            get => _disposables;
-            set => _disposables = value;
-        }
-
-        public ProcessingType ProcessingType
-        {
-            get => _processingTypeSocket.GetValue();
-            set => _processingTypeSocket.TrySetValue(value);
-        }
-
         public ScenarioTask (string name, string description, string failMessage = "Task failed", TaskState completed = default)
         {
             Disposables = new();
@@ -129,12 +117,6 @@ namespace Aqua.SceneController
 
         ~ScenarioTask () => Dispose(false);
 
-        public void Dispose ()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         protected virtual void Dispose (bool disposing)
         {
             if (!_isDisposed)
@@ -146,6 +128,12 @@ namespace Aqua.SceneController
                 Disposables.Dispose();
                 _isDisposed = true;
             }
+        }
+
+        public void Dispose ()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -13,7 +13,9 @@ namespace Aqua.Items
                 : null;
 
         public void DoProcessingAction () => GetInteractableObjectFromInfo(CurrentItem)?.DoProcessingAction();
+
         public void UndoProcessingAction () => GetInteractableObjectFromInfo(CurrentItem)?.UndoProcessingAction();
+
         public void Use () => GetInteractableObjectFromInfo(CurrentItem)?.Use();
     }
 }

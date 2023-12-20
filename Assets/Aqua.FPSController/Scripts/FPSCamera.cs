@@ -8,12 +8,13 @@ namespace Aqua.FPSController
     public class FPSCamera : MonoBehaviour
     {
         [SerializeField]
-        private bool _isCameraChildOfPlayerBody = false;
-
-        [SerializeField]
         private Camera _camera;
 
         private Transform _cameraTransform;
+
+        [SerializeField]
+        private bool _isCameraChildOfPlayerBody = false;
+
         private Vector2 _mouseMovement;
 
         #region Camera transfrom properties
@@ -83,7 +84,7 @@ namespace Aqua.FPSController
 
             _rotX -= _mouseMovement.y;
             _rotX = Mathf.Clamp(_rotX, _maxDownAngle, _maxUpAngle);
-            _rotY += _mouseMovement.x;   
+            _rotY += _mouseMovement.x;
 
             if (!_isCameraChildOfPlayerBody)
             {

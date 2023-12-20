@@ -14,16 +14,14 @@ namespace Aqua.UIBaseElements
 {
     public class ItemsPanelViewModel : MonoBehaviour
     {
-        private bool _isInited = false;
-
         private readonly CompositeDisposable _collectionDisposables = new();
-
         private readonly MulticonnectionSocket<IInfo, IInfo> _indexSocket = new();
-
         private readonly List<SelectItemViewModel> _items = new();
 
         [SerializeField]
         private RectTransform _content;
+
+        private bool _isInited = false;
 
         [SerializeField]
         private PlayerInventory _model;
@@ -31,8 +29,8 @@ namespace Aqua.UIBaseElements
         [SerializeField]
         private GameObject _selectItemViewPrefab;
 
-        public PlayerInventory Model 
-        { 
+        public PlayerInventory Model
+        {
             get => _model;
             set
             {
@@ -50,24 +48,7 @@ namespace Aqua.UIBaseElements
             _items.Add(selectItemViewModel);
         }
 
-        public void ForceInit ()
-        {
-            if (_isInited)
-                return;
-
-            if (_content == null)
-                _content = GetComponent<RectTransform>();
-
-            _indexSocket.ReadOnlyProperty.Subscribe(SetFrameSelected).AddTo(this);
-
-            UpdatePanelVisual(0);
-            _isInited = true;
-        }
-
-        private void Awake ()
-        {
-            ForceInit();
-        }
+        private void Awake () => ForceInit();
 
         private void OnDestroy () => UnsubcribeFromModel();
 
@@ -104,5 +85,19 @@ namespace Aqua.UIBaseElements
         }
 
         private void UpdatePanelVisual (int count) => _content.GetComponent<Image>().enabled = count > 0;
+
+        public void ForceInit ()
+        {
+            if (_isInited)
+                return;
+
+            if (_content == null)
+                _content = GetComponent<RectTransform>();
+
+            _indexSocket.ReadOnlyProperty.Subscribe(SetFrameSelected).AddTo(this);
+
+            UpdatePanelVisual(0);
+            _isInited = true;
+        }
     }
 }

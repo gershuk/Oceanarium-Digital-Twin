@@ -57,7 +57,7 @@ namespace Aqua.FPSController
         private bool TryDoProcessing ()
         {
             var intObj = GetInteractableObjectFromInfo(_objectScaner.ObservedObjectSocket.GetValue());
-            if ((_doProcessingTime + _doProcessingCooldown) <= Time.time &&  intObj != null)
+            if ((_doProcessingTime + _doProcessingCooldown) <= Time.time && intObj != null)
             {
                 intObj.DoProcessingAction();
                 return true;

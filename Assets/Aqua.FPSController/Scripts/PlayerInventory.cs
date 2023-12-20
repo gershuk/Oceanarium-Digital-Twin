@@ -121,9 +121,11 @@ namespace Aqua.FPSController
                     SelectedItem.Drop();
                     itemDroped = true;
                     break;
+
                 case (true, ItemSlot itemSlot and not null):
                     itemDroped = itemSlot.TrySetItem(SelectedItem);
                     break;
+
                 case (true, null):
                     SelectedItem.transform.rotation = _fpsCamera.Camera.transform.rotation;
                     SelectedItem.transform.position = hit.point + hit.normal;
@@ -205,7 +207,7 @@ namespace Aqua.FPSController
 
             if (_grabReleaseItemAction.action.WasPressedThisFrame())
             {
-                _ = _currentGrabbedItem == null 
+                _ = _currentGrabbedItem == null
                     ? TryGrabItem()
                     : TryReleaseItem();
             }

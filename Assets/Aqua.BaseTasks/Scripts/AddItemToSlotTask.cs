@@ -2,7 +2,6 @@
 
 using Aqua.Items;
 using Aqua.SceneController;
-using Aqua.TanksSystem.ViewModels;
 
 using UniRx;
 
@@ -10,9 +9,8 @@ namespace Aqua.BaseTasks
 {
     public class AddItemToSlotTask : ScenarioTask
     {
-        public ItemSlot ItemSlot { get; }
-
         public string ItemName { get; }
+        public ItemSlot ItemSlot { get; }
 
         public AddItemToSlotTask (ItemSlot itemSlot,
                                   string itemName,

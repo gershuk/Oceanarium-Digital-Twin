@@ -23,10 +23,10 @@ namespace Aqua.Utils
                 return Rotation;
             var Deriv = AngVelToDeriv(Rotation, AngularVelocity);
             var Pred = new Vector4(
-                    Rotation.x + Deriv.x * DeltaTime,
-                    Rotation.y + Deriv.y * DeltaTime,
-                    Rotation.z + Deriv.z * DeltaTime,
-                    Rotation.w + Deriv.w * DeltaTime
+                    Rotation.x + (Deriv.x * DeltaTime),
+                    Rotation.y + (Deriv.y * DeltaTime),
+                    Rotation.z + (Deriv.z * DeltaTime),
+                    Rotation.w + (Deriv.w * DeltaTime)
             ).normalized;
             return new Quaternion(Pred.x, Pred.y, Pred.z, Pred.w);
         }

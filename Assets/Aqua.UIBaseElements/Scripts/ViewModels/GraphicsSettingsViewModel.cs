@@ -8,45 +8,17 @@ namespace Aqua.UIBaseElements
 {
     public sealed class GraphicsSettingsViewModel : MonoBehaviour
     {
-        private bool _isInited = false;
-
         [SerializeField]
         private UnityGraphicsSettingsHelper _helper;
+
+        private bool _isInited = false;
 
         [SerializeField]
         private GraphicsSettingsView _view;
 
         public GraphicsSettingsModel Model { get; private set; }
 
-        public void ForceInit ()
-        {
-            if (_isInited) 
-                return;
-
-            Model = new();
-
-            if (_helper == null)
-                _helper = FindAnyObjectByType<UnityGraphicsSettingsHelper>();
-            _helper.ForceInit();
-
-            if (_view == null)
-                _view = GetComponent<GraphicsSettingsView>();
-            _view.Init();
-
-            // ToDo : Find how calc max count
-            _view.InitAntiAliasingDropdown(3);
-
-            SubscribeHelperToModel();
-            SubscribeViewToModel();
-            SubscribeModelToView();
-
-            _isInited = true;
-        }
-
-        private void Start ()
-        {
-            ForceInit();
-        }
+        private void Start () => ForceInit();
 
         private void SubscribeHelperToModel ()
         {
@@ -82,6 +54,31 @@ namespace Aqua.UIBaseElements
             _view.ResolutionSocket.SubscribeTo(Model.ResolutionSocket);
             _view.AntiAliasingSocket.SubscribeTo(Model.AntiAliasingSocket);
             _view.ScreenModeSocket.SubscribeTo(Model.ScreenModeSocket);
+        }
+
+        public void ForceInit ()
+        {
+            if (_isInited)
+                return;
+
+            Model = new();
+
+            if (_helper == null)
+                _helper = FindAnyObjectByType<UnityGraphicsSettingsHelper>();
+            _helper.ForceInit();
+
+            if (_view == null)
+                _view = GetComponent<GraphicsSettingsView>();
+            _view.Init();
+
+            // ToDo : Find how calc max count
+            _view.InitAntiAliasingDropdown(3);
+
+            SubscribeHelperToModel();
+            SubscribeViewToModel();
+            SubscribeModelToView();
+
+            _isInited = true;
         }
     }
 }

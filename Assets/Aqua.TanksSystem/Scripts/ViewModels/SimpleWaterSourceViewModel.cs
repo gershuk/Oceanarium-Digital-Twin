@@ -11,17 +11,11 @@ namespace Aqua.TanksSystem
 {
     public sealed class SimpleWaterSourceViewModel : MonoBehaviour, ITickObject
     {
-        private ConverterSocket<Water, double> _maxVolumeConverter;
-
-        private bool _isInited = false;
-
-        [SerializeField]
-        private WaterInfoPanelView _waterInfoPanel;
-
-        private Source<Water> _waterSource;
-
         [SerializeField]
         private Water _initValue;
+
+        private bool _isInited = false;
+        private ConverterSocket<Water, double> _maxVolumeConverter;
 
         [SerializeField]
         [Range(0.0f, 1e6f)]
@@ -35,7 +29,13 @@ namespace Aqua.TanksSystem
         [Range(0.0f, 1e6f)]
         private float _volume = 1;
 
+        [SerializeField]
+        private WaterInfoPanelView _waterInfoPanel;
+
+        private Source<Water> _waterSource;
         public IOutputSocket<Water> OutputSocket => _waterSource.OutputSocket;
+
+        private void Awake () => ForceInit();
 
         public void ForceInit ()
         {
@@ -44,7 +44,7 @@ namespace Aqua.TanksSystem
 
             _waterSource = new Source<Water>(new Water(_volume, _temp, _ph), true);
             _maxVolumeConverter = new();
-            _maxVolumeConverter.SubscribeTo(_waterSource.OutputSocket, static w=>w.Volume);
+            _maxVolumeConverter.SubscribeTo(_waterSource.OutputSocket, static w => w.Volume);
 
             if (_waterInfoPanel == null)
                 _waterInfoPanel = GetComponent<WaterInfoPanelView>();
@@ -57,11 +57,6 @@ namespace Aqua.TanksSystem
             }
 
             _isInited = true;
-        }
-
-        private void Awake ()
-        {
-            ForceInit();
         }
 
         public void Init (float startTime) => ForceInit();
