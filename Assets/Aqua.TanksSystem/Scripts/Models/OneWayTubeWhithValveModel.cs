@@ -8,7 +8,7 @@ namespace Aqua.TanksSystem.Models
 {
     public class OneWayTubeWhithValveModel<TIn, TOut>
     {
-        private readonly —ombiningSocket<TIn?, float, TIn?> _inSocket;
+        private readonly CombiningSocket<TIn?, float, TIn?> _inSocket;
         private readonly IConverterSocket<TIn?, TOut?> _outSocket;
 
         public IInputSocket<TIn?> InSocket => _inSocket;
@@ -21,7 +21,7 @@ namespace Aqua.TanksSystem.Models
                                           Func<TIn?, float, TIn?>? combineFunction = null)
         {
             _outSocket = new ConverterSocket<TIn?, TOut?>();
-            _inSocket = new —ombiningSocket<TIn?, float, TIn?>(combineFunction: combineFunction);
+            _inSocket = new CombiningSocket<TIn?, float, TIn?>(combineFunction: combineFunction);
 
             _outSocket.SubscribeTo(_inSocket, inputData—onvertingFunction, inputDataModificationFunction);
 

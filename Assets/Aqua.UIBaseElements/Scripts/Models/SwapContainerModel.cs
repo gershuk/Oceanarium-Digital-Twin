@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace Aqua.UIBaseElements
@@ -15,7 +16,21 @@ namespace Aqua.UIBaseElements
 
         public IReadOnlyList<GameObject> UIElements => _uiElements;
 
-        protected bool TryDisableAcitveUI()
+        protected void DisableAll ()
+        {
+            foreach (var uiElement in _uiElements)
+            {
+                uiElement.SetActive(false);
+            }
+        }
+
+        protected virtual void Start ()
+        {
+            _uiElements ??= new List<GameObject>();
+            TrySwap(0);
+        }
+
+        protected bool TryDisableAcitveUI ()
         {
             if (_activeIndex.HasValue)
                 UIElements[_activeIndex.Value].SetActive(false);
@@ -23,22 +38,18 @@ namespace Aqua.UIBaseElements
             return _activeIndex.HasValue;
         }
 
-        protected bool TrySetUIAcitve(int index)
+        protected bool TrySetUIAcitve (int index)
         {
             if (UIElements.Count > index)
                 UIElements[index].SetActive(true);
 
+            _activeIndex = index;
+
             return UIElements.Count > index;
         }
 
-        public bool TrySwap(int index)
+        public void Swap (int index)
         {
-            TryDisableAcitveUI();
-            return TrySetUIAcitve(index);
-        }
-
-        public void Swap(int index) 
-        { 
             if (UIElements.Count <= index)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
@@ -46,10 +57,10 @@ namespace Aqua.UIBaseElements
             TrySetUIAcitve(index);
         }
 
-        protected virtual void Start ()
+        public bool TrySwap (int index)
         {
-            _uiElements ??= new List<GameObject>();
-            TrySwap(0);
+            TryDisableAcitveUI();
+            return TrySetUIAcitve(index);
         }
     }
 }

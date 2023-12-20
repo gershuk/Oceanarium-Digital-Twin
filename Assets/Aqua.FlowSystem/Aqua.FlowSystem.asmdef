@@ -1,0 +1,18 @@
+{
+    "name": "Aqua.FlowSystem",
+    "rootNamespace": "Aqua.FlowSystem",
+    "references": [
+        "GUID:25c5268b34f82cb4b815835e83657392",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:f52c881e3a01bd4459588757d81478e3"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

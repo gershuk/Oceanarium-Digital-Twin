@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6823252306622644042}
   - component: {fileID: 838837312073995521}
   - component: {fileID: 8083219315119308432}
-  - component: {fileID: 1845304727981407722}
+  - component: {fileID: 630473751006548538}
   m_Layer: 0
   m_Name: ValveObject
   m_TagString: Untagged
@@ -88,7 +88,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.030786, y: 1.4891024, z: 1.6979547}
   m_Center: {x: 0.004020691, y: 0.0023543835, z: -0.1318388}
---- !u!114 &1845304727981407722
+--- !u!114 &630473751006548538
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,9 +97,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4199543131201937932}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f050ddfd1d20db48ae7157eae8e83a7, type: 3}
+  m_Script: {fileID: 11500000, guid: 813eb0b549d121042b3fcb4729129e31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _descritption: "\u0412\u0435\u043D\u0442\u0438\u043B\u044C"
+  _name: "\u0412\u0435\u043D\u0442\u0438\u043B\u044C"
+  _sprite: {fileID: 0}
+  _defaultRespawnPosition: {fileID: 0}
 --- !u!1001 &50242615728304180
 PrefabInstance:
   m_ObjectHideFlags: 0

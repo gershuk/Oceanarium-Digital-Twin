@@ -9,12 +9,12 @@ namespace Aqua.UIBaseElements
         [SerializeField]
         private MainScreenSwapContainerModel _swapContainer;
 
-        public void Exit() => Application.Quit();
+        public void Exit () => Application.Quit();
 
-        public void OpenSettingsMenu() => _swapContainer.ActiveSettingsMenu();
+        public void OpenLoadMenu () => _swapContainer.ActiveLoadMenu();
 
-        public void OpenScriptsMenu() => _swapContainer.ActiveScriptsMenu();
+        public void OpenScriptsMenu () => _swapContainer.ActiveScriptsMenu();
 
-        public void OpenLoadMenu() => _swapContainer.ActiveLoadMenu();
+        public void OpenSettingsMenu () => _swapContainer.ActiveSettingsMenu();
     }
 }

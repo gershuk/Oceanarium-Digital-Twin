@@ -11,11 +11,28 @@ namespace Aqua.TanksSystem.ViewModels
 {
     public sealed class ValveViewModel : MonoBehaviour
     {
+        private bool _isInited = false;
+
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float _value;
+
         private SimpleValveModel SimpleValve { get; set; }
 
         public IOutputSocket<float> Output => SimpleValve.OutputSocket;
 
-        private void Awake () => SimpleValve = new();
+        private void Awake () => ForceInit();
+
+        public void ForceInit ()
+        {
+            if (_isInited)
+                return;
+
+            SimpleValve = new();
+            SetValue(_value);
+
+            _isInited = true;
+        }
 
         public void SetValue (float value) => SimpleValve.Value = value;
 

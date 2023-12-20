@@ -12,11 +12,22 @@ namespace Aqua.SocketSystem
         protected HashSet<IOutputSocket<TIn?>> _publishers;
         protected HashSet<IInputSocket<TOut?>> _subscribers;
 
+        public MulticonnectionSocket () : base(property: default)
+        {
+            _publishers = new();
+            _subscribers = new();
+        }
+
+        public MulticonnectionSocket (TOut? value = default) : base(value)
+        {
+            _publishers = new();
+            _subscribers = new();
+        }
+
         public MulticonnectionSocket (ReactiveProperty<TOut?>? property = null) : base(property)
         {
             _publishers = new();
             _subscribers = new();
-            Property = property ?? new();
         }
 
         protected override void RegisterMainPublisher (IOutputSocket<TIn?> socket)
@@ -47,9 +58,9 @@ namespace Aqua.SocketSystem
 
         public override bool TrySetValue (TOut? value)
         {
-            if (_subscribers.Count == 0)
+            if (_publishers.Count == 0)
                 Property.Value = value;
-            return _subscribers.Count == 0;
+            return _publishers.Count == 0;
         }
 
         public override void Unregister (IInputSocket<TOut?> socket)

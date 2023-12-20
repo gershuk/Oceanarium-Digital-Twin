@@ -1,0 +1,16 @@
+{
+    "name": "Aqua.Scenes.StartScene",
+    "rootNamespace": "Aqua.Scenes.StartScene",
+    "references": [
+        "GUID:b0354195131e1414dabcc358840d86b5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

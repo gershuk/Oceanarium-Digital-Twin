@@ -1,0 +1,21 @@
+{
+    "name": "Aqua.BaseTasks",
+    "rootNamespace": "Aqua.BaseTasks",
+    "references": [
+        "GUID:aef38acb4acce274698f4c65e2956312",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:f52c881e3a01bd4459588757d81478e3",
+        "GUID:6e27ca69a1c4ddf4f83cd351fbd7d8df",
+        "GUID:6059454e8becd2247b86f26131ed187f",
+        "GUID:3dfa33521f1cc0f4aa2151ae826edc0d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
