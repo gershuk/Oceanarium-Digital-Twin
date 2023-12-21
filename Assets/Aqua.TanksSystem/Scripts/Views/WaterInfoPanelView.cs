@@ -35,7 +35,7 @@ namespace Aqua.TanksSystem
         {
             _volumeText.text = $"{data.water.Volume / data.maxVolume * 100:00.00}%";
             _temperatureText.text = $"{(data.water.Volume > 0 ? data.water.Temperature : 0): 00.00}°";
-            _phText.text = $"{(data.water.Volume > 0 ? data.water.PH : 0): 00.00}";
+            _phText.text = $"{(data.water.Volume > 0 ? data.water.PH : 0): 00.00 mV}";
         }
 
         public void ForceInit ()
