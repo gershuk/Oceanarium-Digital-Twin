@@ -89,15 +89,21 @@ namespace Aqua.Scada
 
         protected int VisitorsCount { get => _visitorsCount; set => _visitorsCount = value; }
 
-        [ContextMenu(nameof(RespawnVisitors))]
-        public void RespawnVisitors ()
+        protected void DestroyAllVisitors ()
         {
-            IsClocksEnable = false;
             foreach (var visitor in _visitors)
             {
                 _clockGenerator.RemoveAll();
                 Destroy(visitor.gameObject);
             }
+        }
+
+        [ContextMenu(nameof(RespawnVisitors))]
+        public void RespawnVisitors ()
+        {
+            IsClocksEnable = false;
+
+            DestroyAllVisitors();
 
             _visitors.Clear();
 
@@ -117,7 +123,12 @@ namespace Aqua.Scada
                     nextWay = nextWay.NextWay();
                 }
 
-                var speed = fullLength / VisitorsCount;
+                if (transform.lossyScale.x != transform.lossyScale.y || transform.lossyScale.y != transform.lossyScale.z)
+                {
+                    Debug.LogWarning("Strange scale");
+                }
+
+                var speed = fullLength * transform.lossyScale.x / VisitorsCount;
 
                 for (var i = 0; i<VisitorsCount; ++i)
                 {
@@ -127,7 +138,7 @@ namespace Aqua.Scada
                         throw new NullReferenceException(nameof(_defaultVisitor.WayDispatcher)); 
 
                     SpawnVisitor(_defaultVisitor.WayDispatcher, _defaultVisitor.CurrentSegment, _defaultVisitor.Transform.position);
-                    _defaultVisitor.Tick(i, 0, 1);
+                    _defaultVisitor.Tick(i, Time.deltaTime, 1);
                 }
             }
 

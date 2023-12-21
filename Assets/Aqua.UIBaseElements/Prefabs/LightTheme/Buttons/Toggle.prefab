@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 8425643102171762074}
   - component: {fileID: 7024336127740413124}
   - component: {fileID: 5129927003822336975}
+  - component: {fileID: 798747394932535610}
   m_Layer: 5
   m_Name: Toggle
   m_TagString: Untagged
@@ -435,6 +436,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 40
   image: {fileID: 7024336127740413124}
+--- !u!114 &798747394932535610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659665215711112699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 607728ec9d60fd44ba6d769f5ef1071c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _toggle: {fileID: 5628102809384058402}
 --- !u!1 &4605365806003496938
 GameObject:
   m_ObjectHideFlags: 0
@@ -574,6 +588,7 @@ MonoBehaviour:
   - 0.2
   - 0.8
   _horizontalSpace: 0
+  _shouldUpdate: 0
 --- !u!114 &6303028283817815404
 MonoBehaviour:
   m_ObjectHideFlags: 0
