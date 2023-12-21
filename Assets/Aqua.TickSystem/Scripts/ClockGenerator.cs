@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-namespace Aqua.TanksSystem
+namespace Aqua.TickSystem
 {
     public interface ITickObject
     {
@@ -24,7 +24,7 @@ namespace Aqua.TanksSystem
         void Tick ();
     }
 
-    public sealed class TickSystem : MonoBehaviour, ITickSystem
+    public sealed class ClockGenerator : MonoBehaviour, ITickSystem
     {
         private float _lastTickTime = 0;
 
