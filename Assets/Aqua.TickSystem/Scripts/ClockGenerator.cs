@@ -44,6 +44,8 @@ namespace Aqua.TickSystem
 
         public void Init ()
         {
+            _tickNumber = 0;
+            _lastTickTime = Time.time - _tickTime;
             foreach (var tickObject in _tickObjectQueue)
             {
                 tickObject.Init(_startTime);
@@ -51,6 +53,7 @@ namespace Aqua.TickSystem
         }
 
         public void Remove (ITickObject tickObject) => _tickObjectQueue.Remove(tickObject);
+        public void RemoveAll () => _tickObjectQueue.Clear();
 
         public void Tick ()
         {

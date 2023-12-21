@@ -6,6 +6,8 @@ using Aqua.TickSystem;
 
 using UnityEngine;
 
+using System;
+
 namespace Aqua.Scada
 {
     public sealed class Visitor : MonoBehaviour, ITickObject
@@ -16,6 +18,8 @@ namespace Aqua.Scada
         private bool _isInited = false;
 
         private Transform _transform;
+
+        public Transform Transform => _transform;
 
         [SerializeField]
         [Range(0f, 100f)]
@@ -51,6 +55,26 @@ namespace Aqua.Scada
             _isInited = true;
         }
 
+        public WaySegment CurrentSegment => _segments?.Current ?? throw new NullReferenceException(nameof(_segments));
+
+        public void SetPositionAndSegment (WayDispatcher way, in WaySegment segment, Vector3 position)
+        {
+            SetWayDispatcher(way);
+
+            if (_segments == null)
+            {
+                Debug.LogError("Segments == null");
+                return;
+            }
+
+            _transform.position = position;
+
+            while (CurrentSegment != segment)
+            {
+                GetNextSegment();
+            }
+        }
+
         public float Speed
         {
             get => _speed;
@@ -70,7 +94,7 @@ namespace Aqua.Scada
             {
                 _segments = WayDispatcher.GetEnumerator();
                 _segments.MoveNext();
-                _transform.position = _segments.Current.FirstPoint;
+                _transform.position = CurrentSegment.FirstPoint;
             }
         }
 
@@ -96,7 +120,6 @@ namespace Aqua.Scada
 
         public void Tick (int tickNumber, float startTime, float tickTime)
         {
-            Debug.Log($"Pos {_transform.position}");
             if (_segments == null)
             {
                 Debug.LogError("Segments == null");
@@ -109,7 +132,7 @@ namespace Aqua.Scada
                 return;
             }
 
-            if (_segments.Current.IsEnd(_transform.position))
+            if (CurrentSegment.IsEnd(_transform.position))
             {
                 GetNextSegment();
             }
@@ -118,7 +141,7 @@ namespace Aqua.Scada
 
             while (motion > 0)
             {
-                (_transform.position, motion) = _segments.Current.GetClampedDisplacement(_transform.position, motion * tickTime);
+                (_transform.position, motion) = CurrentSegment.GetClampedDisplacement(_transform.position, motion * tickTime);
 
                 if (motion > 0)
                 {
