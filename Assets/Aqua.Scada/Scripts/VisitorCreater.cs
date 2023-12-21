@@ -123,12 +123,18 @@ namespace Aqua.Scada
                     nextWay = nextWay.NextWay();
                 }
 
-                if (transform.lossyScale.x != transform.lossyScale.y || transform.lossyScale.y != transform.lossyScale.z)
-                {
-                    Debug.LogWarning("Strange scale");
-                }
+               
 
-                var speed = fullLength * transform.lossyScale.x / VisitorsCount;
+                var speed = fullLength / VisitorsCount;
+
+                if (GetComponent<RectTransform>() == null)
+                {
+                    if (transform.lossyScale.x != transform.lossyScale.y || transform.lossyScale.y != transform.lossyScale.z)
+                    {
+                        Debug.LogWarning("Strange scale");
+                    }
+                    speed *= transform.lossyScale.x;
+                }
 
                 for (var i = 0; i<VisitorsCount; ++i)
                 {
@@ -152,6 +158,7 @@ namespace Aqua.Scada
         {
             var visitor = Instantiate(_visitorPrefab).GetComponent<Visitor>();
             visitor.SetPositionAndSegment(way, segment, position);
+            visitor.transform.SetParent(transform);
             _clockGenerator.AddToEnd(visitor);
             _visitors.Add(visitor);
         }

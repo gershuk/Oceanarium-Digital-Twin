@@ -95,7 +95,15 @@ namespace Aqua.Scada
                 _segments = WayDispatcher.GetEnumerator();
                 _segments.MoveNext();
                 _transform.position = CurrentSegment.FirstPoint;
+                RotateToTarget();
             }
+        }
+
+        private void RotateToTarget ()
+        {
+            var dir = CurrentSegment.SecondPoint - _transform.position;
+            var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90;
+            _transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
 
         private void GetNextSegment ()
@@ -116,6 +124,8 @@ namespace Aqua.Scada
             {
                 SetWayDispatcher(WayDispatcher.NextWay());
             }
+
+            RotateToTarget();
         }
 
         public void Tick (int tickNumber, float startTime, float tickTime)
