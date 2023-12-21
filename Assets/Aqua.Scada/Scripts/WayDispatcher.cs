@@ -101,9 +101,6 @@ namespace Aqua.Scada
             _isInited = true;
         }
 
-        public Vector3 GetPosition (int segmentIndex, float percent) =>
-            _transform.position + Vector3.Lerp(_points[segmentIndex], _points[segmentIndex + 1], percent);
-
         private void Awake ()
         {
             ForceInit();

@@ -25,6 +25,8 @@ namespace Aqua.UIBaseElements
         public IOutputSocket<bool> StateSocket => _stateSocket;
         public IOutputSocket<int> NumberSocket => _numberSocket;
 
+        public bool State => StateSocket.GetValue();
+
         public void ForceInit ()
         {
             if (_isInited)

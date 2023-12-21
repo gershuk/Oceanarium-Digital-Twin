@@ -5,16 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Aqua.Scenes/StartScene/StartScene.unity
     guid: ae61a008e54265e4cac796c51bdfa411
-  - enabled: 1
+  - enabled: 0
     path: Assets/Aqua.Scenes/MainMenu/MainMenu.unity
     guid: 42441c847abefc84290a91c241cca216
-  - enabled: 1
+  - enabled: 0
     path: Assets/Aqua.Scenes/ChangingFilter/ChangingFilter.unity
     guid: e26ad53702f44f34cb5acc955359800b
-  - enabled: 1
+  - enabled: 0
     path: Assets/Aqua.Scenes/TankFlushing/TankFlushing.unity
     guid: 4420f7f31fffd9343a7a2f89edb587ec
   - enabled: 1

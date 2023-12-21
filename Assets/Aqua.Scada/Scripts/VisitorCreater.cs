@@ -28,8 +28,7 @@ namespace Aqua.Scada
         private List<WayDispatcher> _startWays;
 
         [SerializeField]
-        [Range(1, 100000)]
-        private int _visitorsCount = 20;
+        private int[] _visitorsCounts = new[] { 50 };
 
         protected List<Visitor> _visitors;
         private bool _isClocksEnable;
@@ -87,8 +86,6 @@ namespace Aqua.Scada
             }
         }
 
-        protected int VisitorsCount { get => _visitorsCount; set => _visitorsCount = value; }
-
         protected void DestroyAllVisitors ()
         {
             foreach (var visitor in _visitors)
@@ -110,8 +107,9 @@ namespace Aqua.Scada
             _defaultVisitor.enabled = true;
             _defaultVisitor.Init(Time.deltaTime);
 
-            foreach (var startWay in StartWays)
+            for (var j = 0; j < StartWays.Count; j++)
             {
+                var startWay = StartWays[j];
                 var startSegment = startWay.GetSegment(1);
                 _defaultVisitor.SetPositionAndSegment(startWay, startSegment, startSegment.FirstPoint);
 
@@ -121,11 +119,9 @@ namespace Aqua.Scada
                 {
                     fullLength += nextWay.Length;
                     nextWay = nextWay.NextWay();
-                }
+                }               
 
-               
-
-                var speed = fullLength / VisitorsCount;
+                var speed = fullLength / _visitorsCounts[j];
 
                 if (GetComponent<RectTransform>() == null)
                 {
@@ -136,7 +132,7 @@ namespace Aqua.Scada
                     speed *= transform.lossyScale.x;
                 }
 
-                for (var i = 0; i<VisitorsCount; ++i)
+                for (var i = 0; i< _visitorsCounts[j]; ++i)
                 {
                     _defaultVisitor.Speed = speed;
 

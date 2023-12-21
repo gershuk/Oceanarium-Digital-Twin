@@ -1,7 +1,13 @@
 {
     "name": "Aqua.Scenes.ScadaTest",
     "rootNamespace": "Aqua.Scenes.ScadaTest",
-    "references": [],
+    "references": [
+        "GUID:f52c881e3a01bd4459588757d81478e3",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:b0354195131e1414dabcc358840d86b5",
+        "GUID:aef38acb4acce274698f4c65e2956312",
+        "GUID:3aabc8ab9b462f645a0d89a5363b38fc"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
