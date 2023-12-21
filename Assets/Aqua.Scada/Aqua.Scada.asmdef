@@ -1,0 +1,18 @@
+{
+    "name": "Aqua.Scada",
+    "rootNamespace": "Aqua.Scada",
+    "references": [
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:f52c881e3a01bd4459588757d81478e3",
+        "GUID:465077944a06e7a43a05fa6046d488e6"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

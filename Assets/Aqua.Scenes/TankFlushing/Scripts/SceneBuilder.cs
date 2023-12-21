@@ -5,6 +5,7 @@ using Aqua.FPSController;
 using Aqua.SceneController;
 using Aqua.TanksSystem;
 using Aqua.UIBaseElements;
+using Aqua.TickSystem;
 
 using UniRx;
 
@@ -33,7 +34,7 @@ namespace Aqua.Scenes.TankFlushing
         private TaskListViewModel _taskListViewModel;
 
         [SerializeField]
-        private TickSystem _tickSystem;
+        private ClockGenerator _tickSystem;
 
         protected int _taskIndex;
 
