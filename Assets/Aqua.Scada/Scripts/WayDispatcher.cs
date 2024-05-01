@@ -83,7 +83,18 @@ namespace Aqua.Scada
         public IReadOnlyList<Vector3> Points => _points;
         public List<Vector3> PointsForEditor => _points;
 
-        public float Length { get; protected set; }
+        public float Length
+        {
+            get
+            {
+                var l = 0f;
+                foreach (var segment in this)
+                {
+                    l += segment.Length;
+                }
+                return l;
+            }
+        }
 
         public void ForceInit ()
         {
@@ -93,10 +104,7 @@ namespace Aqua.Scada
             _transform = transform;
             _nextWayIndex = new(0);
 
-            foreach (var segment in this)
-            {
-                Length += segment.Length;
-            }
+
 
             _isInited = true;
         }
@@ -129,14 +137,14 @@ namespace Aqua.Scada
 
         void DrawLine (Vector2 pointA, Vector2 pointB, Color color, float width = 2.0f)
         {
-            pointA.y = Screen.height-pointA.y;
+            pointA.y = Screen.height - pointA.y;
             pointB.y = Screen.height - pointB.y;
             var lineTex = new Texture2D(1, 1);
             var matrixBackup = GUI.matrix;
             GUI.color = color;
             var angle = Mathf.Atan2(pointB.y - pointA.y, pointB.x - pointA.x) * 180f / Mathf.PI;
             GUIUtility.RotateAroundPivot(angle, pointA);
-            GUI.DrawTexture(new Rect(pointA.x, pointA.y, Vector2.Distance(pointA,pointB), width), lineTex);
+            GUI.DrawTexture(new Rect(pointA.x, pointA.y, Vector2.Distance(pointA, pointB), width), lineTex);
             GUI.matrix = matrixBackup;
         }
 
